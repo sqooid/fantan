@@ -1,5 +1,7 @@
 # Fantan
 
+[![Node Docker CI](https://github.com/sqooid/fantan/actions/workflows/main.yml/badge.svg)](https://github.com/sqooid/fantan/actions/workflows/main.yml)
+
 ## Development
 
 TODO: Upgrade to `typescript@5.6` for the `--noCheck` compiler option on Pocketbase hooks then use:
