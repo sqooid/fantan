@@ -53,6 +53,8 @@ jobs:
   build_api:
     name: Build and deploy api
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -94,7 +96,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          context: ./
+          context: .
           platforms: linux/arm64
-          cache-from: type=registry,ref=${{ secrets.REGISTRY }}/${{ secrets.IMAGE_NAME }}
-          cache-to: type=inline
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
