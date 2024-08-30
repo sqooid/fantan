@@ -85,7 +85,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.REGISTRY }}
+          images: ${{ secrets.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -94,7 +94,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           context: ./
           platforms: linux/arm64
-          cache-from: type=registry,ref=${{ secrets.REGISTRY }}
+          cache-from: type=registry,ref=${{ secrets.REGISTRY }}/${{ env.IMAGE_NAME }}
           cache-to: type=inline
     
 
