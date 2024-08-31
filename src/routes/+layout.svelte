@@ -14,27 +14,32 @@
 	import Header from '$lib/components/header.svelte';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();
+	const queryClient = new QueryClient();
 </script>
 
 <Toast />
 <Modal />
-<div class="grid h-screen grid-rows-[auto_1fr_auto]">
-	<!-- Header -->
-	<Header />
-	<!-- Grid Column -->
-	<div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
-		<!-- Sidebar (Left) -->
-		<aside class=" p-4">(sidebar)</aside>
-		<!-- Main -->
-		<main class="p-4 space-y-4">
-			<slot />
-		</main>
-		<!-- Sidebar (Right) -->
-		<aside class=" p-4">(sidebar)</aside>
+<QueryClientProvider client={queryClient}>
+	<div class="grid h-screen grid-rows-[auto_1fr_auto]">
+		<!-- Header -->
+		<Header />
+		<!-- Grid Column -->
+		<div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
+			<!-- Sidebar (Left) -->
+			<aside class=" p-4">(sidebar)</aside>
+			<!-- Main -->
+			<main class="p-4 space-y-4">
+				<slot />
+			</main>
+			<!-- Sidebar (Right) -->
+			<aside class=" p-4">(sidebar)</aside>
+		</div>
+		<!-- Footer -->
+		<footer class="bg-blue-500 p-4">(footer)</footer>
 	</div>
-	<!-- Footer -->
-	<footer class="bg-blue-500 p-4">(footer)</footer>
-</div>
+</QueryClientProvider>
