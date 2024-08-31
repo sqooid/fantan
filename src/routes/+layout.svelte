@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initializeStores, Toast } from '@skeletonlabs/skeleton';
+	import { initializeStores, Modal, Toast } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
@@ -20,6 +20,7 @@
 </script>
 
 <Toast />
+<Modal />
 <div class="grid h-screen grid-rows-[auto_1fr_auto]">
 	<!-- Header -->
 	<Header />

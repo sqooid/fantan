@@ -10,6 +10,11 @@
 
 	$: errors = errorObject ?? {};
 	$: classes = `input ${$$props.class ?? ''} ${errors[id] ? 'input-error' : ''}`;
+
+	export const getFiles = () => {
+		return fileInput.files;
+	};
+	let fileInput: HTMLInputElement;
 </script>
 
 <label class="label">
@@ -44,11 +49,11 @@
 		/>
 	{:else if type === 'file'}
 		<input
+			bind:this={fileInput}
 			type="file"
 			class={classes}
 			{accept}
 			title={label}
-			bind:value={infoObject[id]}
 			{autocomplete}
 		/>
 	{/if}

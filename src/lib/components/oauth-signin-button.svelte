@@ -5,8 +5,7 @@
 	export let name: string;
 
 	const onClick = async () => {
-		const authData = await $pb.collection('users').authWithOAuth2({ provider });
-		// console.log(authData);
+		const authData = await pb.collection('users').authWithOAuth2({ provider });
 	};
 </script>
 
