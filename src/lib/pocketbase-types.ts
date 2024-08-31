@@ -35,15 +35,18 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type ChaptersRecord = {
-	content?: string
+export type ChaptersRecord<TsourceContent = unknown, TtranslatedContent = unknown> = {
 	novel: RecordIdString
 	published?: boolean
+	source?: string
+	sourceContent?: null | TsourceContent
 	title?: string
+	translatedContent?: null | TtranslatedContent
 	value: string
 }
 
 export type NovelsRecord = {
+	cover?: string
 	description?: string
 	editors?: RecordIdString[]
 	owner: RecordIdString
@@ -56,7 +59,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type ChaptersResponse<Texpand = unknown> = Required<ChaptersRecord> & BaseSystemFields<Texpand>
+export type ChaptersResponse<TsourceContent = unknown, TtranslatedContent = unknown, Texpand = unknown> = Required<ChaptersRecord<TsourceContent, TtranslatedContent>> & BaseSystemFields<Texpand>
 export type NovelsResponse<Texpand = unknown> = Required<NovelsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 

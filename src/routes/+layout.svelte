@@ -22,9 +22,9 @@
 	const queryClient = new QueryClient();
 </script>
 
-<Toast />
-<Modal />
 <QueryClientProvider client={queryClient}>
+	<Toast />
+	<Modal />
 	<div class="grid h-screen grid-rows-[auto_1fr_auto]">
 		<!-- Header -->
 		<Header />

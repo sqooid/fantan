@@ -8,37 +8,35 @@
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 
 	export let parent: any;
+	export let novelId: string;
 
 	const modal = getModalStore();
 	const toast = getToastStore();
 	const info = {
-		title: '',
-		description: '',
-		cover: ''
+		novel: novelId,
+		value: '',
+		title: ''
 	};
 	let errors: Record<string, string> | null = null;
 
 	const queryClient = useQueryClient();
-	const mutateNovels = useMutation(
+	const mutateChapters = useMutation(
 		async () => {
-			const form = new FormData();
-			const file = coverInput.getFiles()?.[0];
-			form.append('cover', file);
-			form.append('title', info.title);
-			form.append('description', info.description);
-			form.append('owner', $authStore?.model?.id);
-			return await pb.collection('novels').create(form);
+			return await pb.collection('chapters').create(info);
 		},
 		{
 			onSuccess(data, variables, context) {
 				modal.close();
-				queryClient.invalidateQueries(['novels']);
-				goto(`/edit/novels/${data.id}`);
+				queryClient.invalidateQueries(['chapters', novelId]);
+				goto(`/edit/chapters/${data.id}`);
 			},
 			onError(error, variables, context) {
 				errors = parsePbError(error);
 				if (!errors) {
-					toast.trigger({ message: 'Failed to create novel.', background: 'variant-filled-error' });
+					toast.trigger({
+						message: 'Failed to create chapter.',
+						background: 'variant-filled-error'
+					});
 				}
 			}
 		}
@@ -48,22 +46,17 @@
 </script>
 
 <div class="w-modal flex flex-col gap-4 card p-8">
-	<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
 	<ValidatedField
+		required
 		type="text"
-		id="description"
-		label="Description"
+		id="value"
+		label="Number"
+		placeholder="e.g. 7 or 7.1"
 		infoObject={info}
 		errorObject={errors}
 	/>
-	<ValidatedField
-		bind:this={coverInput}
-		type="file"
-		id="cover"
-		label="Cover image"
-		infoObject={info}
-		errorObject={errors}
-		accept="image/*"
-	/>
-	<RichButton class="variant-filled" on:click={() => $mutateNovels.mutate()}>Create</RichButton>
+	<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
+	<RichButton class="variant-filled" on:click={() => $mutateChapters.mutate()} enterClick
+		>Create</RichButton
+	>
 </div>
