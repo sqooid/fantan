@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "dev:api": "mkdir -p ./src/pb/pb_data/pb_hooks && pnpm dev:pb && cp ./src/pb/pb_data/types.d.ts ./src/pb/hooks && tsc ./src/pb/hooks/*.pb.ts --outDir ./src/pb/pb_data/pb_hooks --watch",
-    "dev:pb": "cd src/pb && docker compose up -d",
+    "dev:api": "./scripts/dev-api.sh",
     "build:api": "tsc ./src/pb/hooks/*.pb.ts --outDir ./pb_build",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
