@@ -6,6 +6,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "dev:api": "./scripts/dev-api.sh",
+    "stop:api": "cd src/pb && docker compose down",
     "build:api": "tsc ./src/pb/hooks/*.pb.ts --outDir ./pb_build",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
