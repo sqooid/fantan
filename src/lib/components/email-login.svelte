@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { pb } from '$lib/stores/pocketbase';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { ClientResponseError } from 'pocketbase';
 	import ValidatedField from './inputs/validated-field.svelte';
-	import { clearErrors } from './inputs/validation';
-	import { goto } from '$app/navigation';
+	import { parsePbError } from './inputs/validation';
 
 	const toast = getToastStore();
 
@@ -12,7 +12,7 @@
 		identity: '',
 		password: ''
 	};
-	const errors: Record<string, string> = { ...info };
+	let errors: Record<string, string> | null = null;
 
 	const onClick = async () => {
 		try {
@@ -20,15 +20,8 @@
 			goto('/');
 		} catch (error) {
 			if (error instanceof ClientResponseError) {
-				clearErrors(errors);
-				let hasKnownError = false;
-				Object.keys(error.response.data).forEach((k) => {
-					hasKnownError = true;
-					errors[k] = error.response.data[k].message;
-				});
-				console.log(errors);
-
-				if (!hasKnownError) {
+				errors = parsePbError(error);
+				if (!errors) {
 					toast.trigger({
 						message: error.message,
 						background: 'variant-filled-error'

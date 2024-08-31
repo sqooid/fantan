@@ -4,7 +4,7 @@
 	import { ClientResponseError } from 'pocketbase';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { goto } from '$app/navigation';
-	import { clearErrors } from './inputs/validation';
+	import { clearErrors, parsePbError } from './inputs/validation';
 
 	const toast = getToastStore();
 
@@ -14,7 +14,7 @@
 		password: '',
 		confirmPassword: ''
 	};
-	let errors: Record<string, string> = { ...info };
+	let errors: Record<string, string> | null = null;
 
 	const onClick = async () => {
 		try {
@@ -22,12 +22,7 @@
 			await pb.collection('users').authWithPassword(info.username, info.password);
 			goto('/');
 		} catch (error) {
-			if (error instanceof ClientResponseError) {
-				clearErrors(errors);
-				Object.keys(error.response.data).forEach((k) => {
-					errors[k] = error.response.data[k].message;
-				});
-			}
+			errors = parsePbError(error);
 		}
 	};
 </script>
