@@ -16,7 +16,7 @@
 
 	const onClick = async () => {
 		try {
-			await $pb.collection('users').authWithPassword(info.identity, info.password);
+			await pb.collection('users').authWithPassword(info.identity, info.password);
 			goto('/');
 		} catch (error) {
 			if (error instanceof ClientResponseError) {

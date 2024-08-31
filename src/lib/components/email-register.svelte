@@ -18,8 +18,8 @@
 
 	const onClick = async () => {
 		try {
-			await $pb.collection('users').create(info);
-			await $pb.collection('users').authWithPassword(info.username, info.password);
+			await pb.collection('users').create(info);
+			await pb.collection('users').authWithPassword(info.username, info.password);
 			goto('/');
 		} catch (error) {
 			if (error instanceof ClientResponseError) {
