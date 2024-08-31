@@ -48,7 +48,14 @@
 </script>
 
 <div class="w-modal flex flex-col gap-4 card p-8">
-	<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
+	<ValidatedField
+		required
+		type="text"
+		id="title"
+		label="Title"
+		infoObject={info}
+		errorObject={errors}
+	/>
 	<ValidatedField
 		type="text"
 		id="description"

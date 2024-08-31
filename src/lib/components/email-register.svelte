@@ -30,6 +30,7 @@
 <dev class="flex flex-col gap-2">
 	<span class="h4">Create a new account</span>
 	<ValidatedField
+		required
 		id="username"
 		label="Username"
 		placeholder="john"
@@ -46,6 +47,7 @@
 		errorObject={errors}
 	/>
 	<ValidatedField
+		required
 		id="password"
 		label="Password"
 		placeholder="password"
@@ -54,6 +56,7 @@
 		errorObject={errors}
 	/>
 	<ValidatedField
+		required
 		id="passwordConfirm"
 		label="Confirm Password"
 		placeholder="password"
