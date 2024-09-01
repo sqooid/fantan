@@ -7,6 +7,8 @@
 
 	export let content: ChapterContent = { sections: [] };
 
+	export const getSections = () => sections;
+
 	let sections = content.sections;
 
 	const onCreateSectionBottom = () => {
@@ -35,24 +37,29 @@
 	// force dom to update on undo
 	let versionKey = 0;
 
+	let consecutiveUndo = false;
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.key === 'z' && e.ctrlKey && !tainted) {
 			if (history.length > 1) {
 				console.log('history undo');
 
 				e.preventDefault();
-				history.pop();
+				if (!consecutiveUndo) {
+					history.pop();
+				}
 				const restored = history.pop();
 				console.log(history);
 				console.log(restored);
 				sections = restored as any;
 				versionKey++;
+				consecutiveUndo = true;
 			}
 		}
 	};
 
 	let tainted = false;
 	const onSectionInput = () => {
+		consecutiveUndo = false;
 		tainted = true;
 		debouncedSave();
 	};

@@ -43,6 +43,6 @@
 			<aside class=" p-4">(sidebar)</aside>
 		</div>
 		<!-- Footer -->
-		<footer class="bg-blue-500 p-4">(footer)</footer>
+		<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
 	</div>
 </QueryClientProvider>
