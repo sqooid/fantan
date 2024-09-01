@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { PUBLIC_API_URL } from '$env/static/public';
-
-	console.log(PUBLIC_API_URL);
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
