@@ -27,6 +27,7 @@
 		console.log('saved history');
 		console.log(history);
 		tainted = false;
+		consecutiveUndo = false;
 		saving = false;
 	};
 
@@ -40,14 +41,20 @@
 	let consecutiveUndo = false;
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.key === 'z' && e.ctrlKey && !tainted) {
-			if (history.length > 1) {
+			if (history.length > 0) {
+				e.preventDefault();
 				console.log('history undo');
 
-				e.preventDefault();
 				if (!consecutiveUndo) {
 					history.pop();
 				}
-				const restored = history.pop();
+				let restored;
+				if (history.length > 1) {
+					restored = history.pop();
+				} else {
+					restored = cloneDeep(history[0]);
+				}
+
 				console.log(history);
 				console.log(restored);
 				sections = restored as any;
@@ -63,6 +70,19 @@
 		tainted = true;
 		debouncedSave();
 	};
+
+	const onEnter = (sectionIndex: number, offset: number, side: 'source' | 'translated') => {
+		const section = sections[sectionIndex];
+		const text = section[side];
+		const beforeText = text.slice(0, offset + 1);
+		const afterText = text.slice(offset);
+		const newSection: typeof section = { source: '', translated: '' };
+		newSection[side] = afterText;
+		section[side] = beforeText;
+		sections.splice(sectionIndex + 1, 0, newSection);
+		sections = sections;
+		onSaveSection();
+	};
 </script>
 
 <svelte:document on:keydown={onKeyDown} />
@@ -70,16 +90,18 @@
 <div class="w-full flex flex-col gap-4">
 	<div class="grid grid-cols-2 max-w-full gap-x-2 gap-y-12 py-12">
 		{#key versionKey}
-			{#each sections as section}
+			{#each sections as section, i}
 				<SplitEditorSection
 					bind:text={section.source}
 					on:saveSection={onSaveSection}
 					on:input={onSectionInput}
+					on:enter={(o) => onEnter(i, o.detail.offset, 'source')}
 				/>
 				<SplitEditorSection
 					bind:text={section.translated}
 					on:saveSection={onSaveSection}
 					on:input={onSectionInput}
+					on:enter={(o) => onEnter(i, o.detail.offset, 'translated')}
 				/>
 			{:else}
 				<span>No sections</span>

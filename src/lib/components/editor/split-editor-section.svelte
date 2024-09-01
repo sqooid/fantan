@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+	export type EnterEvent = { offset: number };
+</script>
+
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
@@ -6,7 +10,7 @@
 
 	let element: HTMLElement;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{ enter: EnterEvent; input: null; saveSection: null }>();
 
 	let tainted = false;
 
@@ -22,6 +26,16 @@
 			tainted = false;
 		}
 	};
+
+	const onKeyPress = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			const offset = document.getSelection()?.focusOffset;
+			if (offset === undefined) return;
+
+			dispatch('enter', { offset });
+		}
+	};
 </script>
 
 <p
@@ -32,6 +46,7 @@
 	on:focusout={onFocusOut}
 	on:focusin
 	bind:this={element}
+	on:keypress={onKeyPress}
 >
 	{text}
 </p>
