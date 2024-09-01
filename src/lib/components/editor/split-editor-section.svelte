@@ -40,7 +40,7 @@
 
 <p
 	contenteditable
-	class="section-p max-w-prose outline-none font-source-sans-3"
+	class="section-p max-w-prose outline-none font-source-sans-3 text-lg font-light"
 	placeholder={language}
 	on:input={onInput}
 	on:focusout={onFocusOut}
