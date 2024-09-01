@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { quintOut } from 'svelte/easing';
 
 	export let loading = false;
 	export let enterClick = false;

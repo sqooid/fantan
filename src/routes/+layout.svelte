@@ -4,12 +4,8 @@
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
-	import xml from 'highlight.js/lib/languages/xml';
+	import markdown from 'highlight.js/lib/languages/markdown';
 	import 'highlight.js/styles/github-dark.css';
-	// for HTML
-	import css from 'highlight.js/lib/languages/css';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import typescript from 'highlight.js/lib/languages/typescript';
 	// Floating UI for Popups
 	import Header from '$lib/components/header.svelte';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
@@ -17,10 +13,17 @@
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-
+	hljs.registerLanguage('markdown', markdown);
+	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
 </script>
+
+<svelte:head>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+	</style>
+</svelte:head>
 
 <QueryClientProvider client={queryClient}>
 	<Toast />

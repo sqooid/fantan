@@ -6,16 +6,19 @@
 	import { parsePbError } from './inputs/validation';
 	import { goto } from '$app/navigation';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
+	import type { ChapterContent } from './editor/content-types';
 
 	export let parent: any;
 	export let novelId: string;
 
 	const modal = getModalStore();
 	const toast = getToastStore();
-	const info = {
+	const content: ChapterContent = { sections: [] };
+	const info: Record<string, any> = {
 		novel: novelId,
 		value: '',
-		title: ''
+		title: '',
+		content
 	};
 	let errors: Record<string, string> | null = null;
 
