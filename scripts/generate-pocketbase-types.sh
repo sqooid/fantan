@@ -1,0 +1,1 @@
+pocketbase-typegen --db ./src/pb/pb_data/data.db --out ./src/lib/pocketbase-types.ts
