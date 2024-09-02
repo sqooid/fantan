@@ -14,6 +14,7 @@
 	export let errorObject: { [K in typeof id]: string } | null;
 	export let autocomplete = '';
 	export let required = false;
+	export let files: FileList | null = null;
 
 	$: errors = errorObject ?? {};
 	$: classes = `input ${$$props.class ?? ''} ${errors[id] ? 'input-error' : ''}`;
@@ -23,7 +24,6 @@
 	};
 	const elementId = randomId();
 
-	let files: FileList | null = null;
 	const onFileInput = (e: InputEvent) => {
 		const elem = e.target as HTMLInputElement;
 		files = elem.files;
@@ -36,9 +36,7 @@
 			<Tooltip.Trigger asChild let:builder>
 				<Label for={elementId}>{label}*</Label>
 			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<span>Field is required</span>
-			</Tooltip.Content>
+			<Tooltip.Content>Field is required</Tooltip.Content>
 		</Tooltip.Root>
 	{:else}
 		<Label for={elementId}>{label}</Label>

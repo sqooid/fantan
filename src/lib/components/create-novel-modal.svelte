@@ -76,7 +76,7 @@
 				accept="image/*"
 			/>
 			<Dialog.Footer>
-				<Button on:click={() => $mutateNovels.mutate()}>Create</Button>
+				<Button on:click={() => $mutateNovels.mutate()} autoEnter>Create</Button>
 			</Dialog.Footer>
 		</div>
 	</Dialog.Content>

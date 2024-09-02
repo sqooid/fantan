@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import ChapterList from '$lib/components/chapter-list.svelte';
-	import RichButton from '$lib/components/inputs/rich-button.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
+	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
+	import { animateChildChanges, animateLayoutChanges } from '$lib/utils/ui';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
+	import { debounce } from 'lodash-es';
+	import { LoaderCircle } from 'lucide-svelte';
 	import { ClientResponseError } from 'pocketbase';
-	import HeaderButton from '$lib/components/header-button.svelte';
+	import { toast } from 'svelte-sonner';
+	import { blur, scale } from 'svelte/transition';
 
 	const novelId = $page.params.slug;
 
@@ -36,6 +39,7 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Saved changes');
+				tainted = false;
 			},
 			onError(error, variables, context) {
 				let message = 'Failed to save changes';
@@ -62,17 +66,17 @@
 		tainted = true;
 	};
 
-	const saveChanges = () => {
+	const saveChanges = debounce(() => {
 		savingDetails = true;
 		$novelDetailsMutation.mutate();
-	};
+	}, 150);
 </script>
 
 {#if $novelQuery.isSuccess}
-	<div class="flex flex-col">
+	<div class="flex flex-col gap-16">
 		<div class="flex gap-8">
 			<img
-				class="h-64"
+				class="h-64 rounded-lg"
 				src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 				alt={`${$novelQuery.data.title} cover image`}
 			/>
@@ -94,23 +98,20 @@
 					errorObject={errors}
 					on:input={onInput}
 				/>
-				<ValidatedField
-					type="file"
-					id="description"
-					label="Description"
-					infoObject={info}
-					errorObject={errors}
-					on:input={onInput}
-				/>
 				{#if tainted}
-					<RichButton
-						class="self-start variant-filled"
-						on:click={saveChanges}
-						loading={savingDetails}>Save changes</RichButton
-					>
+					<div transition:blur={{ duration: 150 }} class="w-fit">
+						<Button class="self-start" on:click={saveChanges}>
+							<div class="flex items-center">
+								<!-- {#if savingDetails}
+								<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+							{/if} -->
+								Save changes
+							</div>
+						</Button>
+					</div>
 				{/if}
 			</div>
 		</div>
+		<ChapterList edit {novelId} />
 	</div>
-	<ChapterList edit {novelId} />
 {/if}

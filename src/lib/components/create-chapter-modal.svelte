@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Button, buttonVariants } from '$lib/shadcn/components/ui/button';
+	import { buttonVariants } from '$lib/shadcn/components/ui/button';
 	import { Dialog, DialogTrigger } from '$lib/shadcn/components/ui/dialog';
 	import DialogContent from '$lib/shadcn/components/ui/dialog/dialog-content.svelte';
 	import DialogFooter from '$lib/shadcn/components/ui/dialog/dialog-footer.svelte';
@@ -12,6 +12,7 @@
 	import type { ChapterContent } from './editor/content-types';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 
 	export let novelId: string;
 
@@ -65,7 +66,7 @@
 			<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
 		</div>
 		<DialogFooter>
-			<Button type="button" on:click={() => $mutateChapters.mutate()}>Create</Button>
+			<Button on:click={() => $mutateChapters.mutate()} autoEnter>Create</Button>
 		</DialogFooter>
 	</DialogContent>
 </Dialog>

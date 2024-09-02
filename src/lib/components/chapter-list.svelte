@@ -16,7 +16,7 @@
 	});
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col gap-8">
 	<div class="flex gap-8">
 		<span class="font-extrabold text-2xl">Chapters</span>
 		{#if edit}
@@ -27,7 +27,7 @@
 		{#each $chaptersQuery.data.items as chapter}
 			<ChapterListItem {chapter} />
 		{:else}
-			<span>No chapters</span>
+			<span class="opacity-50">No chapters</span>
 		{/each}
 	{/if}
 </div>
