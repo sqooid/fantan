@@ -22,15 +22,17 @@
 	let elem: HTMLElement;
 </script>
 
-<div
-	bind:this={elem}
-	contenteditable
-	class="section-p max-w-prose outline-none font-source-sans-3 text-lg font-light"
-	{placeholder}
-	on:paste={onPaste}
-	on:input
->
-	{content}
+<div class="w-full">
+	<div
+		bind:this={elem}
+		contenteditable
+		class="mx-auto section-p max-w-prose w-full outline-none font-source-sans-3 text-lg font-light"
+		{placeholder}
+		on:paste={onPaste}
+		on:input
+	>
+		{content}
+	</div>
 </div>
 
 <style lang="postcss">
