@@ -39,6 +39,7 @@
 			placeholder={placeholder || label}
 			bind:value={infoObject[id]}
 			{autocomplete}
+			on:input
 		/>
 	{:else if type === 'email'}
 		<input
@@ -48,6 +49,7 @@
 			placeholder={placeholder || label}
 			bind:value={infoObject[id]}
 			{autocomplete}
+			on:input
 		/>
 	{:else if type === 'password'}
 		<input
@@ -57,6 +59,7 @@
 			placeholder={placeholder || label}
 			bind:value={infoObject[id]}
 			{autocomplete}
+			on:input
 		/>
 	{:else if type === 'file'}
 		<input
@@ -66,6 +69,7 @@
 			{accept}
 			title={label}
 			{autocomplete}
+			on:input
 		/>
 	{/if}
 </label>
