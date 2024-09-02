@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { Button, buttonVariants } from '$lib/shadcn/components/ui/button';
+	import { Dialog, DialogTrigger } from '$lib/shadcn/components/ui/dialog';
+	import DialogContent from '$lib/shadcn/components/ui/dialog/dialog-content.svelte';
+	import DialogFooter from '$lib/shadcn/components/ui/dialog/dialog-footer.svelte';
+	import DialogHeader from '$lib/shadcn/components/ui/dialog/dialog-header.svelte';
+	import DialogTitle from '$lib/shadcn/components/ui/dialog/dialog-title.svelte';
 	import { pb } from '$lib/stores/pocketbase';
-	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import type { ChapterContent } from './editor/content-types';
-	import RichButton from './inputs/rich-button.svelte';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
 
-	export let parent: any;
 	export let novelId: string;
 
-	const modal = getModalStore();
 	const content: ChapterContent = { sections: [] };
 	const info: Record<string, any> = {
 		novel: novelId,
@@ -29,7 +31,6 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				modal.close();
 				queryClient.invalidateQueries(['chapters', novelId]);
 				goto(`/edit/chapters/${data.id}`);
 			},
@@ -45,18 +46,26 @@
 	let coverInput: ValidatedField;
 </script>
 
-<div class="w-modal flex flex-col gap-4 card p-8">
-	<ValidatedField
-		required
-		type="text"
-		id="value"
-		label="Number"
-		placeholder="e.g. 7 or 7.1"
-		infoObject={info}
-		errorObject={errors}
-	/>
-	<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
-	<RichButton class="variant-filled" on:click={() => $mutateChapters.mutate()} enterClick
-		>Create</RichButton
-	>
-</div>
+<Dialog>
+	<DialogTrigger class={buttonVariants({ variant: 'outline' })}>Create chapter</DialogTrigger>
+	<DialogContent>
+		<DialogHeader>
+			<DialogTitle>Create new chapter</DialogTitle>
+		</DialogHeader>
+		<div class="flex flex-col gap-4">
+			<ValidatedField
+				required
+				type="text"
+				id="value"
+				label="Number"
+				placeholder="e.g. 7 or 7.1"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
+		</div>
+		<DialogFooter>
+			<Button type="button" on:click={() => $mutateChapters.mutate()}>Create</Button>
+		</DialogFooter>
+	</DialogContent>
+</Dialog>

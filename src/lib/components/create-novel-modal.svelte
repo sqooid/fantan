@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { buttonVariants } from '$lib/shadcn/components/ui/button';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import * as Dialog from '$lib/shadcn/components/ui/dialog';
 	import { authStore, pb } from '$lib/stores/pocketbase';
-	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
-	import RichButton from './inputs/rich-button.svelte';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
 
-	export let parent: any;
-
-	const modal = getModalStore();
 	const info = {
 		title: '',
 		description: '',
@@ -31,7 +29,6 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				modal.close();
 				queryClient.invalidateQueries(['novels']);
 				goto(`/edit/novels/${data.id}`);
 			},
@@ -47,30 +44,40 @@
 	let coverInput: ValidatedField;
 </script>
 
-<div class="w-modal flex flex-col gap-4 card p-8">
-	<ValidatedField
-		required
-		type="text"
-		id="title"
-		label="Title"
-		infoObject={info}
-		errorObject={errors}
-	/>
-	<ValidatedField
-		type="text"
-		id="description"
-		label="Description"
-		infoObject={info}
-		errorObject={errors}
-	/>
-	<ValidatedField
-		bind:this={coverInput}
-		type="file"
-		id="cover"
-		label="Cover image"
-		infoObject={info}
-		errorObject={errors}
-		accept="image/*"
-	/>
-	<RichButton class="variant-filled" on:click={() => $mutateNovels.mutate()}>Create</RichButton>
-</div>
+<Dialog.Root>
+	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>Create novel</Dialog.Trigger>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>Create new novel</Dialog.Title>
+		</Dialog.Header>
+		<div class="w-modal flex flex-col gap-4 card p-8">
+			<ValidatedField
+				required
+				type="text"
+				id="title"
+				label="Title"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField
+				type="text"
+				id="description"
+				label="Description"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField
+				bind:this={coverInput}
+				type="file"
+				id="cover"
+				label="Cover image"
+				infoObject={info}
+				errorObject={errors}
+				accept="image/*"
+			/>
+			<Dialog.Footer>
+				<Button on:click={() => $mutateNovels.mutate()}>Create</Button>
+			</Dialog.Footer>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Button } from '$lib/shadcn/components/ui/button';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -18,11 +19,11 @@
 
 <svelte:document on:keypress={onKeyPress} />
 
-<button type="button" class={`btn relative overflow-hidden ${$$props.class ?? ''}`} on:click>
+<Button class={`btn relative overflow-hidden ${$$props.class ?? ''}`} on:click>
 	<slot />
 	{#if loading}
 		<div class="absolute inset-0 flex items-center justify-center bg-black/50">
 			<ProgressRadial width="w-6" />
 		</div>
 	{/if}
-</button>
+</Button>

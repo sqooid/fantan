@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initializeStores, Modal, Toast } from '@skeletonlabs/skeleton';
+	import { initializeStores } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
@@ -8,11 +8,11 @@
 	import 'highlight.js/styles/github-dark.css';
 	// Floating UI for Popups
 	import Header from '$lib/components/header.svelte';
+	import { Toaster } from '$lib/shadcn/components/ui/sonner';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher } from 'mode-watcher';
-	import { Toaster } from '$lib/shadcn/components/ui/sonner';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -30,8 +30,6 @@
 <ModeWatcher />
 <QueryClientProvider client={queryClient}>
 	<Toaster />
-	<Toast />
-	<Modal />
 	<div class="grid h-screen grid-rows-[auto_1fr_auto]">
 		<!-- Header -->
 		<Header />
