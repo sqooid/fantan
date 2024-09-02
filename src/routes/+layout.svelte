@@ -12,13 +12,15 @@
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher, setMode } from 'mode-watcher';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
 	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
+
+	setMode('dark');
 </script>
 
 <svelte:head>

@@ -7,6 +7,7 @@
 	import { pb } from '$lib/stores/pocketbase';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { ClientResponseError } from 'pocketbase';
+	import HeaderButton from '$lib/components/header-button.svelte';
 
 	const novelId = $page.params.slug;
 

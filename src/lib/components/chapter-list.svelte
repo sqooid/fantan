@@ -16,7 +16,7 @@
 	});
 </script>
 
-<div class="flex flex-col prose dark:prose-invert">
+<div class="flex flex-col">
 	<div class="flex gap-8">
 		<span class="font-extrabold text-2xl">Chapters</span>
 		{#if edit}
