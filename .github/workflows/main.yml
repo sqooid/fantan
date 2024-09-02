@@ -32,10 +32,10 @@ jobs:
         run: pnpm run test:unit
       - name: Build
         run: pnpm build
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v3.0.1
-        with:
-          path: build/
+      # - name: Upload GitHub Pages artifact
+      #   uses: actions/upload-pages-artifact@v3.0.1
+      #   with:
+      #     path: build/
   build_api:
     name: Build and deploy api
     runs-on: ubuntu-latest
