@@ -18,7 +18,7 @@
 </script>
 
 <div class="w-full flex flex-col gap-4 pt-6">
-	<div class="grid grid-cols-2 max-w-full gap-x-16 py-8">
+	<div class="grid grid-cols-2 w-full gap-x-16 py-8">
 		<SplitEditorRawSideCooked
 			bind:content={content.source}
 			on:input={onInput}
