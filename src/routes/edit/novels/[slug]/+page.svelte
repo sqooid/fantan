@@ -1,16 +1,14 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import ChapterList from '$lib/components/chapter-list.svelte';
 	import RichButton from '$lib/components/inputs/rich-button.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { pb } from '$lib/stores/pocketbase';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { ClientResponseError } from 'pocketbase';
 
 	const novelId = $page.params.slug;
-
-	const toast = getToastStore();
 
 	const novelQuery = useQuery(
 		['novel', novelId],
@@ -36,14 +34,14 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				toast.trigger({ message: 'Saved changes', background: 'variant-filled-success' });
+				toast.success('Saved changes');
 			},
 			onError(error, variables, context) {
 				let message = 'Failed to save changes';
 				if (error instanceof ClientResponseError) {
 					message += `: ${error}`;
 				}
-				toast.trigger({ message, background: 'variant-error-success' });
+				toast.error(message);
 			},
 			onSettled(data, error, variables, context) {
 				savingDetails = false;
@@ -79,6 +77,7 @@
 			/>
 			<div class="flex w-full flex-col gap-4">
 				<ValidatedField
+					required
 					type="text"
 					id="title"
 					label="Title"
@@ -88,6 +87,14 @@
 				/>
 				<ValidatedField
 					type="text"
+					id="description"
+					label="Description"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
+				<ValidatedField
+					type="file"
 					id="description"
 					label="Description"
 					infoObject={info}

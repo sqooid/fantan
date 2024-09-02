@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { authStore, pb } from '$lib/stores/pocketbase';
-	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
-	import ValidatedField from './inputs/validated-field.svelte';
-	import RichButton from './inputs/rich-button.svelte';
-	import { parsePbError } from './inputs/validation';
 	import { goto } from '$app/navigation';
+	import { pb } from '$lib/stores/pocketbase';
+	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
+	import { toast } from 'svelte-sonner';
 	import type { ChapterContent } from './editor/content-types';
+	import RichButton from './inputs/rich-button.svelte';
+	import ValidatedField from './inputs/validated-field.svelte';
+	import { parsePbError } from './inputs/validation';
 
 	export let parent: any;
 	export let novelId: string;
 
 	const modal = getModalStore();
-	const toast = getToastStore();
 	const content: ChapterContent = { sections: [] };
 	const info: Record<string, any> = {
 		novel: novelId,
@@ -36,10 +36,7 @@
 			onError(error, variables, context) {
 				errors = parsePbError(error);
 				if (!errors) {
-					toast.trigger({
-						message: 'Failed to create chapter.',
-						background: 'variant-filled-error'
-					});
+					toast.error('Failed to create chapter');
 				}
 			}
 		}

@@ -1,15 +1,14 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import type { ChapterContent } from '$lib/components/editor/content-types';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import RichButton from '$lib/components/inputs/rich-button.svelte';
 	import { pb } from '$lib/stores/pocketbase';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 
 	const chapterId = $page.params.slug;
 
-	const toast = getToastStore();
 	let editor: SplitEditor;
 
 	const chapterQuery = useQuery(['chapter', chapterId], () => {
@@ -26,10 +25,10 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				toast.trigger({ message: 'Saved changes', background: 'variant-filled-success' });
+				toast.success('Saved changes');
 			},
 			onError(error, variables, context) {
-				toast.trigger({ message: 'Failed to save changes', background: 'variant-filled-error' });
+				toast.error('Failed to save changes');
 			}
 		}
 	);
