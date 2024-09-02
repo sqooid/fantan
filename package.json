@@ -57,7 +57,12 @@
   "dependencies": {
     "@floating-ui/dom": "1.6.10",
     "@sveltestack/svelte-query": "^1.6.0",
+    "bits-ui": "^0.21.13",
+    "clsx": "^2.1.1",
     "highlight.js": "11.10.0",
-    "pocketbase": "^0.21.5"
+    "lucide-svelte": "^0.438.0",
+    "pocketbase": "^0.21.5",
+    "tailwind-merge": "^2.5.2",
+    "tailwind-variants": "^0.2.1"
   }
 }
