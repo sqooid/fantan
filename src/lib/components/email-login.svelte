@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { pb } from '$lib/stores/pocketbase';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { ClientResponseError } from 'pocketbase';
+	import { toast } from 'svelte-sonner';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
-
-	const toast = getToastStore();
+	import { Button } from '$lib/shadcn/components/ui/button';
 
 	const info = {
 		identity: '',
@@ -22,10 +21,7 @@
 			if (error instanceof ClientResponseError) {
 				errors = parsePbError(error);
 				if (!errors) {
-					toast.trigger({
-						message: error.message,
-						background: 'variant-filled-error'
-					});
+					toast.error(error.message);
 				}
 			}
 		}
@@ -41,6 +37,7 @@
 		type="text"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="username,email"
 	/>
 	<ValidatedField
 		id="password"
@@ -49,6 +46,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="current-password"
 	/>
-	<button type="button" class="btn variant-outline" on:click={onClick}>Log in</button>
+	<Button on:click={onClick}>Log in</Button>
 </dev>

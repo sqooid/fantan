@@ -1,12 +1,8 @@
 <script lang="ts">
-	import { pb } from '$lib/stores/pocketbase';
-	import { getToastStore } from '@skeletonlabs/skeleton';
-	import { ClientResponseError } from 'pocketbase';
-	import ValidatedField from './inputs/validated-field.svelte';
 	import { goto } from '$app/navigation';
-	import { clearErrors, parsePbError } from './inputs/validation';
-
-	const toast = getToastStore();
+	import { pb } from '$lib/stores/pocketbase';
+	import ValidatedField from './inputs/validated-field.svelte';
+	import { parsePbError } from './inputs/validation';
 
 	const info = {
 		username: '',
@@ -37,6 +33,7 @@
 		type="text"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="username"
 	/>
 	<ValidatedField
 		id="email"
@@ -45,6 +42,7 @@
 		type="email"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="email"
 	/>
 	<ValidatedField
 		required
@@ -54,6 +52,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="new-password"
 	/>
 	<ValidatedField
 		required
@@ -63,6 +62,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="new-password"
 	/>
 	<button type="button" class="btn variant-outline" on:click={onClick}>Sign up</button>
 </dev>

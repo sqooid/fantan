@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { authStore, pb } from '$lib/stores/pocketbase';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { authStore } from '$lib/stores/pocketbase';
 	import HeaderButton from './header-button.svelte';
 
 	const onLogout = () => {
@@ -9,17 +10,19 @@
 	};
 </script>
 
-<header class="p-4 backdrop-blur-md bg-white/5 grid grid-cols-[auto_1fr_auto]">
+<header
+	class="p-4 backdrop-blur-md border-b border-solid border-input grid grid-cols-[auto_1fr_auto]"
+>
 	<div>
-		<HeaderButton href="/" name="Browse" />
-		<HeaderButton href="/create" name="Create" />
+		<HeaderButton href="/">Browse</HeaderButton>
+		<HeaderButton href="/create">Create</HeaderButton>
 	</div>
 	<div></div>
 	<div>
 		{#if $authStore?.isValid}
-			<button type="button" class="btn variant-ghost" on:click={onLogout}>Log out</button>
+			<Button variant="ghost" on:click={onLogout}>Log out</Button>
 		{:else}
-			<HeaderButton href="/login" name="Log in" />
+			<HeaderButton href="/login">Log in</HeaderButton>
 		{/if}
 	</div>
 </header>

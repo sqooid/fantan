@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { buttonVariants } from '$lib/shadcn/components/ui/button';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 
 	$: path = $page.url.pathname;
 	export let href: string;
-	export let name: string;
 </script>
 
-<a
-	type="button"
-	class={`btn cursor-pointer ${$$props.class ?? ''} ${path === href ? 'variant-ghost' : ''}`}
-	{href}>{name}</a
->
+<Button {href} variant={path === href ? 'outline' : 'ghost'}>
+	<slot />
+</Button>
 
 <style lang="postcss">
 </style>

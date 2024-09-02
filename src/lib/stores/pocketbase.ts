@@ -1,7 +1,7 @@
-import { get, readable, writable } from 'svelte/store';
-import PocketBase, { BaseAuthStore } from 'pocketbase';
 import { PUBLIC_API_URL } from '$env/static/public';
 import type { TypedPocketBase } from '$lib/pocketbase-types';
+import PocketBase, { BaseAuthStore } from 'pocketbase';
+import { writable } from 'svelte/store';
 
 export const pb = new PocketBase(PUBLIC_API_URL) as TypedPocketBase;
 

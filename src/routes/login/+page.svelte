@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import EmailLogin from '$lib/components/email-login.svelte';
 	import OauthSigninButton from '$lib/components/oauth-signin-button.svelte';
@@ -6,7 +7,7 @@
 	import GoogleIcon from '$lib/icons/google-icon.svelte';
 	import { authStore } from '$lib/stores/pocketbase';
 
-	if ($authStore?.isValid) {
+	if (browser && $authStore?.isValid) {
 		goto('/');
 	}
 </script>

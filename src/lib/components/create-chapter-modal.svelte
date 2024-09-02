@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { authStore, pb } from '$lib/stores/pocketbase';
-	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
-	import ValidatedField from './inputs/validated-field.svelte';
-	import RichButton from './inputs/rich-button.svelte';
-	import { parsePbError } from './inputs/validation';
 	import { goto } from '$app/navigation';
+	import { buttonVariants } from '$lib/shadcn/components/ui/button';
+	import { Dialog, DialogTrigger } from '$lib/shadcn/components/ui/dialog';
+	import DialogContent from '$lib/shadcn/components/ui/dialog/dialog-content.svelte';
+	import DialogFooter from '$lib/shadcn/components/ui/dialog/dialog-footer.svelte';
+	import DialogHeader from '$lib/shadcn/components/ui/dialog/dialog-header.svelte';
+	import DialogTitle from '$lib/shadcn/components/ui/dialog/dialog-title.svelte';
+	import { pb } from '$lib/stores/pocketbase';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
-	import type { ChapterContent } from './editor/content-types';
+	import { toast } from 'svelte-sonner';
+	import type { ChapterContent, ChapterSection } from './editor/content-types';
+	import ValidatedField from './inputs/validated-field.svelte';
+	import { parsePbError } from './inputs/validation';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 
-	export let parent: any;
 	export let novelId: string;
 
-	const modal = getModalStore();
-	const toast = getToastStore();
-	const content: ChapterContent = { sections: [] };
+	const content: ChapterSection = { source: '', translated: '' };
 	const info: Record<string, any> = {
 		novel: novelId,
 		value: '',
@@ -29,17 +32,13 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				modal.close();
 				queryClient.invalidateQueries(['chapters', novelId]);
 				goto(`/edit/chapters/${data.id}`);
 			},
 			onError(error, variables, context) {
 				errors = parsePbError(error);
 				if (!errors) {
-					toast.trigger({
-						message: 'Failed to create chapter.',
-						background: 'variant-filled-error'
-					});
+					toast.error('Failed to create chapter');
 				}
 			}
 		}
@@ -48,18 +47,26 @@
 	let coverInput: ValidatedField;
 </script>
 
-<div class="w-modal flex flex-col gap-4 card p-8">
-	<ValidatedField
-		required
-		type="text"
-		id="value"
-		label="Number"
-		placeholder="e.g. 7 or 7.1"
-		infoObject={info}
-		errorObject={errors}
-	/>
-	<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
-	<RichButton class="variant-filled" on:click={() => $mutateChapters.mutate()} enterClick
-		>Create</RichButton
-	>
-</div>
+<Dialog>
+	<DialogTrigger class={buttonVariants({ variant: 'outline' })}>Create chapter</DialogTrigger>
+	<DialogContent>
+		<DialogHeader>
+			<DialogTitle>Create new chapter</DialogTitle>
+		</DialogHeader>
+		<div class="flex flex-col gap-4">
+			<ValidatedField
+				required
+				type="text"
+				id="value"
+				label="Number"
+				placeholder="e.g. 7 or 7.1"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField type="text" id="title" label="Title" infoObject={info} errorObject={errors} />
+		</div>
+		<DialogFooter>
+			<Button on:click={() => $mutateChapters.mutate()} autoEnter>Create</Button>
+		</DialogFooter>
+	</DialogContent>
+</Dialog>

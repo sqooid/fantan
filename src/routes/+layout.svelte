@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initializeStores, Modal, Toast } from '@skeletonlabs/skeleton';
+	import { initializeStores } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
@@ -8,15 +8,23 @@
 	import 'highlight.js/styles/github-dark.css';
 	// Floating UI for Popups
 	import Header from '$lib/components/header.svelte';
+	import { Toaster } from '$lib/shadcn/components/ui/sonner';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
+	import { ModeWatcher, setMode } from 'mode-watcher';
+	import { page } from '$app/stores';
+	import { blur } from 'svelte/transition';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
 	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
+
+	export let data;
+
+	setMode('dark');
 </script>
 
 <svelte:head>
@@ -25,24 +33,28 @@
 	</style>
 </svelte:head>
 
+<ModeWatcher />
 <QueryClientProvider client={queryClient}>
-	<Toast />
-	<Modal />
-	<div class="grid h-screen grid-rows-[auto_1fr_auto]">
-		<!-- Header -->
-		<Header />
-		<!-- Grid Column -->
-		<div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
-			<!-- Sidebar (Left) -->
-			<aside class=" p-4">(sidebar)</aside>
-			<!-- Main -->
-			<main class="p-4 space-y-4">
-				<slot />
-			</main>
-			<!-- Sidebar (Right) -->
-			<aside class=" p-4">(sidebar)</aside>
-		</div>
-		<!-- Footer -->
-		<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
+	<Toaster />
+	<!-- <div class="grid grid-rows-[auto_1fr_auto]"> -->
+	<!-- Header -->
+	<Header />
+	<!-- Grid Column -->
+	<div class="w-full">
+		<!-- Sidebar (Left) -->
+		<!-- <aside class=" p-4">(sidebar)</aside> -->
+		<!-- Main -->
+		<main class="p-4 space-y-4 w-full">
+			<!-- {#key data.url}
+					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
+			<slot />
+			<!-- </div>
+				{/key} -->
+		</main>
+		<!-- Sidebar (Right) -->
+		<!-- <aside class=" p-4">(sidebar)</aside> -->
 	</div>
+	<!-- Footer -->
+	<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
+	<!-- </div> -->
 </QueryClientProvider>
