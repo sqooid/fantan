@@ -1,12 +1,11 @@
 <script lang="ts">
-	import CreateNovelModal from '$lib/components/create-novel-modal.svelte';
-	import RichButton from '$lib/components/inputs/rich-button.svelte';
-	import { getModalStore } from '@skeletonlabs/skeleton';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { authStore } from '$lib/stores/pocketbase';
 
-	const modal = getModalStore();
-	const onCreate = async () => {
-		modal.trigger({ type: 'component', component: { ref: CreateNovelModal } });
-	};
+	if (browser && $authStore?.isValid) {
+		goto('/edit/novels');
+	}
 </script>
 
-<RichButton class="variant-filled" on:click={onCreate}>Create new novel</RichButton>
+<span>Create an account and log in to start creating</span>
