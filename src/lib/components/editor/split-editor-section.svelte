@@ -10,7 +10,7 @@
 
 	let element: HTMLElement;
 
-	const dispatch = createEventDispatcher<{ enter: EnterEvent; input: null; saveSection: null }>();
+	const dispatch = createEventDispatcher<{ enter: EnterEvent; input: null; focusOut: null }>();
 
 	let tainted = false;
 
@@ -22,7 +22,7 @@
 
 	const onFocusOut = () => {
 		if (tainted) {
-			dispatch('saveSection');
+			dispatch('focusOut');
 			tainted = false;
 		}
 	};

@@ -15,50 +15,54 @@
 	const onCreateSectionBottom = () => {
 		sections.push({ source: '', translated: '' });
 		sections = sections;
-		onSaveSection();
+		saveHistory('bottom');
 	};
 
 	const history = [cloneDeep(sections)];
 
 	let saving = false;
-	const onSaveSection = () => {
+	const saveHistory = (trigger = '') => {
 		saving = true;
 		debouncedSave.cancel();
 		history.push(cloneDeep(sections));
-		console.log(history);
+		console.log(trigger, JSON.stringify(history));
 
-		tainted = false;
+		activeField = false;
 		saving = false;
 	};
 
 	const debouncedSave = debounce(() => {
-		onSaveSection();
+		saveHistory('active');
 	}, 1000);
 
 	// force dom to update on undo
 	let versionKey = 0;
 
 	const onKeyDown = (e: KeyboardEvent) => {
-		if (e.key === 'z' && e.ctrlKey && !tainted) {
+		if (e.key === 'z' && e.ctrlKey && !activeField) {
 			if (history.length > 0) {
 				e.preventDefault();
 
 				history.pop();
 				const restored = cloneDeep(history[history.length - 1]);
+				console.log('undo', restored);
 
 				sections = restored as any;
-				versionKey++;
+				++versionKey;
 			}
 		}
 	};
 
-	let tainted = false;
+	let activeField = false;
 	const onSectionInput = () => {
-		tainted = true;
+		activeField = true;
 		debouncedSave();
 	};
 
 	const onEnter = (sectionIndex: number, offset: number, side: 'source' | 'translated') => {
+		if (activeField) {
+			saveHistory('enter-active');
+		}
 		const section = sections[sectionIndex];
 		const text = section[side];
 		const beforeText = text.slice(0, offset);
@@ -75,7 +79,14 @@
 			sections.splice(sectionIndex + 1, 0, nextSection);
 		}
 		sections = sections;
-		onSaveSection();
+		++versionKey;
+		saveHistory('enter');
+	};
+
+	const onFocusOut = () => {
+		if (activeField) {
+			saveHistory('focus-out');
+		}
 	};
 </script>
 
@@ -87,13 +98,13 @@
 			{#each sections as section, i}
 				<SplitEditorSection
 					bind:text={section.source}
-					on:saveSection={onSaveSection}
+					on:saveSection={onFocusOut}
 					on:input={onSectionInput}
 					on:enter={(o) => onEnter(i, o.detail.offset, 'source')}
 				/>
 				<SplitEditorSection
 					bind:text={section.translated}
-					on:saveSection={onSaveSection}
+					on:saveSection={onFocusOut}
 					on:input={onSectionInput}
 					on:enter={(o) => onEnter(i, o.detail.offset, 'translated')}
 				/>
