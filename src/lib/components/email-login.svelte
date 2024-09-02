@@ -5,6 +5,7 @@
 	import { toast } from 'svelte-sonner';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
+	import { Button } from '$lib/shadcn/components/ui/button';
 
 	const info = {
 		identity: '',
@@ -36,6 +37,7 @@
 		type="text"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="username,email"
 	/>
 	<ValidatedField
 		id="password"
@@ -44,6 +46,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="current-password"
 	/>
-	<button type="button" class="btn variant-outline" on:click={onClick}>Log in</button>
+	<Button on:click={onClick}>Log in</Button>
 </dev>

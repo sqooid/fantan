@@ -33,6 +33,7 @@
 		type="text"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="username"
 	/>
 	<ValidatedField
 		id="email"
@@ -41,6 +42,7 @@
 		type="email"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="email"
 	/>
 	<ValidatedField
 		required
@@ -50,6 +52,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="new-password"
 	/>
 	<ValidatedField
 		required
@@ -59,6 +62,7 @@
 		type="password"
 		infoObject={info}
 		errorObject={errors}
+		autocomplete="new-password"
 	/>
 	<button type="button" class="btn variant-outline" on:click={onClick}>Sign up</button>
 </dev>
