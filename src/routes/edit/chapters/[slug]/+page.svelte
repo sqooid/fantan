@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
-	import type { ChapterContent } from '$lib/components/editor/content-types';
+	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
-	import RichButton from '$lib/components/inputs/rich-button.svelte';
-	import { pb } from '$lib/stores/pocketbase';
-	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { pb } from '$lib/stores/pocketbase';
+	import { useMutation, useQuery } from '@sveltestack/svelte-query';
+	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
-	import { animateLayoutChanges } from '$lib/utils/ui';
 
 	const chapterId = $page.params.slug;
 
@@ -19,7 +17,7 @@
 		const result = pb.collection('chapters').getOne(chapterId);
 		return result;
 	});
-	$: content = $chapterQuery.data?.content as ChapterContent;
+	$: content = $chapterQuery.data?.content as ChapterSection;
 
 	$: info = {
 		value: $chapterQuery.data?.value ?? '',
@@ -44,12 +42,13 @@
 
 	const saveContentMutation = useMutation(
 		() => {
-			content.sections = editor.getSections();
+			content = editor.getContent();
 			const result = pb.collection('chapters').update(chapterId, { content });
 			return result;
 		},
 		{
 			onSuccess(data, variables, context) {
+				contentTainted = false;
 				toast.success('Saved changes');
 			},
 			onError(error, variables, context) {
@@ -66,11 +65,16 @@
 	const onSaveInfo = () => {
 		$saveInfoMutation.mutate();
 	};
+
+	let contentTainted = false;
+	const onSaveContent = () => {
+		$saveContentMutation.mutate();
+	};
 </script>
 
 {#if $chapterQuery.isSuccess}
 	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
-	<div class="flex w-full flex-col gap-4 transition-all" use:animateLayoutChanges>
+	<div class="flex w-full flex-col gap-4 transition-all">
 		<ValidatedField
 			type="text"
 			id="value"
@@ -95,5 +99,10 @@
 			</div>
 		{/if}
 	</div>
-	<SplitEditor bind:this={editor} {content} />
+	<SplitEditor bind:this={editor} {content} bind:tainted={contentTainted} />
+	{#if contentTainted}
+		<div class="w-full pt-32" transition:blur={{ duration: 150 }}>
+			<Button on:click={onSaveContent} class="w-full">Save content</Button>
+		</div>
+	{/if}
 {/if}

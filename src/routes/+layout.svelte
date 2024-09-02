@@ -13,12 +13,16 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
+	import { page } from '$app/stores';
+	import { blur } from 'svelte/transition';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
 	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
+
+	export let data;
 
 	setMode('dark');
 </script>
@@ -32,21 +36,25 @@
 <ModeWatcher />
 <QueryClientProvider client={queryClient}>
 	<Toaster />
-	<div class="grid h-screen grid-rows-[auto_1fr_auto]">
-		<!-- Header -->
-		<Header />
-		<!-- Grid Column -->
-		<div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
-			<!-- Sidebar (Left) -->
-			<aside class=" p-4">(sidebar)</aside>
-			<!-- Main -->
-			<main class="p-4 space-y-4">
-				<slot />
-			</main>
-			<!-- Sidebar (Right) -->
-			<aside class=" p-4">(sidebar)</aside>
-		</div>
-		<!-- Footer -->
-		<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
+	<!-- <div class="grid grid-rows-[auto_1fr_auto]"> -->
+	<!-- Header -->
+	<Header />
+	<!-- Grid Column -->
+	<div class="w-full">
+		<!-- Sidebar (Left) -->
+		<!-- <aside class=" p-4">(sidebar)</aside> -->
+		<!-- Main -->
+		<main class="p-4 space-y-4 w-full">
+			<!-- {#key data.url}
+					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
+			<slot />
+			<!-- </div>
+				{/key} -->
+		</main>
+		<!-- Sidebar (Right) -->
+		<!-- <aside class=" p-4">(sidebar)</aside> -->
 	</div>
+	<!-- Footer -->
+	<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
+	<!-- </div> -->
 </QueryClientProvider>

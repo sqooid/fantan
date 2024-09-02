@@ -36,6 +36,12 @@
 			dispatch('enter', { offset });
 		}
 	};
+
+	const onPaste = (e: ClipboardEvent) => {
+		e.preventDefault();
+		const text = e.clipboardData?.getData('text/plain') ?? '';
+		document.execCommand('insertHTML', false, text);
+	};
 </script>
 
 <p
@@ -47,6 +53,7 @@
 	on:focusin
 	bind:this={element}
 	on:keypress={onKeyPress}
+	on:paste={onPaste}
 >
 	{text}
 </p>

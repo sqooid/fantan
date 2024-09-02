@@ -9,14 +9,14 @@
 	import { pb } from '$lib/stores/pocketbase';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
-	import type { ChapterContent } from './editor/content-types';
+	import type { ChapterContent, ChapterSection } from './editor/content-types';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 
 	export let novelId: string;
 
-	const content: ChapterContent = { sections: [] };
+	const content: ChapterSection = { source: '', translated: '' };
 	const info: Record<string, any> = {
 		novel: novelId,
 		value: '',

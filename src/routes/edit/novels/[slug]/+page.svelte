@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
 	import ChapterList from '$lib/components/chapter-list.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { Button } from '$lib/shadcn/components/ui/button';
@@ -112,6 +113,6 @@
 				{/if}
 			</div>
 		</div>
-		<ChapterList edit {novelId} />
+		<ChapterListDatatable edit {novelId} />
 	</div>
 {/if}

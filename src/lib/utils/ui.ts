@@ -13,7 +13,9 @@ const getPosition = (e: HTMLElement) => {
 
 export const animateChildChanges = (e: HTMLElement, options = { duration: 5000 }) => {
 	const setBox = (box: Box, initial = false) => {
-		e.style.transform = `translate(${box.x}px,${box.y}px)`;
+		console.log(Date.now(), initial, box);
+
+		// e.style.transform = `translate(${box.x}px,${box.y}px)`;
 		if (!initial) {
 			e.style.width = `${box.width}px`;
 			e.style.height = `${box.height}px`;
@@ -23,29 +25,34 @@ export const animateChildChanges = (e: HTMLElement, options = { duration: 5000 }
 			e.style.removeProperty('height');
 		}
 	};
-	const observeOptions = { childList: true, subtree: true, attributes: true };
-	const { duration } = options;
+
 	let oldBox = getPosition(e);
-	console.log(oldBox);
 	setBox(oldBox, true);
 
-	const observer = new MutationObserver((_, o) => {
+	const observer = new ResizeObserver((_, o) => {
 		o.disconnect();
 		const newBox = getPosition(e);
+
+		const duration = e.computedStyleMap().get('transition-duration') as CSSUnitValue;
+		const durationMs = duration.value * 1000;
+
 		setBox(oldBox);
-		console.log('old', oldBox);
-
 		e.style.removeProperty('transition-property');
-		setBox(newBox);
-		console.log('new', newBox);
 
-		setTimeout(() => {
-			setBox(newBox, true);
-			oldBox = newBox;
-			o.observe(e, observeOptions);
-		}, duration);
+		const o1 = new ResizeObserver((_, o1) => {
+			o1.disconnect();
+			setBox(newBox);
+			setTimeout(() => {
+				setBox(newBox, true);
+				oldBox = newBox;
+				o.observe(e);
+			}, durationMs);
+		});
+
+		o1.observe(e);
 	});
-	observer.observe(e, observeOptions);
+
+	observer.observe(e);
 };
 
 export const animateLayoutChanges = (e: HTMLElement) => {
