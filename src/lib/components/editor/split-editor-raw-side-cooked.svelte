@@ -1,16 +1,50 @@
 <script lang="ts">
-	import { Textarea as div } from '$lib/shadcn/components/ui/textarea';
+	import {
+		defaultValueCtx,
+		Editor,
+		editorViewCtx,
+		rootCtx,
+		serializerCtx
+	} from '@milkdown/kit/core';
+	import { clipboard } from '@milkdown/kit/plugin/clipboard';
+	import { history } from '@milkdown/kit/plugin/history';
+	import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
+	import { trailing } from '@milkdown/kit/plugin/trailing';
+	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { createEventDispatcher } from 'svelte';
 
 	export let content: string;
 	export let placeholder = 'English';
 
-	export const getText = () => elem.innerText;
+	export const getText = () =>
+		mEditor?.action((ctx) => {
+			const editorView = ctx.get(editorViewCtx);
+			const serializer = ctx.get(serializerCtx);
+			return serializer(editorView.state.doc);
+		});
 
-	const onPaste = (e: ClipboardEvent) => {
-		e.preventDefault();
-		const text = e.clipboardData?.getData('text/plain') ?? '';
-		document.execCommand('insertHTML', false, text);
+	const dispatch = createEventDispatcher();
+
+	let mEditor: Editor | null = null;
+	const editor = (e: HTMLElement) => {
+		Editor.make()
+			.config((ctx) => {
+				ctx.set(rootCtx, e);
+				ctx.set(defaultValueCtx, content);
+				const listener = ctx.get(listenerCtx);
+				listener.markdownUpdated((ctx, m, pm) => {
+					if (m !== pm) {
+						dispatch('input');
+					}
+				});
+			})
+			.use(commonmark)
+			.use(history)
+			.use(trailing)
+			.use(clipboard)
+			.use(listener)
+			.create()
+			.then((e) => (mEditor = e));
 	};
 
 	// const dispatch = createEventDispatcher();
@@ -18,30 +52,8 @@
 	// 	content = elem.innerText;
 	// 	dispatch('input');
 	// };
-
-	let elem: HTMLElement;
 </script>
 
-<div class="w-full">
-	<div
-		bind:this={elem}
-		contenteditable
-		class="mx-auto section-p max-w-prose w-full outline-none font-source-sans-3 text-lg font-light"
-		{placeholder}
-		on:paste={onPaste}
-		on:input
-	>
-		{content}
-	</div>
+<div class="w-full h-full outline-none focus-visible:outline-none">
+	<div use:editor />
 </div>
-
-<style lang="postcss">
-	.section-p:empty:before {
-		content: attr(placeholder);
-		opacity: 0.2;
-		pointer-events: none;
-	}
-	.section-p:empty:before:focus {
-		@apply outline-none;
-	}
-</style>

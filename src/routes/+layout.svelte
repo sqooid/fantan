@@ -13,8 +13,6 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
-	import { page } from '$app/stores';
-	import { blur } from 'svelte/transition';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -22,9 +20,9 @@
 	initializeStores();
 	const queryClient = new QueryClient();
 
-	export let data;
+	// export let data;
 
-	setMode('dark');
+	setMode('light');
 </script>
 
 <svelte:head>
@@ -44,7 +42,7 @@
 		<!-- Sidebar (Left) -->
 		<!-- <aside class=" p-4">(sidebar)</aside> -->
 		<!-- Main -->
-		<main class="p-4 space-y-4 w-full">
+		<main class="px-4 pt-4 space-y-4 w-full">
 			<!-- {#key data.url}
 					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
 			<slot />

@@ -58,6 +58,7 @@
   "dependencies": {
     "@floating-ui/dom": "1.6.10",
     "@milkdown/crepe": "^7.5.6",
+    "@milkdown/kit": "^7.5.5",
     "@sveltestack/svelte-query": "^1.6.0",
     "bits-ui": "^0.21.13",
     "clsx": "^2.1.1",

@@ -100,9 +100,11 @@
 		{/if}
 	</div>
 	<SplitEditor bind:this={editor} {content} bind:tainted={contentTainted} />
-	{#if contentTainted}
-		<div class="w-full pt-32" transition:blur={{ duration: 150 }}>
-			<Button on:click={onSaveContent} class="w-full">Save content</Button>
-		</div>
-	{/if}
+	<div class="w-full p-8">
+		{#if contentTainted}
+			<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
+				<Button on:click={onSaveContent} class="w-full">Save content</Button>
+			</div>
+		{/if}
+	</div>
 {/if}
