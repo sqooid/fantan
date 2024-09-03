@@ -83,5 +83,11 @@
 		p:not(:first-child) {
 			@apply mt-4 leading-7;
 		}
+
+		p:last-child:empty:before {
+			content: '...';
+			pointer-events: none;
+			opacity: 0.2;
+		}
 	}
 }

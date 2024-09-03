@@ -10,7 +10,7 @@
 
 <Card>
 	<a href={`/edit/novels/${novel.id}`}>
-		<CardContent class="p-6 flex flex-col gap-4">
+		<CardContent class="p-6 flex flex-col gap-4 w-64">
 			<img
 				src={pb.files.getUrl(novel, novel.cover)}
 				alt={`${novel.title} cover image`}
@@ -19,7 +19,10 @@
 			<CardTitle>
 				{novel.title}
 			</CardTitle>
-			<span class="opacity-50">{novel.description || 'No description'}</span>
+			<small
+				class="opacity-50 text-sm font-medium leading-none text-wrap overflow-hidden overflow-ellipsis line-clamp-3"
+				>{novel.description || 'No description'}</small
+			>
 		</CardContent>
 	</a>
 </Card>

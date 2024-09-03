@@ -41,8 +41,9 @@
 	);
 
 	const saveContentMutation = useMutation(
-		() => {
-			content = editor.getContent();
+		['chapter', chapterId],
+		(newContent: ChapterSection) => {
+			content = newContent;
 			const result = pb.collection('chapters').update(chapterId, { content });
 			return result;
 		},
@@ -68,7 +69,12 @@
 
 	let contentTainted = false;
 	const onSaveContent = () => {
-		$saveContentMutation.mutate();
+		const newContent = editor.getContent();
+		if (newContent.source === undefined || newContent.translated === undefined) {
+			toast.error('Failed to save changes.');
+			return null;
+		}
+		$saveContentMutation.mutate(newContent as ChapterSection);
 	};
 </script>
 

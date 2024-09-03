@@ -45,7 +45,9 @@
 		<main class="px-4 pt-4 space-y-4 w-full">
 			<!-- {#key data.url}
 					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
-			<slot />
+			<div class="md:px-8">
+				<slot />
+			</div>
 			<!-- </div>
 				{/key} -->
 		</main>

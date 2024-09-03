@@ -9,15 +9,15 @@
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
 	import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
-	import { trailing } from '@milkdown/kit/plugin/trailing';
+	import { trailing, trailingConfig } from '@milkdown/kit/plugin/trailing';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 
 	export let content: string;
 	export let placeholder = 'English';
 
 	export const getText = () =>
-		mEditor?.action((ctx) => {
+		milkdownEditor?.action((ctx) => {
 			const editorView = ctx.get(editorViewCtx);
 			const serializer = ctx.get(serializerCtx);
 			return serializer(editorView.state.doc);
@@ -25,7 +25,14 @@
 
 	const dispatch = createEventDispatcher();
 
-	let mEditor: Editor | null = null;
+	let showPlaceholder = content.length === 0;
+	const onChange = (text: string) => {
+		dispatch('input');
+		showPlaceholder = text.length === 0;
+	};
+
+	let milkdownEditor: Editor | null = null;
+	let editorDiv: HTMLElement | null = null;
 	const editor = (e: HTMLElement) => {
 		Editor.make()
 			.config((ctx) => {
@@ -33,8 +40,8 @@
 				ctx.set(defaultValueCtx, content);
 				const listener = ctx.get(listenerCtx);
 				listener.markdownUpdated((ctx, m, pm) => {
-					if (m !== pm) {
-						dispatch('input');
+					if (m.length !== pm.length || m !== pm) {
+						onChange(m);
 					}
 				});
 			})
@@ -44,16 +51,31 @@
 			.use(clipboard)
 			.use(listener)
 			.create()
-			.then((e) => (mEditor = e));
+			.then((e) => (milkdownEditor = e));
 	};
 
-	// const dispatch = createEventDispatcher();
-	// const onInput = () => {
-	// 	content = elem.innerText;
-	// 	dispatch('input');
-	// };
+	// override lagg-ass listener to prevent overlap
+	const onKeyDown = (e: KeyboardEvent) => {
+		if (!showPlaceholder) return;
+		const target = e.target as Node;
+		if (target && editorDiv?.contains(target)) {
+			showPlaceholder = false;
+		}
+	};
+
+	onDestroy(() => {
+		milkdownEditor?.destroy();
+	});
 </script>
 
+<svelte:document on:keydown={onKeyDown} />
+
 <div class="w-full h-full outline-none focus-visible:outline-none">
-	<div use:editor />
+	<div use:editor class="relative" bind:this={editorDiv}>
+		{#if showPlaceholder}
+			<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
+				{placeholder}...
+			</span>
+		{/if}
+	</div>
 </div>
