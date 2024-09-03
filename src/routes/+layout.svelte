@@ -13,8 +13,6 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
-	import { page } from '$app/stores';
-	import { blur } from 'svelte/transition';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -24,7 +22,7 @@
 
 	export let data;
 
-	setMode('dark');
+	setMode('light');
 </script>
 
 <svelte:head>
