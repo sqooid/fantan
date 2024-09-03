@@ -12,6 +12,7 @@
 	import { trailing, trailingConfig } from '@milkdown/kit/plugin/trailing';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { createEventDispatcher, onDestroy } from 'svelte';
+	import { brackets } from './brackets-plugin';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -47,9 +48,10 @@
 			})
 			.use(commonmark)
 			.use(history)
-			.use(trailing)
+			// .use(trailing)
 			.use(clipboard)
 			.use(listener)
+			.use(brackets)
 			.create()
 			.then((e) => (milkdownEditor = e));
 	};
