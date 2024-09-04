@@ -5,13 +5,14 @@
 	import { pb } from '$lib/stores/pocketbase';
 	import { useQuery } from '@sveltestack/svelte-query';
 	import moment from 'moment';
-	import { createTable, Render, Subscribe } from 'svelte-headless-table';
+	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import { writable } from 'svelte/store';
 	import CreateChapterModal from './create-chapter-modal.svelte';
 	import { addPagination, addSortBy } from 'svelte-headless-table/plugins';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import { ArrowUpDown } from 'lucide-svelte';
 	import { semverChapterSort } from '$lib/utils/content';
+	import ChapterListDatatableAction from './chapter-list-datatable-action.svelte';
 
 	export let novelId: string;
 	export let edit = false;
@@ -32,11 +33,11 @@
 		}
 	);
 
-	const onClickCell = (row: any) => {
+	const onClickCell = (row: any, id: string) => {
 		const data = row.original as ChaptersResponse;
-		console.log(data);
-
-		goto(`/edit/chapters/${data.id}`);
+		if (id !== 'id') {
+			goto(`/edit/chapters/${data.id}`);
+		}
 	};
 
 	const formatDate = (d: any) => moment(d).fromNow();
@@ -79,10 +80,25 @@
 					}
 				}
 			}
+		}),
+		table.column({
+			accessor: 'id',
+			header: '',
+			cell: ({ value }) => {
+				return createRender(ChapterListDatatableAction, { id: value });
+			},
+			plugins: { sort: { disable: true } }
 		})
 	]);
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns);
+
+	const layoutClassMap: any = {
+		title: 'w-full'
+	};
+	const cellClassMap: any = {
+		title: 'w-full'
+	};
 </script>
 
 <div class="flex flex-col">
@@ -102,11 +118,15 @@
 								<Table.Row>
 									{#each headerRow.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-											<Table.Head {...attrs}>
-												<Button variant="ghost" on:click={props.sort.toggle}>
+											<Table.Head {...attrs} class={layoutClassMap[cell.id]}>
+												{#if cell.id === 'id'}
 													<Render of={cell.render()} />
-													<ArrowUpDown class="ml-2 h-4 w-4" />
-												</Button>
+												{:else}
+													<Button variant="ghost" on:click={props.sort.toggle}>
+														<Render of={cell.render()} />
+														<ArrowUpDown class="ml-2 h-4 w-4" />
+													</Button>
+												{/if}
 											</Table.Head>
 										</Subscribe>
 									{/each}
@@ -120,12 +140,14 @@
 								<Table.Row {...rowAttrs}>
 									{#each row.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs>
-											<Table.Cell {...attrs} on:click={() => onClickCell(row)}>
-												{#if cell.isData() && (cell.id === 'updated' || cell.id === 'created')}
-													<Render of={formatDate(cell.value)} />
-												{:else}
-													<Render of={cell.render()} />
-												{/if}
+											<Table.Cell {...attrs} on:click={(row) => onClickCell(row, cell.id)}>
+												<div class={`mx-auto w-fit ${cellClassMap[cell.id] ?? ''}`}>
+													<Render
+														of={cell.isData() && (cell.id === 'updated' || cell.id === 'created')
+															? formatDate(cell.value)
+															: cell.render()}
+													/>
+												</div>
 											</Table.Cell>
 										</Subscribe>
 									{/each}
