@@ -13,6 +13,7 @@
 	import { ArrowUpDown } from 'lucide-svelte';
 	import { semverChapterSort } from '$lib/utils/content';
 	import ChapterListDatatableAction from './chapter-list-datatable-action.svelte';
+	import ChapterListVisibility from './chapter-list-visibility.svelte';
 
 	export let novelId: string;
 	export let edit = false;
@@ -35,7 +36,7 @@
 
 	const onClickCell = (row: any, id: string) => {
 		const data = row.original as ChaptersResponse;
-		if (id !== 'id') {
+		if (!utilityColumns.includes(id)) {
 			goto(`/edit/chapters/${data.id}`);
 		}
 	};
@@ -82,14 +83,26 @@
 			}
 		}),
 		table.column({
+			accessor: ({ id, published }) => ({ id, published }),
+			id: 'visibility',
+			header: 'Visible',
+			cell: ({ value }) => {
+				return createRender(ChapterListVisibility, { ...(value as any), novelId });
+			},
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
 			accessor: 'id',
 			header: '',
 			cell: ({ value }) => {
-				return createRender(ChapterListDatatableAction, { id: value });
+				return createRender(ChapterListDatatableAction, { id: value, novelId });
 			},
 			plugins: { sort: { disable: true } }
 		})
 	]);
+
+	const utilityColumns = ['id', 'visibility'];
+
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns);
 
@@ -97,7 +110,8 @@
 		title: 'w-full'
 	};
 	const cellClassMap: any = {
-		title: 'w-full'
+		title: 'w-full',
+		id: 'flex items-center'
 	};
 </script>
 
@@ -109,7 +123,7 @@
 		{/if}
 	</div>
 	{#if $chaptersQuery.isSuccess}
-		<div class="container mx-auto py-10">
+		<div class="w-full mx-auto py-10">
 			<div class="rounded-md border">
 				<Table.Root {...$tableAttrs}>
 					<Table.Header>
@@ -119,7 +133,7 @@
 									{#each headerRow.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 											<Table.Head {...attrs} class={layoutClassMap[cell.id]}>
-												{#if cell.id === 'id'}
+												{#if utilityColumns.includes(cell.id)}
 													<Render of={cell.render()} />
 												{:else}
 													<Button variant="ghost" on:click={props.sort.toggle}>
@@ -140,7 +154,7 @@
 								<Table.Row {...rowAttrs}>
 									{#each row.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs>
-											<Table.Cell {...attrs} on:click={(row) => onClickCell(row, cell.id)}>
+											<Table.Cell {...attrs} on:click={() => onClickCell(row, cell.id)}>
 												<div class={`mx-auto w-fit ${cellClassMap[cell.id] ?? ''}`}>
 													<Render
 														of={cell.isData() && (cell.id === 'updated' || cell.id === 'created')

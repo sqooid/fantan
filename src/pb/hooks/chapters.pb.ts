@@ -1,9 +1,5 @@
 //@ts-nocheck
 
-const findChapterCount = (dao: Dao, novelId: string) => {
-	return;
-};
-
 onRecordAfterCreateRequest((e) => {
 	if (e.collection?.name === 'chapters' && e.record) {
 		const record = e.record;
