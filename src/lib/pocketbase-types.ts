@@ -36,7 +36,7 @@ export type AuthSystemFields<T = never> = {
 // Record types for each collection
 
 export type ChaptersRecord<Tcontent = unknown> = {
-	content?: null | Tcontent
+	content: null | Tcontent
 	novel: RecordIdString
 	published?: boolean
 	source?: string
@@ -45,6 +45,7 @@ export type ChaptersRecord<Tcontent = unknown> = {
 }
 
 export type NovelsRecord = {
+	chaptersCount?: number
 	cover?: string
 	description?: string
 	editors?: RecordIdString[]
