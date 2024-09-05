@@ -6,14 +6,21 @@
 	import GithubIcon from '$lib/icons/github-icon.svelte';
 	import GoogleIcon from '$lib/icons/google-icon.svelte';
 	import { authStore } from '$lib/stores/pocketbase';
+	import { mode } from 'mode-watcher';
 
 	if (browser && $authStore?.isValid) {
 		goto('/');
 	}
 </script>
 
-<div class="flex flex-col gap-4 max-w-prose">
+<div class="flex flex-col items-center gap-4 max-w-lg mx-auto">
 	<EmailLogin />
-	<OauthSigninButton provider="google" name="Google"><GoogleIcon class="h-6" /></OauthSigninButton>
-	<OauthSigninButton provider="github" name="Github"><GithubIcon class="h-6" /></OauthSigninButton>
+	<div>or</div>
+	<OauthSigninButton provider="google" name="Google" class="w-full"
+		><GoogleIcon class="h-6" /></OauthSigninButton
+	>
+	<OauthSigninButton provider="github" name="Github" class="w-full"
+		><GithubIcon class="h-6" /></OauthSigninButton
+	>
+	<div>Don't have an account? <a href="/register" class="anchor">Sign up</a></div>
 </div>

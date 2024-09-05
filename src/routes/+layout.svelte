@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { initializeStores } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
+	import '../global.postcss';
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';

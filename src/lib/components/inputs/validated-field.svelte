@@ -88,5 +88,5 @@
 	{/if}
 </div>
 {#if errors[id]}
-	<small class="variant-soft-error p-1 rounded-full w-fit">{errors[id]}</small>
+	<small class="text-destructive p-1 rounded-full w-fit">{errors[id]}</small>
 {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
@@ -23,7 +24,7 @@
 	};
 </script>
 
-<dev class="flex flex-col gap-2">
+<dev class="flex flex-col gap-2 w-full">
 	<span class="h4">Create a new account</span>
 	<ValidatedField
 		required
@@ -64,5 +65,5 @@
 		errorObject={errors}
 		autocomplete="new-password"
 	/>
-	<button type="button" class="btn variant-outline" on:click={onClick}>Sign up</button>
+	<Button variant="outline" on:click={onClick}>Sign up</Button>
 </dev>

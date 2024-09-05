@@ -12,8 +12,13 @@
 	}
 </script>
 
-<div class="flex flex-col gap-4 max-w-prose">
+<div class="flex flex-col items-center gap-4 max-w-lg mx-auto">
 	<EmailRegister />
-	<OauthSigninButton provider="google" name="Google"><GoogleIcon class="h-6" /></OauthSigninButton>
-	<OauthSigninButton provider="github" name="Github"><GithubIcon class="h-6" /></OauthSigninButton>
+	<div>or</div>
+	<OauthSigninButton provider="google" name="Google" class="w-full">
+		<GoogleIcon class="h-6 w-full" /></OauthSigninButton
+	>
+	<OauthSigninButton provider="github" name="Github" class="w-full"
+		><GithubIcon class="h-6" /></OauthSigninButton
+	>
 </div>

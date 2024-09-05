@@ -76,18 +76,3 @@
 		@apply bg-background text-foreground;
 	}
 }
-
-.milkdown {
-	.editor {
-		@apply outline-none text-lg pb-64;
-		p:not(:first-child) {
-			@apply mt-4 leading-7;
-		}
-
-		p:last-child:empty:before {
-			content: '...';
-			pointer-events: none;
-			opacity: 0.2;
-		}
-	}
-}

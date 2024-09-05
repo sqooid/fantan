@@ -1,0 +1,12 @@
+.milkdown {
+	& .editor {
+		@apply outline-none text-lg pb-64;
+		& p:not(:first-child) {
+			@apply mt-4 leading-7;
+		}
+	}
+}
+
+a.anchor {
+	@apply font-semibold underline hover:opacity-80;
+}
