@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
+	import EditTips from '$lib/components/editor/edit-tips.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import { pb } from '$lib/stores/pocketbase';
+	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
@@ -78,39 +80,42 @@
 	};
 </script>
 
-{#if $chapterQuery.isSuccess}
-	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
-	<div class="flex w-full flex-col gap-4 transition-all">
-		<ValidatedField
-			type="text"
-			id="value"
-			label="Chapter number"
-			placeholder="1.1"
-			infoObject={info}
-			errorObject={errors}
-			on:input={onInfoChanged}
-		/>
-		<ValidatedField
-			type="text"
-			id="title"
-			label="Chapter title"
-			placeholder="New chapter"
-			infoObject={info}
-			errorObject={errors}
-			on:input={onInfoChanged}
-		/>
-		{#if tainted}
-			<div class="w-fit" transition:blur={{ duration: 150 }}>
-				<Button on:click={onSaveInfo}>Save changes</Button>
-			</div>
-		{/if}
-	</div>
-	<SplitEditor bind:this={editor} {content} bind:tainted={contentTainted} />
-	<div class="w-full p-8">
-		{#if contentTainted}
-			<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
-				<Button on:click={onSaveContent} class="w-full">Save content</Button>
-			</div>
-		{/if}
-	</div>
-{/if}
+<div class="flex flex-col w-full gap-4">
+	{#if $chapterQuery.isSuccess}
+		<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
+		<div class="flex w-full flex-col gap-4 transition-all">
+			<ValidatedField
+				type="text"
+				id="value"
+				label="Chapter number"
+				placeholder="1.1"
+				infoObject={info}
+				errorObject={errors}
+				on:input={onInfoChanged}
+			/>
+			<ValidatedField
+				type="text"
+				id="title"
+				label="Chapter title"
+				placeholder="New chapter"
+				infoObject={info}
+				errorObject={errors}
+				on:input={onInfoChanged}
+			/>
+			{#if tainted}
+				<div class="w-fit" transition:slideBlur={{ duration: 150 }}>
+					<Button on:click={onSaveInfo}>Save changes</Button>
+				</div>
+			{/if}
+		</div>
+		<EditTips />
+		<SplitEditor bind:this={editor} {content} bind:tainted={contentTainted} />
+		<div class="w-full p-8">
+			{#if contentTainted}
+				<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
+					<Button on:click={onSaveContent} class="w-full">Save content</Button>
+				</div>
+			{/if}
+		</div>
+	{/if}
+</div>

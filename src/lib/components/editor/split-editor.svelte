@@ -14,19 +14,6 @@
 	let editor: SplitEditorRaw;
 </script>
 
-<div class="w-full flex flex-col gap-4 pt-6">
-	<!-- <div class="flex items-center space-x-2">
-		<Switch
-			id="sectioned"
-			bind:checked={sectioned}
-			on:click={onChangeSectioned}
-			on:keydown={onChangeSectioned}
-		/>
-		<Label for="sectioned">Sectioned</Label>
-	</div> -->
-	<!-- {#if sectioned}
-		<SplitEditorSectioned bind:sections bind:tainted />
-	{:else}
-	{/if} -->
+<div class="w-full flex flex-col gap-4">
 	<SplitEditorRaw {content} bind:tainted bind:this={editor} />
 </div>

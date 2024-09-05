@@ -17,7 +17,7 @@
 	let targetEditor: SplitEditorRawSideCooked;
 </script>
 
-<div class="w-full flex flex-col gap-4 pt-6">
+<div class="w-full flex flex-col gap-4">
 	<div class="grid grid-cols-2 w-full gap-x-16 py-8">
 		<SplitEditorRawSideCooked
 			bind:content={content.source}
