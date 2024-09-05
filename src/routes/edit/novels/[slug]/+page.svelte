@@ -4,6 +4,7 @@
 	import ChapterList from '$lib/components/chapter-list.svelte';
 	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
+	import { parsePbError } from '$lib/components/inputs/validation';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
 	import { animateChildChanges, animateLayoutChanges } from '$lib/utils/ui';
@@ -46,11 +47,8 @@
 				tainted = false;
 			},
 			onError(error, variables, context) {
-				let message = 'Failed to save changes';
-				if (error instanceof ClientResponseError) {
-					message += `: ${error}`;
-				}
-				toast.error(message);
+				errors = parsePbError(error);
+				toast.error('Failed to save changes');
 			},
 			onSettled(data, error, variables, context) {
 				savingDetails = false;
@@ -81,11 +79,13 @@
 				toast.success('Updated cover image');
 			},
 			onError(error, variables, context) {
-				toast.error('Failed to update cover image');
+				const e = parsePbError(error);
+				toast.error(e?.cover ?? 'Failed to update cover image');
 			}
 		}
 	);
 	const saveChanges = debounce(() => {
+		errors = null;
 		savingDetails = true;
 		$novelDetailsMutation.mutate();
 	}, 150);
@@ -97,7 +97,7 @@
 </script>
 
 {#if $novelQuery.isSuccess}
-	<div class="flex flex-col gap-16 max-w-lg">
+	<div class="flex flex-col gap-16 max-w-4xl mx-auto">
 		<div class="flex gap-8">
 			<ImageInput
 				on:input={onChooseCover}
