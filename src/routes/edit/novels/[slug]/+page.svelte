@@ -2,11 +2,12 @@
 	import { page } from '$app/stores';
 	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
 	import ChapterList from '$lib/components/chapter-list.svelte';
+	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
 	import { animateChildChanges, animateLayoutChanges } from '$lib/utils/ui';
-	import { useMutation, useQuery } from '@sveltestack/svelte-query';
+	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { debounce } from 'lodash-es';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { ClientResponseError } from 'pocketbase';
@@ -14,6 +15,7 @@
 	import { blur, scale } from 'svelte/transition';
 
 	const novelId = $page.params.slug;
+	const queryClient = useQueryClient();
 
 	const novelQuery = useQuery(
 		['novel', novelId],
@@ -40,6 +42,7 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Saved changes');
+				queryClient.invalidateQueries(['novel', novelId]);
 				tainted = false;
 			},
 			onError(error, variables, context) {
@@ -67,17 +70,38 @@
 		tainted = true;
 	};
 
+	const coverChangeMutation = useMutation(
+		async (file: File) => {
+			const result = await pb.collection('novels').update(novelId, { cover: file });
+			return result;
+		},
+		{
+			onSuccess(data, variables, context) {
+				queryClient.invalidateQueries(['novel', novelId]);
+				toast.success('Updated cover image');
+			},
+			onError(error, variables, context) {
+				toast.error('Failed to update cover image');
+			}
+		}
+	);
 	const saveChanges = debounce(() => {
 		savingDetails = true;
 		$novelDetailsMutation.mutate();
 	}, 150);
+
+	const onChooseCover = (e: CustomEvent<File>) => {
+		const file = e.detail;
+		$coverChangeMutation.mutate(file);
+	};
 </script>
 
 {#if $novelQuery.isSuccess}
 	<div class="flex flex-col gap-16">
 		<div class="flex gap-8">
-			<img
-				class="h-64 rounded-lg"
+			<ImageInput
+				on:input={onChooseCover}
+				class="w-80"
 				src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 				alt={`${$novelQuery.data.title} cover image`}
 			/>
