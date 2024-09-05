@@ -116,7 +116,7 @@
 					on:input={onInput}
 				/>
 				<ValidatedField
-					type="text"
+					type="textarea"
 					id="description"
 					label="Description"
 					infoObject={info}

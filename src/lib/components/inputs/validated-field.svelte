@@ -4,9 +4,10 @@
 	import Label from '$lib/shadcn/components/ui/label/label.svelte';
 	import { randomId } from '$lib/utils/ui';
 	import * as Tooltip from '$lib/shadcn/components/ui/tooltip';
+	import Textarea from '$lib/shadcn/components/ui/textarea/textarea.svelte';
 
 	export let label: string;
-	export let type: 'text' | 'email' | 'password' | 'file';
+	export let type: 'text' | 'email' | 'password' | 'file' | 'textarea';
 	export let id: string;
 	export let placeholder = '';
 	export let accept = '';
@@ -85,6 +86,15 @@
 				title={label}
 				{autocomplete}
 				on:input={onFileInput}
+			/>
+		{:else if type === 'textarea'}
+			<Textarea
+				id={elementId}
+				class={classes}
+				title={label}
+				{autocomplete}
+				bind:value={infoObject[id]}
+				on:input
 			/>
 		{/if}
 	</div>
