@@ -5,7 +5,7 @@
 
 	const novelsQuery = useQuery(['novels', 'edit'], async () => {
 		const result = await pb.collection('novels').getFullList({
-			filter: pb.filter('owner = {:id} || editor ?= {:id}', { id: $authStore?.model?.id })
+			filter: pb.filter('owner = {:id} || editors ?= {:id}', { id: $authStore?.model?.id })
 		});
 		return result;
 	});
