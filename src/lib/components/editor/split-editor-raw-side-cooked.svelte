@@ -9,7 +9,6 @@
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
 	import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
-	import { trailing, trailingConfig } from '@milkdown/kit/plugin/trailing';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';

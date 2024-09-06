@@ -53,15 +53,16 @@ export type NovelsRecord = {
 	title: string
 }
 
-export type UsersRecord = {
+export type UsersRecord<Thistory = unknown> = {
 	avatar?: string
+	history?: null | Thistory
 	name?: string
 }
 
 // Response types include system fields and match responses from the PocketBase API
 export type ChaptersResponse<Tcontent = unknown, Texpand = unknown> = Required<ChaptersRecord<Tcontent>> & BaseSystemFields<Texpand>
 export type NovelsResponse<Texpand = unknown> = Required<NovelsRecord> & BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type UsersResponse<Thistory = unknown, Texpand = unknown> = Required<UsersRecord<Thistory>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 

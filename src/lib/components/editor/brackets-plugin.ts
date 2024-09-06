@@ -78,7 +78,7 @@ const closeBracketInputRule = $inputRule(() => {
 
 export const brackets = [
 	openParenthesisInputRule,
-	openBracketInputRule,
-	closeParenthesisInputRule,
-	closeBracketInputRule
+	// openBracketInputRule,
+	closeParenthesisInputRule
+	// closeBracketInputRule
 ];

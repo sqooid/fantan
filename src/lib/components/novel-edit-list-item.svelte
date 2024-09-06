@@ -6,10 +6,11 @@
 	import { pb } from '$lib/stores/pocketbase';
 
 	export let novel: NovelsResponse;
+	export let edit = true;
 </script>
 
 <Card>
-	<a href={`/edit/novels/${novel.id}`}>
+	<a href={`/${edit ? 'edit/' : ''}novels/${novel.id}`}>
 		<CardContent class="p-6 flex flex-col gap-4 w-64 h-full">
 			<img
 				src={pb.files.getUrl(novel, novel.cover)}
