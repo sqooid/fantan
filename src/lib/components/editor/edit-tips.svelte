@@ -32,6 +32,7 @@
 		<div class="grid grid-cols-2 gap-x-1 gap-y-2 auto-rows-min">
 			<EditTipItem keys={['Ctrl', 'Shift', 'B']}><span>> Blockquote</span></EditTipItem>
 			<EditTipItem><span>--- Horizontal</span></EditTipItem>
+			<EditTipItem><span>@Note@</span></EditTipItem>
 		</div>
 	</Collapsible.Content>
 </Collapsible.Root>

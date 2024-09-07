@@ -4,6 +4,7 @@
 		Editor,
 		editorViewCtx,
 		rootCtx,
+		rootDOMCtx,
 		serializerCtx
 	} from '@milkdown/kit/core';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
@@ -13,6 +14,11 @@
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';
 	import { inlineNotePlugin, inlineNoteRemark, inlineNoteSerializer } from './note-plugin';
+	import { debounce } from 'lodash-es';
+	import type { Ctx } from '@milkdown/kit/ctx';
+	import * as Drawer from '$lib/shadcn/components/ui/drawer';
+	import { Button } from '$lib/shadcn/components/ui/button';
+	import InlineNoteEditor from './inline-note-editor.svelte';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -32,6 +38,35 @@
 		showPlaceholder = text.length === 0;
 	};
 
+	let prevContent = content;
+	const onEditorChange = (ctx: Ctx) => {
+		const editorView = ctx.get(editorViewCtx);
+		const serializer = ctx.get(serializerCtx);
+		const markdown = serializer(editorView.state.doc);
+
+		if (markdown.length !== prevContent.length || markdown !== prevContent) {
+			prevContent = markdown;
+			onChange(markdown);
+		}
+
+		const docRoot = ctx.get(rootDOMCtx);
+		const notes = docRoot.getElementsByClassName('inline-note');
+		for (let index = 0; index < notes.length; index++) {
+			const e = notes[index];
+			const activated = e.classList.contains('activated');
+			if (!activated) {
+				e.classList.add('activated');
+				e.addEventListener('click', () => {
+					editNote(e.id);
+				});
+			}
+		}
+	};
+
+	const editNote = (id: string) => {
+		dispatch('editNote', { id });
+	};
+
 	let milkdownEditor: Editor | null = null;
 	let editorDiv: HTMLElement | null = null;
 	const editor = (e: HTMLElement) => {
@@ -39,40 +74,41 @@
 			.config((ctx) => {
 				ctx.set(rootCtx, e);
 				ctx.set(defaultValueCtx, content);
-				const listener = ctx.get(listenerCtx);
-				listener.markdownUpdated((ctx, m, pm) => {
-					if (m.length !== pm.length || m !== pm) {
-						onChange(m);
-					}
-				});
 			})
 			.config(inlineNoteSerializer)
 			.use(commonmark)
 			.use(history)
-			// .use(trailing)
 			.use(clipboard)
 			.use(listener)
 			.use(brackets)
 			.use(inlineNotePlugin)
 			.create()
-			.then((e) => (milkdownEditor = e));
-	};
-
-	// override lagg-ass listener to prevent overlap
-	const onKeyDown = (e: KeyboardEvent) => {
-		if (!showPlaceholder) return;
-		const target = e.target as Node;
-		if (target && editorDiv?.contains(target)) {
-			showPlaceholder = false;
-		}
+			.then((e) => {
+				milkdownEditor = e;
+				const ctx = e.ctx;
+				onEditorChange(ctx);
+				const root = ctx.get(rootDOMCtx);
+				root.addEventListener('keydown', () => {
+					debounce(() => {
+						onEditorChange(ctx);
+					}, 100)();
+				});
+				// show/hide placeholder
+				root.addEventListener('keydown', () => {
+					if (root.innerText === '\n') {
+						showPlaceholder = false;
+					}
+				});
+				root.addEventListener('keyup', () => {
+					showPlaceholder = root.innerText === '\n';
+				});
+			});
 	};
 
 	onDestroy(() => {
 		milkdownEditor?.destroy();
 	});
 </script>
-
-<svelte:document on:keydown={onKeyDown} />
 
 <div class="w-full h-full outline-none focus-visible:outline-none">
 	<div use:editor class="relative" bind:this={editorDiv}>

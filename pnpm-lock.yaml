@@ -56,6 +56,9 @@ dependencies:
   tailwind-variants:
     specifier: ^0.2.1
     version: 0.2.1(tailwindcss@3.4.10)
+  vaul-svelte:
+    specifier: ^0.3.2
+    version: 0.3.2(svelte@4.2.19)
 
 devDependencies:
   '@playwright/test':
@@ -6673,6 +6676,15 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /vaul-svelte@0.3.2(svelte@4.2.19):
+    resolution: {integrity: sha512-X4OGWttSTVUl417qGDsSFgOvIx24DoiMRY/jaP9z0v9FL8LQQJ0RQ1ZM0QpdyQPRlNd24ewjNQHh5EgYDtfNpw==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.1
+    dependencies:
+      bits-ui: 0.21.13(svelte@4.2.19)
+      svelte: 4.2.19
+    dev: false
 
   /vfile-message@4.0.2:
     resolution: {integrity: sha512-jRDZ1IMLttGj41KcZvlrYAaI3CfqpLpfpf+Mfig13viT6NKvRzWZ+lXz0Y5D60w6uJIBAOGq9mSHf0gktF0duw==}

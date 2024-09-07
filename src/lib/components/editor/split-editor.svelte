@@ -3,9 +3,11 @@
 	import Switch from '$lib/shadcn/components/ui/switch/switch.svelte';
 	import { rawToSectioned, sectionedToRaw } from '$lib/utils/content';
 	import type { ChapterContent, ChapterSection } from './content-types';
+	import InlineNoteEditor from './inline-note-editor.svelte';
 	import SplitEditorRaw from './split-editor-raw.svelte';
 	import SplitEditorSectioned from './split-editor-sectioned.svelte';
 
+	export let chapterId: string;
 	export let content: ChapterSection;
 	export let tainted = false;
 
@@ -15,5 +17,5 @@
 </script>
 
 <div class="w-full flex flex-col gap-4">
-	<SplitEditorRaw {content} bind:tainted bind:this={editor} />
+	<SplitEditorRaw {content} bind:tainted bind:this={editor} on:editNote />
 </div>

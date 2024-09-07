@@ -11,8 +11,6 @@ const inlineNoteRegex = /@(\S+?)@\(([a-f0-9-]+)\)/;
 
 export const inlineNoteRemark = $remark('inlineNote', () => () => {
 	const transform = (tree: Parent) => {
-		console.log(tree);
-
 		if (!tree.children) return;
 		for (let index = 0; index < tree.children.length; index++) {
 			const node = tree.children[index];
@@ -37,9 +35,6 @@ export const inlineNoteRemark = $remark('inlineNote', () => () => {
 					value: afterText
 				};
 
-				console.log('before:', beforeText);
-				console.log('after:', afterText);
-
 				const deletePrior = beforeText.length === 0;
 				if (afterText.length === 0) {
 					tree.children.splice(
@@ -55,7 +50,6 @@ export const inlineNoteRemark = $remark('inlineNote', () => () => {
 						newTextNode as Text
 					);
 				}
-				console.log(tree.children);
 			} else if ('children' in node) {
 				transform(node as Parent);
 			}
@@ -69,13 +63,10 @@ export const inlineNoteSerializer: Config = (ctx) => {
 		if (options?.handlers) {
 			const handlers = options.handlers as Record<string, Handle>;
 			handlers.inlineNote = (node, _, state, info) => {
-				console.log(node, state, info);
-
 				const tracker = state.createTracker(info);
 				let value = tracker.move(`@`);
 				value += tracker.move(state.containerFlow(node, tracker.current()));
 				value += tracker.move(`@(${node.id})`);
-				console.log(value);
 
 				return value;
 			};

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ChapterSection } from './content-types';
+	import InlineNoteEditor from './inline-note-editor.svelte';
 	import SplitEditorRawSideCooked from './split-editor-raw-side-cooked.svelte';
 
 	export let content: ChapterSection;
@@ -20,11 +21,13 @@
 <div class="w-full flex flex-col gap-4">
 	<div class="grid grid-cols-2 w-full gap-x-16 py-8">
 		<SplitEditorRawSideCooked
+			on:editNote
 			bind:content={content.source}
 			on:input={onInput}
 			bind:this={sourceEditor}
 		/>
 		<SplitEditorRawSideCooked
+			on:editNote
 			bind:content={content.translated}
 			on:input={onInput}
 			bind:this={targetEditor}

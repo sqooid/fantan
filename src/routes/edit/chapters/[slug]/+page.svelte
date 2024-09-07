@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import EditTips from '$lib/components/editor/edit-tips.svelte';
+	import InlineNoteEditor from '$lib/components/editor/inline-note-editor.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
@@ -19,7 +20,12 @@
 		const result = pb.collection('chapters').getOne(chapterId);
 		return result;
 	});
+	const notesQuery = useQuery(['notes', chapterId], () => {
+		const result = pb.collection('chapters').getOne(chapterId, { fields: 'notes' });
+		return result;
+	});
 	$: content = $chapterQuery.data?.content as ChapterSection;
+	$: notes = $notesQuery.data?.notes as Record<string, string>;
 
 	$: info = {
 		value: $chapterQuery.data?.value ?? '',
@@ -78,6 +84,14 @@
 		}
 		$saveContentMutation.mutate(newContent as ChapterSection);
 	};
+
+	let noteId: string = '';
+	let showNoteEditor = false;
+	const onEditNote = (e: CustomEvent<{ id: string }>) => {
+		const { id } = e.detail;
+		noteId = id;
+		showNoteEditor = true;
+	};
 </script>
 
 <div class="flex flex-col w-full gap-4">
@@ -109,7 +123,13 @@
 			{/if}
 		</div>
 		<EditTips />
-		<SplitEditor bind:this={editor} {content} bind:tainted={contentTainted} />
+		<SplitEditor
+			bind:this={editor}
+			{content}
+			bind:tainted={contentTainted}
+			{chapterId}
+			on:editNote={onEditNote}
+		/>
 		<div class="w-full p-8">
 			{#if contentTainted}
 				<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
@@ -119,3 +139,5 @@
 		</div>
 	{/if}
 </div>
+
+<InlineNoteEditor bind:open={showNoteEditor} {chapterId} initialNotes={notes ?? {}} {noteId} />
