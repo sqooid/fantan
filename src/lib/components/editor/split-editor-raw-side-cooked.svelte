@@ -12,6 +12,7 @@
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';
+	import { inlineNotePlugin, inlineNoteRemark, inlineNoteSerializer } from './note-plugin';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -45,12 +46,14 @@
 					}
 				});
 			})
+			.config(inlineNoteSerializer)
 			.use(commonmark)
 			.use(history)
 			// .use(trailing)
 			.use(clipboard)
 			.use(listener)
 			.use(brackets)
+			.use(inlineNotePlugin)
 			.create()
 			.then((e) => (milkdownEditor = e));
 	};

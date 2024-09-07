@@ -1,48 +1,82 @@
-import type { Root } from '@milkdown/kit/transformer';
-import { $nodeAttr, $nodeSchema, $remark } from '@milkdown/kit/utils';
-import { v4 as uuidv4 } from 'uuid';
-import type { Text } from 'mdast';
-import type { MilkdownPlugin } from '@milkdown/kit/ctx';
 import { remarkStringifyOptionsCtx, type Config } from '@milkdown/kit/core';
+import type { MilkdownPlugin } from '@milkdown/kit/ctx';
+import { markRule } from '@milkdown/kit/prose';
+import type { Root } from '@milkdown/kit/transformer';
+import { $inputRule, $markAttr, $markSchema, $remark } from '@milkdown/kit/utils';
+import type { Parent, Text } from 'mdast';
 import type { Handle } from 'mdast-util-to-markdown';
+import { v4 as uuidv4 } from 'uuid';
 
 const inlineNoteRegex = /@(\S+?)@\(([a-f0-9-]+)\)/;
 
-const inlineNoteRemark = $remark('inline_note', (ctx) => (tree: Root) => {
-	for (let index = 0; index < tree.children.length; index++) {
-		const node = tree.children[index];
-		if (node.type === 'text') {
-			const textNode = node as Text;
-			const match = inlineNoteRegex.exec(textNode.value);
-			if (!match) continue;
-			const index = match.index;
-			const length = match[0].length;
-			const text = match[1];
-			const id = match[2];
-			const inlineNoteNode = {
-				type: 'inline_note',
-				id,
-				value: text
-			};
-			const beforeText = textNode.value.slice(0, index);
-			const afterText = textNode.value.slice(index);
-			textNode.value = beforeText;
-			const newTextNode = {
-				type: 'text',
-				value: afterText
-			};
-			tree.children.splice(index + 1, 0, inlineNoteNode as any, newTextNode as Text);
+export const inlineNoteRemark = $remark('inlineNote', () => () => {
+	const transform = (tree: Parent) => {
+		console.log(tree);
+
+		if (!tree.children) return;
+		for (let index = 0; index < tree.children.length; index++) {
+			const node = tree.children[index];
+			if (node.type === 'text') {
+				const textNode = node as Text;
+				const match = inlineNoteRegex.exec(textNode.value);
+				if (!match) continue;
+				const index = match.index;
+				const length = match[0].length;
+				const text = match[1];
+				const id = match[2];
+				const inlineNoteNode = {
+					type: 'inline_note',
+					id,
+					children: [{ type: 'text', value: text }]
+				};
+				const beforeText = textNode.value.slice(0, index);
+				const afterText = textNode.value.slice(index + length);
+				textNode.value = beforeText;
+				const newTextNode = {
+					type: 'text',
+					value: afterText
+				};
+
+				console.log('before:', beforeText);
+				console.log('after:', afterText);
+
+				const deletePrior = beforeText.length === 0;
+				if (afterText.length === 0) {
+					tree.children.splice(
+						deletePrior ? index : index + 1,
+						deletePrior ? 1 : 0,
+						inlineNoteNode as any
+					);
+				} else {
+					tree.children.splice(
+						deletePrior ? index : index + 1,
+						deletePrior ? 1 : 0,
+						inlineNoteNode as any,
+						newTextNode as Text
+					);
+				}
+				console.log(tree.children);
+			} else if ('children' in node) {
+				transform(node as Parent);
+			}
 		}
-	}
+	};
+	return transform;
 });
 
-const inlineNoteSerializer: Config = (ctx) => {
+export const inlineNoteSerializer: Config = (ctx) => {
 	ctx.update(remarkStringifyOptionsCtx, (options) => {
 		if (options?.handlers) {
 			const handlers = options.handlers as Record<string, Handle>;
 			handlers.inlineNote = (node, _, state, info) => {
+				console.log(node, state, info);
+
 				const tracker = state.createTracker(info);
-				let value = tracker.move(`@${node.value}@(${node.id})`);
+				let value = tracker.move(`@`);
+				value += tracker.move(state.containerFlow(node, tracker.current()));
+				value += tracker.move(`@(${node.id})`);
+				console.log(value);
+
 				return value;
 			};
 		}
@@ -50,17 +84,13 @@ const inlineNoteSerializer: Config = (ctx) => {
 	});
 };
 
-export const inlineNoteAttr = $nodeAttr('inlineNote', () => ({
-	id: {}
+export const inlineNoteAttr = $markAttr('inline_note', () => ({
+	id: ''
 }));
 
-export const inlineNoteSchema = $nodeSchema('inline_note', (ctx) => {
+export const inlineNoteSchema = $markSchema('inline_note', (ctx) => {
 	return {
-		content: 'text*',
-		group: 'block',
-		marks: '',
-		defining: true,
-		code: true,
+		spanning: false,
 		attrs: {
 			id: {
 				default: ''
@@ -75,12 +105,13 @@ export const inlineNoteSchema = $nodeSchema('inline_note', (ctx) => {
 				}
 			}
 		],
-		toDOM: (node) => {
-			const attr = ctx.get(inlineNoteAttr.key)(node);
+		toDOM: (mark) => {
+			const attr = ctx.get(inlineNoteAttr.key)(mark);
 			return [
 				'span',
 				{
-					id: attr.id || uuidv4(),
+					...attr,
+					id: mark.attrs.id || uuidv4(),
 					class: 'inline-note'
 				},
 				0
@@ -90,26 +121,35 @@ export const inlineNoteSchema = $nodeSchema('inline_note', (ctx) => {
 			match: ({ type }) => type === 'inline_note',
 			runner: (state, node, type) => {
 				const id = node.id as string;
-				const text = node.text as string;
-				state.openNode(type, { id });
-				if (text) state.addText(text);
-
-				state.closeNode();
+				state.openMark(type, { id });
+				state.next(node.children);
+				state.closeMark(type);
 			}
 		},
 		toMarkdown: {
-			match: (node) => node.type.name === 'inline_note',
-			runner: (state, node) => {
-				state.addNode('inline_note', undefined, node.content.firstChild?.text || '', {
-					id: node.attrs.id
+			match: (mark) => mark.type.name === 'inline_note',
+			runner: (state, mark) => {
+				state.withMark(mark, 'inlineNote', undefined, {
+					id: mark.attrs.id
 				});
 			}
 		}
 	};
 });
 
+const inlineNoteInputRule = $inputRule((ctx) => {
+	return markRule(/@(\S+)@$/, inlineNoteSchema.type(ctx), {
+		getAttr: (match) => {
+			return {
+				id: uuidv4()
+			};
+		}
+	});
+});
+
 export const inlineNotePlugin: MilkdownPlugin[] = [
 	inlineNoteRemark as any,
 	inlineNoteAttr,
-	inlineNoteSchema as any
+	inlineNoteSchema as any,
+	inlineNoteInputRule
 ];
