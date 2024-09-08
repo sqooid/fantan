@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import * as Drawer from '$lib/shadcn/components/ui/drawer';
+	import * as Tooltip from '$lib/shadcn/components/ui/tooltip';
+
 	import { pb } from '$lib/stores/pocketbase';
 	import {
 		defaultValueCtx,
@@ -18,6 +20,7 @@
 	import { toast } from 'svelte-sonner';
 	import { brackets } from './brackets-plugin';
 	import { addEventListeners } from './event-listeners';
+	import { Info } from 'lucide-svelte';
 
 	export let open = false;
 	export let chapterId: string;
@@ -43,7 +46,7 @@
 		}
 	);
 
-	let editorDiv: HTMLElement | null = null;
+	let tainted = false;
 	let milkdownEditor: Editor | null = null;
 	const editor = (e: HTMLElement) => {
 		Editor.make()
@@ -67,6 +70,9 @@
 				addEventListeners(e, {
 					onEmptyChange: (v) => {
 						showPlaceholder = v;
+					},
+					onInteraction: () => {
+						tainted = true;
 					}
 				});
 			});
@@ -83,6 +89,7 @@
 	const onSave = () => {
 		const markdown = getMarkdown();
 		if (!markdown) return;
+		if (!tainted) return;
 		initialNotes[noteId] = markdown;
 		$notesMutation.mutate();
 	};
@@ -98,17 +105,30 @@
 	<Drawer.Trigger></Drawer.Trigger>
 	<Drawer.Content>
 		<Drawer.Header>
-			<Drawer.Title>Edit inline note</Drawer.Title>
+			<Drawer.Title class="flex items-center gap-2">
+				Edit inline note
+				<Tooltip.Root>
+					<Tooltip.Trigger asChild let:builder>
+						<Button builders={[builder]} variant="ghost">
+							<Info class="w-4 h-4" />
+						</Button>
+					</Tooltip.Trigger>
+					<Tooltip.Content class="flex flex-col gap-2 p-4">
+						<span>Content is saved automatically.</span>
+						<span>URL's will be automatically converted to links.</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Drawer.Title>
 		</Drawer.Header>
 		<div class="p-8">
-			<div use:editor class="h-32 relative" bind:this={editorDiv}>
+			<div use:editor class=" relative">
 				{#if showPlaceholder}
 					<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
 						Note...
 					</span>
 				{/if}
 			</div>
-			<Button on:click={onSave}>Save changes</Button>
+			<!-- <Button on:click={onSave}>Save changes</Button> -->
 		</div></Drawer.Content
 	>
 </Drawer.Root>

@@ -2,13 +2,16 @@ import { rootDOMCtx, type Editor } from '@milkdown/kit/core';
 
 type Listeners = {
 	onEmptyChange?: (value: boolean) => void;
-	onKeyDown?: () => void;
+	onInteraction?: () => void;
 };
 
 export const addEventListeners = (editor: Editor, listeners: Listeners) => {
 	const root = editor.ctx.get(rootDOMCtx);
 	root.addEventListener('keydown', () => {
-		listeners.onKeyDown?.();
+		listeners.onInteraction?.();
+	});
+	root.addEventListener('mousedown', () => {
+		listeners.onInteraction?.();
 	});
 	// show/hide placeholder
 	root.addEventListener('keydown', () => {

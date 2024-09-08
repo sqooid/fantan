@@ -89,7 +89,7 @@
 						showPlaceholder = v;
 					},
 
-					onKeyDown: () => {
+					onInteraction: () => {
 						debounce(() => {
 							onEditorChange(ctx);
 						}, 100)();
