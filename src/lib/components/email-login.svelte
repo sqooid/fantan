@@ -28,12 +28,12 @@
 	};
 </script>
 
-<dev class="flex flex-col gap-2">
-	<span class="h4">Log in with username/email and password</span>
+<div class="flex flex-col gap-2 w-full">
+	<span class="text-lg font-semibold">Log in with username/email and password</span>
 	<ValidatedField
 		id="identity"
-		label="Username or password"
-		placeholder="john"
+		label="Username or email"
+		placeholder="Username"
 		type="text"
 		infoObject={info}
 		errorObject={errors}
@@ -42,11 +42,11 @@
 	<ValidatedField
 		id="password"
 		label="Password"
-		placeholder="password"
+		placeholder="Password"
 		type="password"
 		infoObject={info}
 		errorObject={errors}
 		autocomplete="current-password"
 	/>
-	<Button on:click={onClick}>Log in</Button>
-</dev>
+	<Button on:click={onClick} variant="outline">Log in</Button>
+</div>

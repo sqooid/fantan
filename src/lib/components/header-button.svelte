@@ -5,9 +5,10 @@
 
 	$: path = $page.url.pathname;
 	export let href: string;
+	export let altPaths: string[] = [];
 </script>
 
-<Button {href} variant={path === href ? 'outline' : 'ghost'}>
+<Button {href} variant={path === href || altPaths.includes(path) ? 'outline' : 'ghost'}>
 	<slot />
 </Button>
 

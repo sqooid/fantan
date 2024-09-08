@@ -33,3 +33,15 @@ export const rawToSectioned = (s: ChapterSection) => {
 	}
 	return sections;
 };
+
+export const semverChapterSort = (l: string, r: string) => {
+	const lt = l.split('.').filter((x) => x);
+	const rt = r.split('.').filter((x) => x);
+	for (let i = 0; i < Math.min(lt.length, r.length); i++) {
+		const lv = parseInt(lt[i]);
+		const rv = parseInt(rt[i]);
+		if (lv < rv) return -1;
+		if (rv < lv) return 1;
+	}
+	return lt.length === rt.length ? 0 : lt.length < rt.length ? -1 : 1;
+};

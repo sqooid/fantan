@@ -4,20 +4,25 @@
 		Editor,
 		editorViewCtx,
 		rootCtx,
+		rootDOMCtx,
 		serializerCtx
 	} from '@milkdown/kit/core';
+	import type { Ctx } from '@milkdown/kit/ctx';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
-	import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
-	import { trailing } from '@milkdown/kit/plugin/trailing';
+	import { listener } from '@milkdown/kit/plugin/listener';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
-	import { createEventDispatcher } from 'svelte';
+	import { debounce } from 'lodash-es';
+	import { createEventDispatcher, onDestroy } from 'svelte';
+	import { brackets } from './brackets-plugin';
+	import { inlineNotePlugin, inlineNoteSerializer } from './note-plugin';
+	import { addEventListeners } from './event-listeners';
 
 	export let content: string;
 	export let placeholder = 'English';
 
 	export const getText = () =>
-		mEditor?.action((ctx) => {
+		milkdownEditor?.action((ctx) => {
 			const editorView = ctx.get(editorViewCtx);
 			const serializer = ctx.get(serializerCtx);
 			return serializer(editorView.state.doc);
@@ -25,35 +30,85 @@
 
 	const dispatch = createEventDispatcher();
 
-	let mEditor: Editor | null = null;
+	let showPlaceholder = content.length === 0;
+	const onChange = (text: string) => {
+		dispatch('input');
+		showPlaceholder = text.length === 0;
+	};
+
+	let prevContent = content;
+	const onEditorChange = (ctx: Ctx) => {
+		const editorView = ctx.get(editorViewCtx);
+		const serializer = ctx.get(serializerCtx);
+		const markdown = serializer(editorView.state.doc);
+
+		if (markdown.length !== prevContent.length || markdown !== prevContent) {
+			prevContent = markdown;
+			onChange(markdown);
+		}
+
+		const docRoot = ctx.get(rootDOMCtx);
+		const notes = docRoot.getElementsByClassName('inline-note');
+		for (let index = 0; index < notes.length; index++) {
+			const e = notes[index];
+			const activated = e.classList.contains('activated');
+			if (!activated) {
+				e.classList.add('activated');
+				e.addEventListener('click', () => {
+					editNote(e.id);
+				});
+			}
+		}
+	};
+
+	const editNote = (id: string) => {
+		dispatch('editNote', { id });
+	};
+
+	let milkdownEditor: Editor | null = null;
 	const editor = (e: HTMLElement) => {
 		Editor.make()
 			.config((ctx) => {
 				ctx.set(rootCtx, e);
 				ctx.set(defaultValueCtx, content);
-				const listener = ctx.get(listenerCtx);
-				listener.markdownUpdated((ctx, m, pm) => {
-					if (m !== pm) {
-						dispatch('input');
-					}
-				});
 			})
+			.config(inlineNoteSerializer)
 			.use(commonmark)
 			.use(history)
-			.use(trailing)
 			.use(clipboard)
 			.use(listener)
+			.use(brackets)
+			.use(inlineNotePlugin)
 			.create()
-			.then((e) => (mEditor = e));
+			.then((e) => {
+				milkdownEditor = e;
+				const ctx = e.ctx;
+				onEditorChange(ctx);
+				addEventListeners(e, {
+					onEmptyChange: (v) => {
+						showPlaceholder = v;
+					},
+
+					onInteraction: () => {
+						debounce(() => {
+							onEditorChange(ctx);
+						}, 100)();
+					}
+				});
+			});
 	};
 
-	// const dispatch = createEventDispatcher();
-	// const onInput = () => {
-	// 	content = elem.innerText;
-	// 	dispatch('input');
-	// };
+	onDestroy(() => {
+		milkdownEditor?.destroy();
+	});
 </script>
 
 <div class="w-full h-full outline-none focus-visible:outline-none">
-	<div use:editor />
+	<div use:editor class="relative">
+		{#if showPlaceholder}
+			<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
+				{placeholder}...
+			</span>
+		{/if}
+	</div>
 </div>

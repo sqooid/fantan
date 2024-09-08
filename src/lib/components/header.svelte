@@ -15,7 +15,7 @@
 >
 	<div>
 		<HeaderButton href="/">Browse</HeaderButton>
-		<HeaderButton href="/create">Create</HeaderButton>
+		<HeaderButton href="/create" altPaths={['/edit/novels']}>Create</HeaderButton>
 	</div>
 	<div></div>
 	<div>

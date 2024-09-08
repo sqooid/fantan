@@ -1,0 +1,72 @@
+.milkdown {
+	& .editor {
+		@apply outline-none text-lg pb-32;
+		& p:not(:first-child) {
+			@apply mt-4 leading-7;
+		}
+	}
+}
+
+.inline-note {
+	@apply text-primary underline underline-offset-2;
+}
+
+.activated {
+	@apply cursor-pointer;
+}
+
+a.anchor {
+	@apply font-semibold underline hover:opacity-60 underline-offset-2 transition-opacity duration-75;
+}
+
+kbd {
+	@apply inline-flex h-5 px-1 items-center justify-center border text-xs text-muted-foreground rounded-sm dark:border-muted-foreground;
+}
+
+h1 {
+	@apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+}
+
+h2 {
+	@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+}
+
+h3 {
+	@apply scroll-m-20 text-2xl font-semibold tracking-tight;
+}
+
+h4 {
+	@apply scroll-m-20 text-xl font-semibold tracking-tight;
+}
+
+code {
+	@apply bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+}
+
+p {
+	@apply leading-7 [&:not(:first-child)]:mt-6;
+}
+
+blockquote {
+	@apply mt-6 border-l-2 pl-6 italic;
+}
+
+ul {
+	@apply my-6 ml-6 list-disc [&>li]:mt-2;
+}
+
+ol {
+	@apply my-6 ml-6 list-decimal [&>li]:mt-2;
+}
+
+.lead {
+	@apply text-lg font-semibold;
+}
+
+small {
+	@apply text-sm font-medium leading-none;
+}
+
+.muted {
+	@apply text-muted-foreground text-sm;
+}

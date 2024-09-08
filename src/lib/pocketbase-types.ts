@@ -35,8 +35,10 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type ChaptersRecord<Tcontent = unknown> = {
-	content?: null | Tcontent
+export type ChaptersRecord<Tcontent = unknown, Tnotes = unknown> = {
+	content: null | Tcontent
+	editor?: RecordIdString
+	notes?: null | Tnotes
 	novel: RecordIdString
 	published?: boolean
 	source?: string
@@ -44,23 +46,33 @@ export type ChaptersRecord<Tcontent = unknown> = {
 	value: string
 }
 
+export enum NovelsSourceLanguageOptions {
+	"中文" = "中文",
+	"日本語" = "日本語",
+	"Other" = "Other",
+}
 export type NovelsRecord = {
+	chaptersCount?: number
 	cover?: string
 	description?: string
 	editors?: RecordIdString[]
+	originalAuthor: string
+	originalSource?: string
 	owner: RecordIdString
+	sourceLanguage: NovelsSourceLanguageOptions
 	title: string
 }
 
-export type UsersRecord = {
+export type UsersRecord<Thistory = unknown> = {
 	avatar?: string
+	history?: null | Thistory
 	name?: string
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type ChaptersResponse<Tcontent = unknown, Texpand = unknown> = Required<ChaptersRecord<Tcontent>> & BaseSystemFields<Texpand>
+export type ChaptersResponse<Tcontent = unknown, Tnotes = unknown, Texpand = unknown> = Required<ChaptersRecord<Tcontent, Tnotes>> & BaseSystemFields<Texpand>
 export type NovelsResponse<Texpand = unknown> = Required<NovelsRecord> & BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type UsersResponse<Thistory = unknown, Texpand = unknown> = Required<UsersRecord<Thistory>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 

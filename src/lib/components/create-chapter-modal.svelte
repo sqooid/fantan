@@ -43,8 +43,6 @@
 			}
 		}
 	);
-
-	let coverInput: ValidatedField;
 </script>
 
 <Dialog>

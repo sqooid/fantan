@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { ChapterSection } from './content-types';
+	import InlineNoteEditor from './inline-note-editor.svelte';
 	import SplitEditorRawSideCooked from './split-editor-raw-side-cooked.svelte';
 
 	export let content: ChapterSection;
 	export let tainted = false;
+	export let sourceLanguage: string;
 
 	export const getContent = () => {
 		return { source: sourceEditor.getText(), translated: targetEditor.getText() };
@@ -17,14 +19,17 @@
 	let targetEditor: SplitEditorRawSideCooked;
 </script>
 
-<div class="w-full flex flex-col gap-4 pt-6">
+<div class="w-full flex flex-col gap-4">
 	<div class="grid grid-cols-2 w-full gap-x-16 py-8">
 		<SplitEditorRawSideCooked
+			on:editNote
 			bind:content={content.source}
 			on:input={onInput}
 			bind:this={sourceEditor}
+			placeholder={sourceLanguage}
 		/>
 		<SplitEditorRawSideCooked
+			on:editNote
 			bind:content={content.translated}
 			on:input={onInput}
 			bind:this={targetEditor}

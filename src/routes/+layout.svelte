@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { initializeStores } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
+	import '../global.postcss';
 	// Highlight JS
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
@@ -29,6 +30,7 @@
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 	</style>
+	<title>Fantan</title>
 </svelte:head>
 
 <ModeWatcher />
@@ -45,7 +47,9 @@
 		<main class="px-4 pt-4 space-y-4 w-full">
 			<!-- {#key data.url}
 					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
-			<slot />
+			<div class="md:px-8">
+				<slot />
+			</div>
 			<!-- </div>
 				{/key} -->
 		</main>

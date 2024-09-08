@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
-	import ChapterList from '$lib/components/chapter-list.svelte';
+	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
+	import { parsePbError } from '$lib/components/inputs/validation';
+	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
-	import { animateChildChanges, animateLayoutChanges } from '$lib/utils/ui';
-	import { useMutation, useQuery } from '@sveltestack/svelte-query';
-	import { debounce } from 'lodash-es';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { ClientResponseError } from 'pocketbase';
+	import { slideBlur } from '$lib/utils/transition';
+	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
+	import { assign, debounce } from 'lodash-es';
 	import { toast } from 'svelte-sonner';
-	import { blur, scale } from 'svelte/transition';
+	import { blur } from 'svelte/transition';
 
 	const novelId = $page.params.slug;
+	const queryClient = useQueryClient();
 
 	const novelQuery = useQuery(
 		['novel', novelId],
@@ -23,8 +24,7 @@
 		},
 		{
 			onSuccess(data) {
-				info.title = data.title;
-				info.description = data.description;
+				assign(info, data);
 			}
 		}
 	);
@@ -32,22 +32,18 @@
 	let savingDetails = false;
 	const novelDetailsMutation = useMutation(
 		async () => {
-			const result = await pb
-				.collection('novels')
-				.update(novelId, { title: info.title, description: info.description });
+			const result = await pb.collection('novels').update(novelId, info);
 			return result;
 		},
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Saved changes');
+				queryClient.invalidateQueries(['novel', novelId]);
 				tainted = false;
 			},
 			onError(error, variables, context) {
-				let message = 'Failed to save changes';
-				if (error instanceof ClientResponseError) {
-					message += `: ${error}`;
-				}
-				toast.error(message);
+				errors = parsePbError(error);
+				toast.error('Failed to save changes');
 			},
 			onSettled(data, error, variables, context) {
 				savingDetails = false;
@@ -58,7 +54,10 @@
 	const info = {
 		title: '',
 		description: '',
-		cover: ''
+		cover: '',
+		originalAuthor: '',
+		originalSource: '',
+		sourceLanguage: 'Other'
 	};
 	let errors: Record<string, string> | null = null;
 
@@ -67,17 +66,45 @@
 		tainted = true;
 	};
 
+	const coverChangeMutation = useMutation(
+		async (file: File) => {
+			const result = await pb.collection('novels').update(novelId, { cover: file });
+			return result;
+		},
+		{
+			onSuccess(data, variables, context) {
+				queryClient.invalidateQueries(['novel', novelId]);
+				toast.success('Updated cover image');
+			},
+			onError(error, variables, context) {
+				const e = parsePbError(error);
+				toast.error(e?.cover ?? 'Failed to update cover image');
+			}
+		}
+	);
 	const saveChanges = debounce(() => {
+		errors = null;
 		savingDetails = true;
 		$novelDetailsMutation.mutate();
 	}, 150);
+
+	const onChooseCover = (e: CustomEvent<File>) => {
+		const file = e.detail;
+		$coverChangeMutation.mutate(file);
+	};
+
+	const languageOptions = Object.keys(NovelsSourceLanguageOptions).map((key) => ({
+		value: key,
+		label: key
+	}));
 </script>
 
 {#if $novelQuery.isSuccess}
-	<div class="flex flex-col gap-16">
+	<div class="flex flex-col gap-16 max-w-4xl mx-auto">
 		<div class="flex gap-8">
-			<img
-				class="h-64 rounded-lg"
+			<ImageInput
+				on:input={onChooseCover}
+				class="w-80"
 				src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 				alt={`${$novelQuery.data.title} cover image`}
 			/>
@@ -92,15 +119,44 @@
 					on:input={onInput}
 				/>
 				<ValidatedField
-					type="text"
+					type="textarea"
 					id="description"
 					label="Description"
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
 				/>
+				<ValidatedField
+					required
+					type="text"
+					id="originalAuthor"
+					label="Original author"
+					placeholder="Author name"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
+				<ValidatedField
+					type="text"
+					id="originalSource"
+					label="Original source url"
+					placeholder="https://example.com"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
+				<ValidatedField
+					type="select"
+					id="sourceLanguage"
+					label="Source language"
+					placeholder="Select language"
+					selectOptions={languageOptions}
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
 				{#if tainted}
-					<div transition:blur={{ duration: 150 }} class="w-fit">
+					<div in:slideBlur={{ duration: 150 }} out:blur={{ duration: 150 }} class="w-fit">
 						<Button class="self-start" on:click={saveChanges}>
 							<div class="flex items-center">
 								<!-- {#if savingDetails}
