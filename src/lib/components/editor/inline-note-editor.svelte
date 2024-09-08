@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { history } from '@milkdown/kit/plugin/history';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import * as Drawer from '$lib/shadcn/components/ui/drawer';
+	import { pb } from '$lib/stores/pocketbase';
 	import {
 		defaultValueCtx,
 		Editor,
@@ -10,17 +10,13 @@
 		rootDOMCtx,
 		serializerCtx
 	} from '@milkdown/kit/core';
-	import { listenerCtx, listener } from '@milkdown/kit/plugin/listener';
-	import { commonmark } from '@milkdown/kit/preset/commonmark';
-	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
-	import { brackets } from './brackets-plugin';
-	import { inlineNoteSerializer, inlineNotePlugin } from './note-plugin';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
-	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
-	import { pb } from '$lib/stores/pocketbase';
+	import { history } from '@milkdown/kit/plugin/history';
+	import { listener } from '@milkdown/kit/plugin/listener';
+	import { commonmark } from '@milkdown/kit/preset/commonmark';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
-	import type { HTML } from 'mdast';
+	import { brackets } from './brackets-plugin';
 	import { addEventListeners } from './event-listeners';
 
 	export let open = false;

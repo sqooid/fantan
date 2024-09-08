@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import EditTips from '$lib/components/editor/edit-tips.svelte';
@@ -75,7 +76,6 @@
 	const onSaveInfo = () => {
 		$saveInfoMutation.mutate();
 	};
-
 	let contentTainted = false;
 	const onSaveContent = () => {
 		const newContent = editor.getContent();
@@ -93,6 +93,18 @@
 		noteId = id;
 		showNoteEditor = true;
 	};
+
+	$: {
+		chapterQuery.setEnabled(!tainted && !contentTainted);
+	}
+
+	beforeNavigate((n) => {
+		if (tainted || contentTainted) {
+			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+				n.cancel();
+			}
+		}
+	});
 </script>
 
 <div class="flex flex-col w-full gap-4">
