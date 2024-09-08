@@ -7,18 +7,16 @@
 		rootDOMCtx,
 		serializerCtx
 	} from '@milkdown/kit/core';
+	import type { Ctx } from '@milkdown/kit/ctx';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
-	import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
+	import { listener } from '@milkdown/kit/plugin/listener';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
+	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';
-	import { inlineNotePlugin, inlineNoteRemark, inlineNoteSerializer } from './note-plugin';
-	import { debounce } from 'lodash-es';
-	import type { Ctx } from '@milkdown/kit/ctx';
-	import * as Drawer from '$lib/shadcn/components/ui/drawer';
-	import { Button } from '$lib/shadcn/components/ui/button';
-	import InlineNoteEditor from './inline-note-editor.svelte';
+	import { inlineNotePlugin, inlineNoteSerializer } from './note-plugin';
+	import { addEventListeners } from './event-listeners';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -68,7 +66,6 @@
 	};
 
 	let milkdownEditor: Editor | null = null;
-	let editorDiv: HTMLElement | null = null;
 	const editor = (e: HTMLElement) => {
 		Editor.make()
 			.config((ctx) => {
@@ -87,20 +84,16 @@
 				milkdownEditor = e;
 				const ctx = e.ctx;
 				onEditorChange(ctx);
-				const root = ctx.get(rootDOMCtx);
-				root.addEventListener('keydown', () => {
-					debounce(() => {
-						onEditorChange(ctx);
-					}, 100)();
-				});
-				// show/hide placeholder
-				root.addEventListener('keydown', () => {
-					if (root.innerText === '\n') {
-						showPlaceholder = false;
+				addEventListeners(e, {
+					onEmptyChange: (v) => {
+						showPlaceholder = v;
+					},
+
+					onKeyDown: () => {
+						debounce(() => {
+							onEditorChange(ctx);
+						}, 100)();
 					}
-				});
-				root.addEventListener('keyup', () => {
-					showPlaceholder = root.innerText === '\n';
 				});
 			});
 	};
@@ -111,7 +104,7 @@
 </script>
 
 <div class="w-full h-full outline-none focus-visible:outline-none">
-	<div use:editor class="relative" bind:this={editorDiv}>
+	<div use:editor class="relative">
 		{#if showPlaceholder}
 			<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
 				{placeholder}...

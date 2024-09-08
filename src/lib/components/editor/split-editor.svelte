@@ -1,13 +1,8 @@
 <script lang="ts">
-	import Label from '$lib/shadcn/components/ui/label/label.svelte';
-	import Switch from '$lib/shadcn/components/ui/switch/switch.svelte';
-	import { rawToSectioned, sectionedToRaw } from '$lib/utils/content';
-	import type { ChapterContent, ChapterSection } from './content-types';
-	import InlineNoteEditor from './inline-note-editor.svelte';
+	import { fade } from 'svelte/transition';
+	import type { ChapterSection } from './content-types';
 	import SplitEditorRaw from './split-editor-raw.svelte';
-	import SplitEditorSectioned from './split-editor-sectioned.svelte';
 
-	export let chapterId: string;
 	export let content: ChapterSection;
 	export let tainted = false;
 
@@ -16,6 +11,6 @@
 	let editor: SplitEditorRaw;
 </script>
 
-<div class="w-full flex flex-col gap-4">
+<div class="w-full flex flex-col gap-4" in:fade={{ duration: 50 }}>
 	<SplitEditorRaw {content} bind:tainted bind:this={editor} on:editNote />
 </div>

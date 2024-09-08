@@ -21,6 +21,7 @@
 	import { pb } from '$lib/stores/pocketbase';
 	import { toast } from 'svelte-sonner';
 	import type { HTML } from 'mdast';
+	import { addEventListeners } from './event-listeners';
 
 	export let open = false;
 	export let chapterId: string;
@@ -67,13 +68,10 @@
 				const ctx = e.ctx;
 				const root = ctx.get(rootDOMCtx);
 				// show/hide placeholder
-				root.addEventListener('keydown', () => {
-					if (root.innerText === '\n') {
-						showPlaceholder = false;
+				addEventListeners(e, {
+					onEmptyChange: (v) => {
+						showPlaceholder = v;
 					}
-				});
-				root.addEventListener('keyup', () => {
-					showPlaceholder = root.innerText === '\n';
 				});
 			});
 	};

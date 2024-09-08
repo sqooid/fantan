@@ -6,6 +6,7 @@
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
 	import { pb } from '$lib/stores/pocketbase';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
@@ -95,9 +96,9 @@
 </script>
 
 <div class="flex flex-col w-full gap-4">
-	{#if $chapterQuery.isSuccess}
-		<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
-		<div class="flex w-full flex-col gap-4 transition-all">
+	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
+	<div class="flex w-full flex-col gap-4 transition-all">
+		{#if $chapterQuery.isSuccess}
 			<ValidatedField
 				type="text"
 				id="value"
@@ -121,23 +122,32 @@
 					<Button on:click={onSaveInfo}>Save changes</Button>
 				</div>
 			{/if}
-		</div>
-		<EditTips />
+		{:else}
+			<Skeleton class="h-16" />
+			<Skeleton class="h-16" />
+		{/if}
+	</div>
+	<EditTips />
+	{#if $chapterQuery.isSuccess}
 		<SplitEditor
 			bind:this={editor}
 			{content}
 			bind:tainted={contentTainted}
-			{chapterId}
 			on:editNote={onEditNote}
 		/>
-		<div class="w-full p-8">
-			{#if contentTainted}
-				<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
-					<Button on:click={onSaveContent} class="w-full">Save content</Button>
-				</div>
-			{/if}
+	{:else}
+		<div class="flex gap-4">
+			<Skeleton class="w-1/2 h-96" />
+			<Skeleton class="w-1/2 h-96" />
 		</div>
 	{/if}
+	<div class="w-full p-8">
+		{#if contentTainted}
+			<div class="fixed left-4 right-4 bottom-4" transition:blur={{ duration: 150 }}>
+				<Button on:click={onSaveContent} class="w-full">Save content</Button>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <InlineNoteEditor bind:open={showNoteEditor} {chapterId} initialNotes={notes ?? {}} {noteId} />
