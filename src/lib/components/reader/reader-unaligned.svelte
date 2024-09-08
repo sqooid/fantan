@@ -35,4 +35,4 @@
 	};
 </script>
 
-<article class="max-w-prose mx-auto" use:editor></article>
+<article class="max-w-prose" use:editor></article>

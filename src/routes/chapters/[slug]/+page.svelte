@@ -12,8 +12,6 @@
 
 	const chapterQuery = useQuery(['chapter', chapterId], async () => {
 		const result = await pb.collection('chapters').getOne(chapterId, { expand: 'novel' });
-		console.log(result);
-
 		return result;
 	});
 

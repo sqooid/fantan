@@ -8,7 +8,6 @@
 
 	const md = markdownit({ html: false, linkify: true });
 	$: rendered = md.render(notes[noteId] ?? '');
-	$: console.log(rendered);
 </script>
 
 <Drawer.Root bind:open>
