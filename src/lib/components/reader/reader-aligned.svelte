@@ -45,7 +45,7 @@
 	};
 
 	let root: HTMLElement;
-	$: if (root) transformNodes(root);
+	$: if (root && sourceContent && translatedContent) transformNodes(root);
 </script>
 
 <div class="w-full">

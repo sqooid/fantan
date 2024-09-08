@@ -59,7 +59,7 @@
 						<Button href={`/edit/novels/${novelId}`} variant="outline" class="mt-4">Edit</Button>
 					{/if}
 				</div>
-				{#if $chaptersQuery.isSuccess}
+				{#if $chaptersQuery.data}
 					<Button
 						class="w-fit mt-8"
 						href={nextChapter

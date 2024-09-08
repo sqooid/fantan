@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { defaultValueCtx, Editor, editorViewOptionsCtx, rootCtx } from '@milkdown/kit/core';
+	import { Editor, editorViewOptionsCtx, rootCtx } from '@milkdown/kit/core';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
-	import { inlineNotePlugin, inlineNoteSerializer } from '../editor/note-plugin';
-	import { activateNotes } from '../editor/event-listeners';
+	import { replaceAll } from '@milkdown/kit/utils';
 	import { createEventDispatcher } from 'svelte';
+	import { activateNotes } from '../editor/event-listeners';
+	import { inlineNotePlugin, inlineNoteSerializer } from '../editor/note-plugin';
 
 	export let content: string = '';
 
@@ -14,7 +15,6 @@
 		Editor.make()
 			.config((ctx) => {
 				ctx.set(rootCtx, e);
-				ctx.set(defaultValueCtx, content);
 				ctx.update(editorViewOptionsCtx, (prev) => ({
 					...prev,
 					editable: () => false
@@ -26,9 +26,13 @@
 			.create()
 			.then((e) => {
 				milkdownEditor = e;
-				activateNotes(e.ctx, showNote);
 			});
 	};
+
+	$: if (content && milkdownEditor) {
+		milkdownEditor.action(replaceAll(content));
+		activateNotes(milkdownEditor.ctx, showNote);
+	}
 
 	const showNote = (id: string) => {
 		dispatch('openNote', id);
