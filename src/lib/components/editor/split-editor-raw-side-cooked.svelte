@@ -10,13 +10,12 @@
 	import type { Ctx } from '@milkdown/kit/ctx';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
-	import { listener } from '@milkdown/kit/plugin/listener';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';
+	import { activateNotes, addEventListeners } from './event-listeners';
 	import { inlineNotePlugin, inlineNoteSerializer } from './note-plugin';
-	import { addEventListeners } from './event-listeners';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -47,18 +46,7 @@
 			onChange(markdown);
 		}
 
-		const docRoot = ctx.get(rootDOMCtx);
-		const notes = docRoot.getElementsByClassName('inline-note');
-		for (let index = 0; index < notes.length; index++) {
-			const e = notes[index];
-			const activated = e.classList.contains('activated');
-			if (!activated) {
-				e.classList.add('activated');
-				e.addEventListener('click', () => {
-					editNote(e.id);
-				});
-			}
-		}
+		activateNotes(ctx, editNote);
 	};
 
 	const editNote = (id: string) => {
@@ -76,7 +64,6 @@
 			.use(commonmark)
 			.use(history)
 			.use(clipboard)
-			.use(listener)
 			.use(brackets)
 			.use(inlineNotePlugin)
 			.create()
