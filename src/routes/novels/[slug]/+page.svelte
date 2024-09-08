@@ -5,6 +5,7 @@
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
 	import { useQuery, useQueryClient } from '@sveltestack/svelte-query';
+	import { BookText } from 'lucide-svelte';
 	import moment from 'moment';
 
 	const novelId = $page.params.slug;
@@ -27,6 +28,8 @@
 	$: lastChapter = $authStore?.model?.history?.[novelId] as string | undefined;
 	let nextChapter: ChaptersResponse | null = null;
 	$: if (lastChapter && $chaptersQuery.data) {
+		console.log('last', lastChapter);
+
 		const lastIndex = $chaptersQuery.data.findIndex((x) => x.id === lastChapter);
 		if ($chaptersQuery.data.length > lastIndex + 1) {
 			nextChapter = $chaptersQuery.data[lastIndex + 1];
@@ -37,11 +40,17 @@
 {#if $novelQuery.isSuccess}
 	<div class="flex flex-col gap-16 max-w-4xl mx-auto pb-32">
 		<div class="grid grid-cols-[auto_1fr] gap-4">
-			<img
-				class="w-80 rounded-md"
-				src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
-				alt={`${$novelQuery.data.title} cover image`}
-			/>
+			{#if $novelQuery.data.cover}
+				<img
+					class="w-80 rounded-md"
+					src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
+					alt={`${$novelQuery.data.title} cover image`}
+				/>
+			{:else}
+				<div class="w-80 h-full flex items-center justify-center">
+					<BookText class="w-32 h-32" />
+				</div>
+			{/if}
 			<div class="h-full flex flex-col justify-between">
 				<div>
 					<h1>{$novelQuery.data.title}</h1>
@@ -52,7 +61,7 @@
 				</div>
 				{#if $chaptersQuery.isSuccess}
 					<Button
-						class="w-fit"
+						class="w-fit mt-8"
 						href={nextChapter
 							? `/chapters/${nextChapter.id}`
 							: `/chapters/${$chaptersQuery.data[0].id}`}
