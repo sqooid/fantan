@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Input from '$lib/shadcn/components/ui/input/input.svelte';
 	import Label from '$lib/shadcn/components/ui/label/label.svelte';
-	import { randomId } from '$lib/utils/ui';
-	import * as Tooltip from '$lib/shadcn/components/ui/tooltip';
+	import * as Select from '$lib/shadcn/components/ui/select';
 	import Textarea from '$lib/shadcn/components/ui/textarea/textarea.svelte';
+	import * as Tooltip from '$lib/shadcn/components/ui/tooltip';
+	import { randomId } from '$lib/utils/ui';
+	import type { Selected } from 'bits-ui';
+	import { createEventDispatcher } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	export let label: string;
-	export let type: 'text' | 'email' | 'password' | 'file' | 'textarea';
+	export let type: 'text' | 'email' | 'password' | 'file' | 'textarea' | 'select';
 	export let id: string;
 	export let placeholder = '';
 	export let accept = '';
@@ -16,6 +19,7 @@
 	export let autocomplete = '';
 	export let required = false;
 	export let files: FileList | null = null;
+	export let selectOptions: { value: string; label: string }[] = [];
 
 	$: errors = errorObject ?? {};
 	$: classes = `input ${$$props.class ?? ''} ${errors[id] ? 'input-error' : ''}`;
@@ -23,11 +27,23 @@
 	export const getFiles = () => {
 		return files;
 	};
+
+	const dispatch = createEventDispatcher();
 	const elementId = randomId();
 
 	const onFileInput = (e: InputEvent) => {
 		const elem = e.target as HTMLInputElement;
 		files = elem.files;
+	};
+
+	let selected: { value: string; label: string } =
+		selectOptions.find((x) => x.value === infoObject[id]) ?? selectOptions[0];
+
+	let loaded = false;
+
+	const onSelectedChange = (e: Selected<string> | undefined) => {
+		infoObject[id] = e?.value ?? '';
+		dispatch('input');
 	};
 </script>
 
@@ -96,9 +112,22 @@
 				bind:value={infoObject[id]}
 				on:input
 			/>
+		{:else if type === 'select'}
+			<Select.Root {selected} {onSelectedChange}>
+				<Select.Trigger class="">
+					<Select.Value {placeholder} />
+				</Select.Trigger>
+				<Select.Content>
+					{#each selectOptions as option}
+						<Select.Item value={option.value}>{option.label}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
 		{/if}
 	</div>
 	{#if errors[id]}
-		<small class="text-destructive p-1 rounded-full w-fit">{errors[id]}</small>
+		<div transition:slide>
+			<small class="text-destructive p-1 rounded-full w-fit"> {errors[id]}</small>
+		</div>
 	{/if}
 </div>

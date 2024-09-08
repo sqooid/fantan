@@ -8,11 +8,15 @@
 	import { toast } from 'svelte-sonner';
 	import ValidatedField from './inputs/validated-field.svelte';
 	import { parsePbError } from './inputs/validation';
+	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
 
 	const info = {
 		title: '',
 		description: '',
-		cover: ''
+		cover: '',
+		originalAuthor: '',
+		originalSource: '',
+		sourceLanguage: 'Other'
 	};
 	let errors: Record<string, string> | null = null;
 
@@ -21,10 +25,15 @@
 		async () => {
 			const form = new FormData();
 			const file = coverInput.getFiles()?.[0];
-			form.append('cover', file);
+			if (file) {
+				form.append('cover', file);
+			}
 			form.append('title', info.title);
 			form.append('description', info.description);
 			form.append('owner', $authStore?.model?.id);
+			form.append('originalAuthor', info.originalAuthor);
+			form.append('originalSource', info.originalSource);
+			form.append('sourceLanguage', info.sourceLanguage);
 			return await pb.collection('novels').create(form);
 		},
 		{
@@ -42,6 +51,11 @@
 	);
 
 	let coverInput: ValidatedField;
+
+	const languageOptions = Object.keys(NovelsSourceLanguageOptions).map((key) => ({
+		value: key,
+		label: key
+	}));
 </script>
 
 <Dialog.Root>
@@ -60,7 +74,7 @@
 				errorObject={errors}
 			/>
 			<ValidatedField
-				type="text"
+				type="textarea"
 				id="description"
 				label="Description"
 				infoObject={info}
@@ -74,6 +88,32 @@
 				infoObject={info}
 				errorObject={errors}
 				accept="image/*"
+			/>
+			<ValidatedField
+				required
+				type="text"
+				id="originalAuthor"
+				label="Original author"
+				placeholder="Author name"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField
+				type="text"
+				id="originalSource"
+				label="Original source url"
+				placeholder="https://example.com"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField
+				type="select"
+				id="sourceLanguage"
+				label="Source language"
+				placeholder="Select language"
+				selectOptions={languageOptions}
+				infoObject={info}
+				errorObject={errors}
 			/>
 			<Dialog.Footer>
 				<Button on:click={() => $mutateNovels.mutate()} autoEnter>Create</Button>

@@ -4,6 +4,7 @@
 	import CardTitle from '$lib/shadcn/components/ui/card/card-title.svelte';
 	import Card from '$lib/shadcn/components/ui/card/card.svelte';
 	import { pb } from '$lib/stores/pocketbase';
+	import { BookText } from 'lucide-svelte';
 
 	export let novel: NovelsResponse;
 	export let edit = true;
@@ -12,11 +13,17 @@
 <Card>
 	<a href={`/${edit ? 'edit/' : ''}novels/${novel.id}`}>
 		<CardContent class="p-6 flex flex-col gap-4 w-64 h-full">
-			<img
-				src={pb.files.getUrl(novel, novel.cover)}
-				alt={`${novel.title} cover image`}
-				class="h-48 rounded-lg w-fit max-w-full self-center"
-			/>
+			{#if novel.cover}
+				<img
+					src={pb.files.getUrl(novel, novel.cover)}
+					alt={`${novel.title} cover image`}
+					class="h-48 rounded-lg w-fit max-w-full self-center"
+				/>
+			{:else}
+				<div class="w-fit max-w-full self-center">
+					<BookText class="h-48 w-16" />
+				</div>
+			{/if}
 			<CardTitle>
 				{novel.title}
 			</CardTitle>

@@ -46,12 +46,20 @@ export type ChaptersRecord<Tcontent = unknown, Tnotes = unknown> = {
 	value: string
 }
 
+export enum NovelsSourceLanguageOptions {
+	"中文" = "中文",
+	"日本語" = "日本語",
+	"Other" = "Other",
+}
 export type NovelsRecord = {
 	chaptersCount?: number
 	cover?: string
 	description?: string
 	editors?: RecordIdString[]
+	originalAuthor: string
+	originalSource?: string
 	owner: RecordIdString
+	sourceLanguage: NovelsSourceLanguageOptions
 	title: string
 }
 

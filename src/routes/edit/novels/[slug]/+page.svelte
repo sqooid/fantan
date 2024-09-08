@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
-	import ChapterList from '$lib/components/chapter-list.svelte';
 	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { parsePbError } from '$lib/components/inputs/validation';
+	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
-	import { animateChildChanges, animateLayoutChanges } from '$lib/utils/ui';
+	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
-	import { debounce } from 'lodash-es';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { ClientResponseError } from 'pocketbase';
+	import { assign, debounce } from 'lodash-es';
 	import { toast } from 'svelte-sonner';
-	import { blur, scale } from 'svelte/transition';
+	import { blur } from 'svelte/transition';
 
 	const novelId = $page.params.slug;
 	const queryClient = useQueryClient();
@@ -26,8 +24,7 @@
 		},
 		{
 			onSuccess(data) {
-				info.title = data.title;
-				info.description = data.description;
+				assign(info, data);
 			}
 		}
 	);
@@ -35,9 +32,7 @@
 	let savingDetails = false;
 	const novelDetailsMutation = useMutation(
 		async () => {
-			const result = await pb
-				.collection('novels')
-				.update(novelId, { title: info.title, description: info.description });
+			const result = await pb.collection('novels').update(novelId, info);
 			return result;
 		},
 		{
@@ -59,7 +54,10 @@
 	const info = {
 		title: '',
 		description: '',
-		cover: ''
+		cover: '',
+		originalAuthor: '',
+		originalSource: '',
+		sourceLanguage: 'Other'
 	};
 	let errors: Record<string, string> | null = null;
 
@@ -94,6 +92,11 @@
 		const file = e.detail;
 		$coverChangeMutation.mutate(file);
 	};
+
+	const languageOptions = Object.keys(NovelsSourceLanguageOptions).map((key) => ({
+		value: key,
+		label: key
+	}));
 </script>
 
 {#if $novelQuery.isSuccess}
@@ -123,8 +126,37 @@
 					errorObject={errors}
 					on:input={onInput}
 				/>
+				<ValidatedField
+					required
+					type="text"
+					id="originalAuthor"
+					label="Original author"
+					placeholder="Author name"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
+				<ValidatedField
+					type="text"
+					id="originalSource"
+					label="Original source url"
+					placeholder="https://example.com"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
+				<ValidatedField
+					type="select"
+					id="sourceLanguage"
+					label="Source language"
+					placeholder="Select language"
+					selectOptions={languageOptions}
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+				/>
 				{#if tainted}
-					<div transition:blur={{ duration: 150 }} class="w-fit">
+					<div in:slideBlur={{ duration: 150 }} out:blur={{ duration: 150 }} class="w-fit">
 						<Button class="self-start" on:click={saveChanges}>
 							<div class="flex items-center">
 								<!-- {#if savingDetails}
