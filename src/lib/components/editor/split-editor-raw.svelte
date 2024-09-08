@@ -5,6 +5,7 @@
 
 	export let content: ChapterSection;
 	export let tainted = false;
+	export let sourceLanguage: string;
 
 	export const getContent = () => {
 		return { source: sourceEditor.getText(), translated: targetEditor.getText() };
@@ -25,6 +26,7 @@
 			bind:content={content.source}
 			on:input={onInput}
 			bind:this={sourceEditor}
+			placeholder={sourceLanguage}
 		/>
 		<SplitEditorRawSideCooked
 			on:editNote

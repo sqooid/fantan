@@ -19,6 +19,10 @@
 	<div class="flex gap-8">
 		{#each $novelsQuery.data as novel}
 			<NovelEditListItem {novel} {edit} />
+		{:else}
+			<div class="w-full h-full p-8">
+				<h4 class="mx-auto w-fit">No novels created yet</h4>
+			</div>
 		{/each}
 	</div>
 {/if}

@@ -120,7 +120,7 @@
 				</Tooltip.Root>
 			</Drawer.Title>
 		</Drawer.Header>
-		<div class="p-8">
+		<div class="p-12">
 			<div use:editor class=" relative">
 				{#if showPlaceholder}
 					<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">

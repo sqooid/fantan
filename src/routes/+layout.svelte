@@ -14,7 +14,6 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
-	import Progress from '$lib/shadcn/components/ui/progress/progress.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -40,7 +39,6 @@
 	<!-- <div class="grid grid-rows-[auto_1fr_auto]"> -->
 	<!-- Header -->
 	<Header />
-	<Progress />
 	<!-- Grid Column -->
 	<div class="w-full">
 		<!-- Sidebar (Left) -->

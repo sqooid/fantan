@@ -6,6 +6,7 @@
 	import InlineNoteEditor from '$lib/components/editor/inline-note-editor.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
+	import type { NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
 	import { pb } from '$lib/stores/pocketbase';
@@ -28,6 +29,20 @@
 	});
 	$: content = $chapterQuery.data?.content as ChapterSection;
 	$: notes = $notesQuery.data?.notes as Record<string, string>;
+
+	const novelQuery = useQuery<NovelsResponse>({ enabled: false });
+	$: if ($chapterQuery.data?.novel) {
+		novelQuery.setOptions({
+			enabled: true,
+			queryKey: ['novel', $chapterQuery.data?.novel],
+			queryFn: () => {
+				const result = pb
+					.collection('novels')
+					.getOne($chapterQuery.data?.novel, { fields: 'sourceLanguage' });
+				return result;
+			}
+		});
+	}
 
 	$: info = {
 		value: $chapterQuery.data?.value ?? '',
@@ -146,6 +161,7 @@
 			{content}
 			bind:tainted={contentTainted}
 			on:editNote={onEditNote}
+			sourceLanguage={$novelQuery.data?.sourceLanguage}
 		/>
 	{:else}
 		<div class="flex gap-4">
