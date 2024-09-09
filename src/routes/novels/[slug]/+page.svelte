@@ -52,10 +52,10 @@
 
 {#if $novelQuery.isSuccess}
 	<div class="flex flex-col gap-16 max-w-4xl mx-auto pb-32">
-		<div class="grid grid-cols-[auto_1fr] gap-4">
+		<div class="flex flex-col sm:grid grid-cols-[auto_1fr] gap-4">
 			{#if $novelQuery.data.cover}
 				<img
-					class="w-80 h-80 rounded-md"
+					class="w-80 h-80 rounded-md self-center"
 					src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 					alt={`${$novelQuery.data.title} cover image`}
 				/>

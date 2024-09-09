@@ -93,14 +93,14 @@
 		{/if}
 	</div>
 	{#if chapterContent}
-		<div class="p-8 mt-24 mb-32">
+		<div class="p-8 mt-12 mb-12 sm:mt-24 sm:mb-32">
 			<Reader
 				sourceContent={chapterContent.source}
 				translatedContent={chapterContent.translated}
 				{notes}
 			/>
 		</div>
-		<div class="w-full p-16 flex justify-between">
+		<div class="w-full mb-8 p-8 sm:p-16 flex justify-between">
 			{#if $chaptersQuery.data?.length && chapterIndex > -1}
 				{#if previousChapter}
 					<Button href={`/chapters/${previousChapter.id}`} variant="outline"

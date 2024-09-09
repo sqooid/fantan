@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
+import { isMobile } from './breakpoints';
 
 export type ReaderOptions = {
 	aligned: boolean;
@@ -10,7 +11,7 @@ const createReaderOptionStore = () => {
 	const existing = browser ? localStorage.getItem('readerOptions') : null;
 	const options: ReaderOptions = existing
 		? JSON.parse(existing)
-		: { aligned: true, showSource: true };
+		: { aligned: true, showSource: !get(isMobile) };
 	const { subscribe, set } = writable<ReaderOptions>(options);
 	const persistentSet = (value: ReaderOptions) => {
 		localStorage.setItem('readerOptions', JSON.stringify(value));

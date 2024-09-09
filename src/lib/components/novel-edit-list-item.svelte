@@ -12,12 +12,12 @@
 
 <Card>
 	<a href={`/${edit ? 'edit/' : ''}novels/${novel.id}`}>
-		<CardContent class="p-6 flex flex-col gap-4 w-64 h-full">
+		<CardContent class="p-3 sm:p-6 flex flex-col gap-4 w-full">
 			{#if novel.cover}
 				<img
 					src={pb.files.getUrl(novel, novel.cover)}
 					alt={`${novel.title} cover image`}
-					class="h-48 rounded-lg w-fit max-w-full self-center"
+					class="h-48 rounded-lg w-full max-w-full self-center object-cover"
 				/>
 			{:else}
 				<div class="w-fit max-w-full self-center">

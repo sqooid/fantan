@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isMobile } from '$lib/stores/breakpoints';
 	import { readerOptions } from '$lib/stores/options';
 	import NoteViewer from './note-viewer.svelte';
 	import ReaderAligned from './reader-aligned.svelte';
@@ -12,7 +13,7 @@
 	let showNotes = false;
 	let noteId = '';
 
-	$: divClass = `${$readerOptions.showSource ? 'grid grid-cols-2' : ''} w-fit gap-x-8 lg:gap-x-24 mx-auto`;
+	$: divClass = `${$readerOptions.showSource && !$isMobile ? 'grid grid-cols-2' : ''} w-fit gap-x-8 lg:gap-x-24 mx-auto`;
 
 	const onOpenNote = (e: CustomEvent<string>) => {
 		const id = e.detail;
@@ -21,15 +22,16 @@
 	};
 </script>
 
-{#if $readerOptions.aligned && $readerOptions.showSource}
+{#if $readerOptions.aligned && $readerOptions.showSource && !$isMobile}
 	<ReaderAligned {sourceContent} {translatedContent} on:openNote={onOpenNote} />
 {:else}
 	<div class={divClass}>
 		{#if $readerOptions.showSource}
 			<ReaderUnaligned content={sourceContent} on:openNote={onOpenNote} />
 		{/if}
-		<ReaderUnaligned content={translatedContent} on:openNote={onOpenNote} />
+		{#if !$isMobile || !$readerOptions.showSource}
+			<ReaderUnaligned content={translatedContent} on:openNote={onOpenNote} />
+		{/if}
 	</div>
 {/if}
-<ReaderOptions />
 <NoteViewer {notes} bind:open={showNotes} {noteId} />
