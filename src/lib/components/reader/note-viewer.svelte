@@ -7,6 +7,15 @@
 	export let noteId: string;
 
 	const md = markdownit({ html: false, linkify: true });
+	// open links in new tab
+	md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+		const token = tokens[idx];
+		const href = token.attrGet('href');
+		if (href && href.startsWith('http')) {
+			token.attrSet('target', '_blank');
+		}
+		return self.renderToken(tokens, idx, options);
+	};
 	$: rendered = md.render(notes[noteId] ?? '');
 </script>
 
