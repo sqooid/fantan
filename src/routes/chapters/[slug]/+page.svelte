@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import Reader from '$lib/components/reader/reader.svelte';
-	import type { ChaptersResponse } from '$lib/pocketbase-types';
+	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
@@ -10,14 +10,34 @@
 
 	$: chapterId = $page.params.slug;
 
-	const chapterQuery = useQuery<ChaptersResponse>({ enabled: true });
+	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
 	$: chapterQuery.setOptions({
 		queryKey: ['chapter', chapterId],
 		queryFn: async () => {
 			const result = await pb.collection('chapters').getOne(chapterId, { expand: 'novel' });
 			return result;
-		}
+		},
+		enabled: true
 	});
+
+	$: novel = ($chapterQuery.data?.expand as any).novel as NovelsResponse | undefined;
+
+	const ownerQuery = useQuery<{ username: string; name: string }>({ enabled: false });
+	$: if (novel?.owner) {
+		ownerQuery.setOptions({
+			queryKey: ['user', novel.owner],
+			queryFn: async () => {
+				const path = pb.buildUrl(`/c/user?id=${novel.owner}`);
+				console.log(path);
+				const result = await fetch(path);
+				if (!result.ok) {
+					throw new Error('Failed to fetch user');
+				}
+				return await result.json();
+			},
+			enabled: true
+		});
+	}
 
 	const chaptersQuery = useQuery<ChaptersResponse[]>({ enabled: false });
 	$: if ($chapterQuery.data) {
@@ -32,8 +52,6 @@
 					fields: 'id,value,title'
 				});
 				result.sort((a, b) => semverChapterSort(a.value, b.value));
-				console.log(result);
-
 				return result;
 			}
 		});
@@ -55,9 +73,14 @@
 <svelte:document on:scroll={onScroll} />
 
 <div class="flex flex-col w-full gap-4">
-	{#if data}
-		<h1 class="max-w-prose mx-auto">Chapter {data.value}{data.title ? ` - ${data.title}` : ''}</h1>
-	{/if}
+	<div class="max-w-prose self-center flex flex-col gap-8">
+		{#if data}
+			<h1 class="mx-auto">Chapter {data.value}{data.title ? ` - ${data.title}` : ''}</h1>
+		{/if}
+		{#if $ownerQuery.data}
+			<h4>Editor: {$ownerQuery.data.name || $ownerQuery.data.username}</h4>
+		{/if}
+	</div>
 	{#if chapterContent}
 		<div class="p-8 mt-24 mb-32">
 			<Reader
