@@ -4,11 +4,23 @@
 	import Reader from '$lib/components/reader/reader.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
+	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
+	import { chapterToDisplay } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
 
 	$: chapterId = $page.params.slug;
+
+	$: if (novel && $chapterQuery.data)
+		$breadcrumbStore = [
+			{ title: 'Home', href: '/' },
+			{ title: novel.title, href: `/novels/${novel.id}` },
+			{
+				title: chapterToDisplay($chapterQuery.data),
+				href: `/chapters/${chapterId}`
+			}
+		];
 
 	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
 	$: chapterQuery.setOptions({
@@ -20,7 +32,7 @@
 		enabled: true
 	});
 
-	$: novel = ($chapterQuery.data?.expand as any).novel as NovelsResponse | undefined;
+	$: novel = ($chapterQuery.data?.expand as any)?.novel as NovelsResponse | undefined;
 
 	const ownerQuery = useQuery<{ username: string; name: string }>({ enabled: false });
 	$: if (novel?.owner) {

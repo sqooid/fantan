@@ -9,7 +9,9 @@
 	import type { NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
+	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { pb } from '$lib/stores/pocketbase';
+	import { chapterToDisplay } from '$lib/utils/data-transform';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
@@ -18,6 +20,17 @@
 	const chapterId = $page.params.slug;
 
 	let editor: SplitEditor;
+
+	$: if ($novelQuery.data && $chapterQuery.data)
+		$breadcrumbStore = [
+			{ title: 'Home', href: '/' },
+			{ title: 'Create', href: '/create' },
+			{ title: $novelQuery.data.title, href: `/edit/novels/${$novelQuery.data.id}` },
+			{
+				title: chapterToDisplay($chapterQuery.data),
+				href: `/edit/chapters/${chapterId}`
+			}
+		];
 
 	const chapterQuery = useQuery(['chapter', chapterId], () => {
 		const result = pb.collection('chapters').getOne(chapterId);
@@ -38,7 +51,7 @@
 			queryFn: () => {
 				const result = pb
 					.collection('novels')
-					.getOne($chapterQuery.data?.novel, { fields: 'sourceLanguage' });
+					.getOne($chapterQuery.data?.novel, { fields: 'sourceLanguage,title,id' });
 				return result;
 			}
 		});

@@ -6,6 +6,7 @@
 	import { parsePbError } from '$lib/components/inputs/validation';
 	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
+	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { pb } from '$lib/stores/pocketbase';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
@@ -15,6 +16,13 @@
 
 	const novelId = $page.params.slug;
 	const queryClient = useQueryClient();
+
+	$: if ($novelQuery.data)
+		$breadcrumbStore = [
+			{ title: 'Home', href: '/' },
+			{ title: 'Create', href: '/create' },
+			{ title: $novelQuery.data.title, href: `/novels/${novelId}` }
+		];
 
 	const novelQuery = useQuery(
 		['novel', novelId],

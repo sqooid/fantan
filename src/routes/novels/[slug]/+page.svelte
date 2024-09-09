@@ -1,36 +1,48 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { ChaptersResponse } from '$lib/pocketbase-types';
+	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
 	import { useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { BookText } from 'lucide-svelte';
 	import moment from 'moment';
 
-	const novelId = $page.params.slug;
-	const queryClient = useQueryClient();
+	$: novelId = $page.params.slug;
 
-	const novelQuery = useQuery(['novel', novelId], async () => {
-		const result = await pb.collection('novels').getOne(novelId);
-		return result;
+	$: if ($novelQuery.data)
+		$breadcrumbStore = [
+			{ title: 'Home', href: '/' },
+			{ title: $novelQuery.data.title, href: `/edit/novels/${novelId}` }
+		];
+
+	const novelQuery = useQuery<NovelsResponse>({ enabled: false });
+	$: novelQuery.setOptions({
+		enabled: true,
+		queryKey: ['novel', novelId],
+		queryFn: () => pb.collection('novels').getOne(novelId)
 	});
 	$: editors = [...($novelQuery.data?.editors ?? []), $novelQuery.data?.owner];
 
-	const chaptersQuery = useQuery(['chapters', novelId], async () => {
-		const result = await pb.collection('chapters').getFullList({
-			filter: pb.filter('novel = {:id} && published = true', { id: novelId }),
-			fields: 'id,value,title,updated'
-		});
-		result.sort((x, y) => semverChapterSort(x.value, y.value));
-		return result;
+	const chaptersQuery = useQuery<ChaptersResponse[]>({ enabled: false });
+	$: chaptersQuery.setOptions({
+		enabled: true,
+		queryKey: ['chapters', novelId],
+		queryFn: async () => {
+			const result = await pb.collection('chapters').getFullList({
+				filter: pb.filter('novel = {:id} && published = true', { id: novelId }),
+				fields: 'id,value,title,updated'
+			});
+			result.sort((x, y) => semverChapterSort(x.value, y.value));
+			return result;
+		}
 	});
 
 	$: lastChapter = $authStore?.model?.history?.[novelId] as string | undefined;
-	let nextChapter: ChaptersResponse | null = null;
-	$: if (lastChapter && $chaptersQuery.data) {
-		console.log('last', lastChapter);
 
+	let nextChapter: ChaptersResponse | null = null;
+	$: if (lastChapter && $chaptersQuery.data?.length) {
 		const lastIndex = $chaptersQuery.data.findIndex((x) => x.id === lastChapter);
 		if ($chaptersQuery.data.length > lastIndex + 1) {
 			nextChapter = $chaptersQuery.data[lastIndex + 1];
@@ -43,7 +55,7 @@
 		<div class="grid grid-cols-[auto_1fr] gap-4">
 			{#if $novelQuery.data.cover}
 				<img
-					class="w-80 rounded-md"
+					class="w-80 h-80 rounded-md"
 					src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 					alt={`${$novelQuery.data.title} cover image`}
 				/>
@@ -73,7 +85,7 @@
 			</div>
 		</div>
 		<h2 class="h2">Chapters</h2>
-		{#if $chaptersQuery.isSuccess}
+		{#if $chaptersQuery.data?.length}
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				{#each $chaptersQuery.data as chapter}
 					<Button
