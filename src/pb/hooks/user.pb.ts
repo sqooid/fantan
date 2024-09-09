@@ -1,4 +1,3 @@
-//@ts-ignore
 routerAdd('GET', '/c/user', (c) => {
 	const id = c.queryParam('id');
 	const result = new DynamicModel({ username: '', name: '' });

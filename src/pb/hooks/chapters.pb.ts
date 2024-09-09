@@ -1,11 +1,9 @@
-//@ts-nocheck
-
 onRecordAfterCreateRequest((e) => {
 	if (e.collection?.name === 'chapters' && e.record) {
 		const record = e.record;
 		const novelId = record.get('novel') as string;
 
-		const result = arrayOf(DynamicModel({ id: '' }));
+		const result = arrayOf(new DynamicModel({ id: '' }));
 		$app
 			.dao()
 			.db()
@@ -29,7 +27,7 @@ onRecordAfterDeleteRequest((e) => {
 		const record = e.record;
 		const novelId = record.get('novel') as string;
 
-		const result = arrayOf(DynamicModel({ id: '' }));
+		const result = arrayOf(new DynamicModel({ id: '' }));
 		$app
 			.dao()
 			.db()
