@@ -21,10 +21,6 @@
 	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
-
-	// export let data;
-
-	setMode('light');
 </script>
 
 <svelte:head>

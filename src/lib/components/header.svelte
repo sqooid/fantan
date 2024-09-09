@@ -3,6 +3,7 @@
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import { authStore } from '$lib/stores/pocketbase';
 	import HeaderButton from './header-button.svelte';
+	import ModeToggle from './navigation/mode-toggle.svelte';
 
 	const onLogout = () => {
 		$authStore?.clear();
@@ -18,7 +19,8 @@
 		<HeaderButton href="/create" altPaths={['/edit/novels']}>Create</HeaderButton>
 	</div>
 	<div></div>
-	<div>
+	<div class="flex items-center gap-2">
+		<ModeToggle />
 		{#if $authStore?.isValid}
 			<Button variant="ghost" on:click={onLogout}>Log out</Button>
 		{:else}
