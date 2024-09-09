@@ -100,7 +100,7 @@
 				{notes}
 			/>
 		</div>
-		<div class="w-full p-16 flex justify-between">
+		<div class="w-full mb-8 p-8 sm:p-16 flex justify-between">
 			{#if $chaptersQuery.data?.length && chapterIndex > -1}
 				{#if previousChapter}
 					<Button href={`/chapters/${previousChapter.id}`} variant="outline"

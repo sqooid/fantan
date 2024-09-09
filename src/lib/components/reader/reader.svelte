@@ -34,5 +34,4 @@
 		{/if}
 	</div>
 {/if}
-<ReaderOptions />
 <NoteViewer {notes} bind:open={showNotes} {noteId} />

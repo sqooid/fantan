@@ -7,11 +7,15 @@
 	import HeaderButton from './header-button.svelte';
 	import ModeToggle from './navigation/mode-toggle.svelte';
 	import Sidebar from './navigation/sidebar.svelte';
+	import { page } from '$app/stores';
+	import ReaderOptions from './reader/reader-options.svelte';
 
 	const onLogout = () => {
 		$authStore?.clear();
 		goto('/');
 	};
+
+	$: inReader = $page.url.pathname.startsWith('/chapters');
 
 	let showSidebar = false;
 </script>
@@ -31,11 +35,16 @@
 	</div>
 	<div></div>
 	<div class="flex items-center gap-2">
-		<ModeToggle />
-		{#if $authStore?.isValid}
-			<Button variant="ghost" on:click={onLogout}>Log out</Button>
-		{:else}
+		{#if inReader}
+			<ReaderOptions />
+		{/if}
+		{#if !$isMobile}
+			<ModeToggle />
+		{/if}
+		{#if !$authStore?.isValid}
 			<HeaderButton href="/login">Log in</HeaderButton>
+		{:else}
+			<!-- TODO: add user options dropdown -->
 		{/if}
 	</div>
 </header>

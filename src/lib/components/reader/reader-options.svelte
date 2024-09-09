@@ -5,16 +5,16 @@
 	import Switch from '$lib/shadcn/components/ui/switch/switch.svelte';
 	import { isMobile } from '$lib/stores/breakpoints';
 	import { readerOptions } from '$lib/stores/options';
-	import { Settings } from 'lucide-svelte';
+	import { Settings2 } from 'lucide-svelte';
 
 	export let open = false;
 </script>
 
 <Drawer.Root bind:open>
 	<Drawer.Trigger asChild let:builder>
-		<div class="fixed left-0 bottom-0 right-0 flex justify-center">
+		<div class="flex justify-center">
 			<Button builders={[builder]} class="mx-auto w-fit" variant="ghost">
-				<Settings size="24" />
+				<Settings2 size="24" />
 			</Button>
 		</div>
 	</Drawer.Trigger>
