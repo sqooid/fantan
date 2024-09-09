@@ -29,7 +29,7 @@
 </script>
 
 <div class="flex flex-col gap-2 w-full">
-	<span class="text-lg font-semibold">Log in with username/email and password</span>
+	<span class="large">Log in with username/email and password</span>
 	<ValidatedField
 		id="identity"
 		label="Username or email"

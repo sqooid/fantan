@@ -1,10 +1,45 @@
 .milkdown {
 	& .editor {
-		@apply outline-none 
-		/* & p:not(:first-child) {
-			@apply mt-4 leading-7;
-		} */;
+		@apply outline-none;
 	}
+
+	& h1 {
+		@apply h1;
+	}
+	& h2 {
+		@apply h2;
+	}
+	& h3 {
+		@apply h3;
+	}
+	& h4 {
+		@apply h4;
+	}
+	& code {
+		@apply code;
+	}
+	& p {
+		@apply p;
+	}
+	& blockquote {
+		@apply blockquote;
+	}
+	& ul {
+		@apply ul;
+	}
+	& ol {
+		@apply ol;
+	}
+	& lead {
+		@apply lead;
+	}
+	& small {
+		@apply small;
+	}
+}
+
+.aligned-reader p {
+	@apply leading-7 mt-6;
 }
 
 .inline-note {
@@ -27,39 +62,40 @@ kbd {
 	@apply inline-flex h-5 px-1 items-center justify-center border text-xs text-muted-foreground rounded-sm dark:border-muted-foreground;
 }
 
-h1 {
+/* shadcn typography */
+.h1 {
 	@apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
 }
 
-h2 {
+.h2 {
 	@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
 }
 
-h3 {
+.h3 {
 	@apply scroll-m-20 text-2xl font-semibold tracking-tight;
 }
 
-h4 {
+.h4 {
 	@apply scroll-m-20 text-xl font-semibold tracking-tight;
 }
 
-code {
+.code {
 	@apply bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
 }
 
-p {
+.p {
 	@apply leading-7 [&:not(:first-child)]:mt-6;
 }
 
-blockquote {
+.blockquote {
 	@apply mt-6 border-l-2 pl-6 italic;
 }
 
-ul {
+.ul {
 	@apply my-6 ml-6 list-disc [&>li]:mt-2;
 }
 
-ol {
+.ol {
 	@apply my-6 ml-6 list-decimal [&>li]:mt-2;
 }
 
@@ -67,7 +103,11 @@ ol {
 	@apply text-lg font-semibold;
 }
 
-small {
+.large {
+	@apply text-lg font-semibold;
+}
+
+.small {
 	@apply text-sm font-medium leading-none;
 }
 

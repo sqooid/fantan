@@ -37,28 +37,27 @@
 	const transformNodes = async (e: HTMLElement) => {
 		const sourceNodes = await render(sourceContent);
 		const translatedNodes = await render(translatedContent);
+
 		if (!sourceNodes || !translatedNodes) return;
-		for (let index = 0; index < Math.max(sourceNodes.length, translatedNodes.length); index++) {
-			e.appendChild(sourceNodes[index] ?? document.createElement('div'));
-			e.appendChild(translatedNodes[index] ?? document.createElement('div'));
+		while (sourceNodes.length || translatedNodes.length) {
+			e.appendChild(sourceNodes[0] ?? document.createElement('div'));
+			e.appendChild(translatedNodes[0] ?? document.createElement('div'));
 		}
 	};
 
 	let root: HTMLElement;
-	$: if (root && sourceContent && translatedContent) transformNodes(root);
+	$: if (root && (sourceContent || translatedContent)) transformNodes(root);
 </script>
 
 <div class="w-full">
 	<div
-		class="aligned-reader grid grid-cols-[minmax(auto,65ch)_minmax(auto,65ch)] gap-x-8 lg:gap-x-24 w-fit mx-auto"
+		class="aligned-reader grid grid-cols-[minmax(auto,65ch)_minmax(auto,65ch)] gap-x-8 lg:gap-x-24 w-fit mx-auto milkdown"
 		bind:this={root}
 	/>
 </div>
 
-<style lang="postcss">
-	.aligned-reader {
-		& p {
-			@apply leading-7 mt-6;
-		}
+<style global lang="postcss">
+	.milkdown p {
+		@apply leading-7 mt-6;
 	}
 </style>

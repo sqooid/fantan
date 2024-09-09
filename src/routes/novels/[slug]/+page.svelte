@@ -18,9 +18,10 @@
 	$: editors = [...($novelQuery.data?.editors ?? []), $novelQuery.data?.owner];
 
 	const chaptersQuery = useQuery(['chapters', novelId], async () => {
-		const result = await pb
-			.collection('chapters')
-			.getFullList({ filter: pb.filter('novel = {:id} && published = true', { id: novelId }) });
+		const result = await pb.collection('chapters').getFullList({
+			filter: pb.filter('novel = {:id} && published = true', { id: novelId }),
+			fields: 'id,value,title,updated'
+		});
 		result.sort((x, y) => semverChapterSort(x.value, y.value));
 		return result;
 	});
@@ -53,8 +54,8 @@
 			{/if}
 			<div class="h-full flex flex-col justify-between">
 				<div>
-					<h1>{$novelQuery.data.title}</h1>
-					<p>{$novelQuery.data.description}</p>
+					<h1 class="h1">{$novelQuery.data.title}</h1>
+					<p class="p">{$novelQuery.data.description}</p>
 					{#if editors.includes($authStore?.model?.id)}
 						<Button href={`/edit/novels/${novelId}`} variant="outline" class="mt-4">Edit</Button>
 					{/if}
@@ -64,14 +65,14 @@
 						class="w-fit mt-8"
 						href={nextChapter
 							? `/chapters/${nextChapter.id}`
-							: `/chapters/${$chaptersQuery.data[0].id}`}
+							: `/chapters/${$chaptersQuery.data[0]?.id}`}
 					>
 						{nextChapter ? `Continue from chapter ${nextChapter.value}` : 'Start reading'}
 					</Button>
 				{/if}
 			</div>
 		</div>
-		<h2>Chapters</h2>
+		<h2 class="h2">Chapters</h2>
 		{#if $chaptersQuery.isSuccess}
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				{#each $chaptersQuery.data as chapter}
@@ -82,7 +83,7 @@
 					>
 						<div class="flex gap-8 justify-start">
 							<span class="w-8 hover:no-underline">{chapter.value}</span>
-							<span>{chapter.title}</span>
+							<span>{chapter.title || 'No title'}</span>
 						</div>
 
 						<span class="muted ml-16">{moment(chapter.updated).fromNow()}</span>

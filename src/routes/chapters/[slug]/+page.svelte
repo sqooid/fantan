@@ -28,7 +28,6 @@
 			queryKey: ['user', novel.owner],
 			queryFn: async () => {
 				const path = pb.buildUrl(`/c/user?id=${novel.owner}`);
-				console.log(path);
 				const result = await fetch(path);
 				if (!result.ok) {
 					throw new Error('Failed to fetch user');
@@ -75,10 +74,10 @@
 <div class="flex flex-col w-full gap-4">
 	<div class="max-w-prose self-center flex flex-col gap-8">
 		{#if data}
-			<h1 class="mx-auto">Chapter {data.value}{data.title ? ` - ${data.title}` : ''}</h1>
+			<h1 class="h1 mx-auto">Chapter {data.value}{data.title ? ` - ${data.title}` : ''}</h1>
 		{/if}
 		{#if $ownerQuery.data}
-			<h4>Editor: {$ownerQuery.data.name || $ownerQuery.data.username}</h4>
+			<h4 class="h4">Editor: {$ownerQuery.data.name || $ownerQuery.data.username}</h4>
 		{/if}
 	</div>
 	{#if chapterContent}

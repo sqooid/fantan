@@ -14,6 +14,7 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
+	import Breadcrumb from '$lib/components/navigation/breadcrumb.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -41,6 +42,7 @@
 	<Header />
 	<!-- Grid Column -->
 	<div class="w-full">
+		<Breadcrumb />
 		<!-- Sidebar (Left) -->
 		<!-- <aside class=" p-4">(sidebar)</aside> -->
 		<!-- Main -->

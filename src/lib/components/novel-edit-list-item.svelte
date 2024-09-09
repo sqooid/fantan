@@ -28,10 +28,10 @@
 				{novel.title}
 			</CardTitle>
 			<div class="flex flex-col justify-between h-full gap-4">
-				<small class="opacity-50 text-sm font-medium leading-none overflow-ellipsis line-clamp-4">
+				<small class="opacity-50 small overflow-ellipsis line-clamp-4">
 					{novel.description || 'No description'}
 				</small>
-				<p class="text-muted-foreground text-sm">
+				<p class="muted">
 					{novel.chaptersCount} chapters
 				</p>
 			</div>

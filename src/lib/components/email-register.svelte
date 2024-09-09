@@ -25,7 +25,7 @@
 </script>
 
 <dev class="flex flex-col gap-2 w-full">
-	<span class="text-lg font-semibold">Create a new account</span>
+	<span class="large">Create a new account</span>
 	<ValidatedField
 		required
 		id="username"
