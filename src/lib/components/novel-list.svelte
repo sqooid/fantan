@@ -16,7 +16,7 @@
 </script>
 
 {#if $novelsQuery.isSuccess}
-	<div class="flex gap-8">
+	<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-8">
 		{#each $novelsQuery.data as novel}
 			<NovelEditListItem {novel} {edit} />
 		{:else}

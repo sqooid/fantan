@@ -15,6 +15,7 @@
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import Breadcrumb from '$lib/components/navigation/breadcrumb.svelte';
+	import { isMobile } from '$lib/stores/breakpoints';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
@@ -37,15 +38,17 @@
 	<!-- Header -->
 	<Header />
 	<!-- Grid Column -->
-	<div class="w-full">
-		<Breadcrumb />
+	<div class="w-full mt-16">
+		{#if !$isMobile}
+			<Breadcrumb />
+		{/if}
 		<!-- Sidebar (Left) -->
 		<!-- <aside class=" p-4">(sidebar)</aside> -->
 		<!-- Main -->
 		<main class="px-4 pt-4 space-y-4 w-full">
 			<!-- {#key data.url}
 					<div in:blur={{ delay: 1 }} out:blur={{ duration: 1 }} class="absolute"> -->
-			<div class="md:px-8">
+			<div class="md:px-8 max-w-full">
 				<slot />
 			</div>
 			<!-- </div>
