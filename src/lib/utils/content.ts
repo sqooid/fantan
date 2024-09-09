@@ -35,6 +35,7 @@ export const rawToSectioned = (s: ChapterSection) => {
 };
 
 export const semverChapterSort = (l: string, r: string) => {
+	// negative value means l < r
 	const lt = l.split('.').filter((x) => x);
 	const rt = r.split('.').filter((x) => x);
 	for (let i = 0; i < Math.min(lt.length, r.length); i++) {

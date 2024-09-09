@@ -79,7 +79,7 @@
 							? `/chapters/${nextChapter.id}`
 							: `/chapters/${$chaptersQuery.data[0]?.id}`}
 					>
-						{nextChapter ? `Continue from chapter ${nextChapter.value}` : 'Start reading'}
+						{nextChapter ? `Continue from Chapter ${nextChapter.value}` : 'Start reading'}
 					</Button>
 				{/if}
 			</div>
