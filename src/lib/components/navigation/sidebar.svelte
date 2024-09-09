@@ -9,6 +9,11 @@
 	export let open = false;
 
 	const onClose = () => (open = false);
+
+	const onLogout = () => {
+		$authStore?.clear();
+		onClose();
+	};
 </script>
 
 {#if open}
@@ -25,7 +30,7 @@
 		</div>
 		<div class="justify-self-end">
 			<ModeToggle class="w-full" />
-			<SidebarButton on:click={() => $authStore?.clear()} class="mt-10">Log out</SidebarButton>
+			<SidebarButton on:click={onLogout} class="mt-10">Log out</SidebarButton>
 		</div>
 	</div>
 	<button

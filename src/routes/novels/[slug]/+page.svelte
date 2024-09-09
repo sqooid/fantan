@@ -7,7 +7,10 @@
 	import { semverChapterSort } from '$lib/utils/content';
 	import { useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { BookText } from 'lucide-svelte';
+	import * as DropdownMenu from '$lib/shadcn/components/ui/dropdown-menu';
+
 	import moment from 'moment';
+	import { Ellipsis } from '$lib/shadcn/components/ui/breadcrumb';
 
 	$: novelId = $page.params.slug;
 
@@ -48,6 +51,18 @@
 			nextChapter = $chaptersQuery.data[lastIndex + 1];
 		}
 	}
+	$: if (!lastChapter) {
+		nextChapter = null;
+	}
+
+	const onResetProgress = async () => {
+		const history = $authStore?.model?.history;
+		if (history) {
+			delete history[novelId];
+			await pb.collection('users').update($authStore.model.id, { history });
+			pb.collection('users').authRefresh();
+		}
+	};
 </script>
 
 {#if $novelQuery.isSuccess}
@@ -68,9 +83,21 @@
 				<div>
 					<h1 class="h1">{$novelQuery.data.title}</h1>
 					<p class="p">{$novelQuery.data.description}</p>
-					{#if editors.includes($authStore?.model?.id)}
-						<Button href={`/edit/novels/${novelId}`} variant="outline" class="mt-4">Edit</Button>
-					{/if}
+					<div class="flex items-center mt-4 gap-4">
+						{#if editors.includes($authStore?.model?.id)}
+							<Button href={`/edit/novels/${novelId}`} variant="outline">Edit</Button>
+						{/if}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger asChild let:builder>
+								<Button builders={[builder]} variant="ghost">
+									<Ellipsis />
+								</Button>
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content>
+								<DropdownMenu.Item on:click={onResetProgress}>Reset progress</DropdownMenu.Item>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					</div>
 				</div>
 				{#if $chaptersQuery.data}
 					<Button
@@ -79,7 +106,7 @@
 							? `/chapters/${nextChapter.id}`
 							: `/chapters/${$chaptersQuery.data[0]?.id}`}
 					>
-						{nextChapter ? `Continue from chapter ${nextChapter.value}` : 'Start reading'}
+						{nextChapter ? `Continue from Chapter ${nextChapter.value}` : 'Start reading'}
 					</Button>
 				{/if}
 			</div>

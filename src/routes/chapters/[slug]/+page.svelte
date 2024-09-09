@@ -5,10 +5,11 @@
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { breadcrumbStore } from '$lib/stores/navigation';
-	import { pb } from '$lib/stores/pocketbase';
+	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
 	import { chapterToDisplay } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
+	import { debounce } from 'lodash-es';
 
 	$: chapterId = $page.params.slug;
 
@@ -75,8 +76,25 @@
 	$: chapterContent = data?.content as ChapterSection | null;
 	$: notes = (data?.notes ?? {}) as Record<string, string>;
 
+	const finishedChapter = debounce(async () => {
+		console.log('finished chapter');
+
+		if (novel?.id && $authStore?.model && data) {
+			const history = $authStore?.model?.history ?? {};
+			const lastReadValue = $chaptersQuery.data?.[history[novel.id]]?.value;
+			const currentValue = data.value;
+
+			if (lastReadValue === undefined || semverChapterSort(lastReadValue, currentValue) < 0) {
+				history[novel.id] = chapterId;
+				const result = await pb.collection('users').update($authStore.model.id, { history });
+				pb.collection('users').authRefresh();
+			}
+		}
+	}, 1000);
+
 	const onScroll = () => {
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+			finishedChapter();
 		}
 	};
 </script>
@@ -110,7 +128,9 @@
 					<div></div>
 				{/if}
 				{#if nextChapter}
-					<Button href={`/chapters/${nextChapter.id}`} variant="outline">Next chapter</Button>
+					<Button href={`/chapters/${nextChapter.id}`} variant="outline" on:click={finishedChapter}
+						>Next chapter</Button
+					>
 				{/if}
 			{/if}
 		</div>
