@@ -4,7 +4,7 @@
 	import Reader from '$lib/components/reader/reader.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
-	import { breadcrumbStore } from '$lib/stores/navigation';
+	import { breadcrumbStore, novelIdStore } from '$lib/stores/navigation';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
 	import { chapterToDisplay } from '$lib/utils/data-transform';
@@ -34,6 +34,9 @@
 	});
 
 	$: novel = ($chapterQuery.data?.expand as any)?.novel as NovelsResponse | undefined;
+	$: if (novel) {
+		$novelIdStore = novel.id;
+	}
 
 	const ownerQuery = useQuery<{ username: string; name: string }>({ enabled: false });
 	$: if (novel?.owner) {

@@ -6,3 +6,5 @@ type Breadcrumb = {
 };
 
 export const breadcrumbStore = writable<Breadcrumb[]>([]);
+
+export const novelIdStore = writable<string>('');

@@ -1,11 +1,10 @@
 <script lang="ts">
+	import GithubIcon from '$lib/icons/github-icon.svelte';
+	import GoogleIcon from '$lib/icons/google-icon.svelte';
 	import type { UsersResponse } from '$lib/pocketbase-types';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { useQuery } from '@sveltestack/svelte-query';
-	import OauthSigninButton from '../oauth-signin-button.svelte';
-	import GoogleIcon from '$lib/icons/google-icon.svelte';
 	import LinkAuthButton from './link-auth-button.svelte';
-	import GithubIcon from '$lib/icons/github-icon.svelte';
 
 	$: info = ($authStore?.model ?? {}) as UsersResponse;
 
