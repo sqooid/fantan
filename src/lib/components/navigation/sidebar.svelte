@@ -21,7 +21,7 @@
 		class="flex flex-col w-64 max-w-[80%] fixed top-0 bottom-0 left-0 py-16 px-2 bg-background z-50 gap-2 justify-between"
 		transition:slide={{ axis: 'x', duration: 100 }}
 	>
-		<div>
+		<div class="flex flex-col gap-4">
 			<SidebarButton on:click={onClose} class="mb-10">
 				<ArrowLeftToLine />
 			</SidebarButton>
