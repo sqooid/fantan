@@ -9,6 +9,7 @@
 	import Sidebar from './navigation/sidebar.svelte';
 	import { page } from '$app/stores';
 	import ReaderOptions from './reader/reader-options.svelte';
+	import UserDropdown from './navigation/user-dropdown.svelte';
 
 	const onLogout = () => {
 		$authStore?.clear();
@@ -34,7 +35,7 @@
 		{/if}
 	</div>
 	<div></div>
-	<div class="flex items-center gap-2">
+	<div class="flex items-center gap-4">
 		{#if inReader}
 			<ReaderOptions />
 		{/if}
@@ -44,7 +45,7 @@
 		{#if !$authStore?.isValid}
 			<HeaderButton href="/login">Log in</HeaderButton>
 		{:else}
-			<!-- TODO: add user options dropdown -->
+			<UserDropdown />
 		{/if}
 	</div>
 </header>

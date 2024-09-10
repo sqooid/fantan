@@ -20,6 +20,7 @@
 	export let required = false;
 	export let files: FileList | null = null;
 	export let selectOptions: { value: string; label: string }[] = [];
+	export let disabled = false;
 
 	$: errors = errorObject ?? {};
 	$: classes = `input ${$$props.class ?? ''} ${errors[id] ? 'input-error' : ''}`;
@@ -62,6 +63,7 @@
 		<slot />
 		{#if type === 'text'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="text"
 				class={classes}
@@ -73,6 +75,7 @@
 			/>
 		{:else if type === 'email'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="email"
 				class={classes}
@@ -84,6 +87,7 @@
 			/>
 		{:else if type === 'password'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="password"
 				class={classes}
@@ -95,6 +99,7 @@
 			/>
 		{:else if type === 'file'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="file"
 				class={classes}
@@ -105,6 +110,7 @@
 			/>
 		{:else if type === 'textarea'}
 			<Textarea
+				{disabled}
 				id={elementId}
 				class={classes}
 				title={label}
@@ -113,7 +119,7 @@
 				on:input
 			/>
 		{:else if type === 'select'}
-			<Select.Root {selected} {onSelectedChange}>
+			<Select.Root {selected} {onSelectedChange} {disabled}>
 				<Select.Trigger class="">
 					<Select.Value {placeholder} />
 				</Select.Trigger>
