@@ -21,7 +21,7 @@
 </script>
 
 <header
-	class="fixed left-0 top-0 right-0 h-16 px-4 items-center backdrop-blur-xl border-b border-solid border-input grid grid-cols-[auto_1fr_auto]"
+	class={`fixed left-0 top-0 right-0 h-16 px-4 items-center border-b border-solid border-input grid grid-cols-[auto_1fr_auto] ${inReader ? 'bg-background' : 'backdrop-blur-xl'}`}
 >
 	<div>
 		{#if $isMobile}
