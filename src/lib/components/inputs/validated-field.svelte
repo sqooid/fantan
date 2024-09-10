@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Input from '$lib/shadcn/components/ui/input/input.svelte';
 	import Label from '$lib/shadcn/components/ui/label/label.svelte';
 	import * as Select from '$lib/shadcn/components/ui/select';
@@ -6,6 +7,7 @@
 	import * as Tooltip from '$lib/shadcn/components/ui/tooltip';
 	import { randomId } from '$lib/utils/ui';
 	import type { Selected } from 'bits-ui';
+	import { Info } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
 
@@ -14,12 +16,14 @@
 	export let id: string;
 	export let placeholder = '';
 	export let accept = '';
-	export let infoObject: { [K in typeof id]: string };
+	export let infoObject: { [K in typeof id]: string } | any;
 	export let errorObject: { [K in typeof id]: string } | null;
 	export let autocomplete = '';
 	export let required = false;
 	export let files: FileList | null = null;
 	export let selectOptions: { value: string; label: string }[] = [];
+	export let disabled = false;
+	export let tooltip = false;
 
 	$: errors = errorObject ?? {};
 	$: classes = `input ${$$props.class ?? ''} ${errors[id] ? 'input-error' : ''}`;
@@ -49,19 +53,25 @@
 
 <div>
 	<div class="label">
-		{#if required}
-			<Tooltip.Root>
-				<Tooltip.Trigger asChild let:builder>
-					<Label for={elementId}>{label}*</Label>
-				</Tooltip.Trigger>
-				<Tooltip.Content>Field is required</Tooltip.Content>
-			</Tooltip.Root>
-		{:else}
-			<Label for={elementId}>{label}</Label>
-		{/if}
+		<Label for={elementId} class="relative"
+			>{label}{required ? '*' : ''}
+			{#if tooltip}
+				<Tooltip.Root>
+					<Tooltip.Trigger asChild let:builder>
+						<Button builders={[builder]} variant="ghost" class="h-fit w-fit p-1" size="icon">
+							<Info class="w-3 h-3 p-0" />
+						</Button>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<slot name="tooltip-content" />
+					</Tooltip.Content>
+				</Tooltip.Root>
+			{/if}
+		</Label>
 		<slot />
 		{#if type === 'text'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="text"
 				class={classes}
@@ -73,6 +83,7 @@
 			/>
 		{:else if type === 'email'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="email"
 				class={classes}
@@ -84,6 +95,7 @@
 			/>
 		{:else if type === 'password'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="password"
 				class={classes}
@@ -95,6 +107,7 @@
 			/>
 		{:else if type === 'file'}
 			<Input
+				{disabled}
 				id={elementId}
 				type="file"
 				class={classes}
@@ -105,6 +118,7 @@
 			/>
 		{:else if type === 'textarea'}
 			<Textarea
+				{disabled}
 				id={elementId}
 				class={classes}
 				title={label}
@@ -113,7 +127,7 @@
 				on:input
 			/>
 		{:else if type === 'select'}
-			<Select.Root {selected} {onSelectedChange}>
+			<Select.Root {selected} {onSelectedChange} {disabled}>
 				<Select.Trigger class="">
 					<Select.Value {placeholder} />
 				</Select.Trigger>

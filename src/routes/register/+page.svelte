@@ -16,9 +16,9 @@
 	<EmailRegister />
 	<div>or</div>
 	<OauthSigninButton provider="google" name="Google" class="w-full">
-		<GoogleIcon class="h-6 w-full" /></OauthSigninButton
+		<GoogleIcon class="h-6" />Register with Google</OauthSigninButton
 	>
 	<OauthSigninButton provider="github" name="Github" class="w-full"
-		><GithubIcon class="h-6" /></OauthSigninButton
+		><GithubIcon class="h-6" />Register with Github</OauthSigninButton
 	>
 </div>

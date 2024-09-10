@@ -4,7 +4,7 @@
 	import { mode, toggleMode } from 'mode-watcher';
 </script>
 
-<Button on:click={toggleMode} variant="ghost" class={`${$$props.class ?? ''}`}>
+<Button on:click={toggleMode} variant="ghost" class={`${$$props.class ?? ''}`} size="icon">
 	{#if $mode === 'dark'}
 		<Moon />
 	{:else}

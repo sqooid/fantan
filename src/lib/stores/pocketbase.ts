@@ -1,7 +1,8 @@
+import { goto } from '$app/navigation';
 import { PUBLIC_API_URL } from '$env/static/public';
 import type { TypedPocketBase } from '$lib/pocketbase-types';
 import PocketBase, { BaseAuthStore } from 'pocketbase';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export const pb = new PocketBase(PUBLIC_API_URL) as TypedPocketBase;
 
@@ -14,3 +15,8 @@ const createAuthStore = () => {
 	return { subscribe };
 };
 export const authStore = createAuthStore();
+
+export const logOut = () => {
+	get(authStore)?.clear();
+	goto('/login');
+};

@@ -13,8 +13,14 @@
 <Drawer.Root bind:open>
 	<Drawer.Trigger asChild let:builder>
 		<div class="flex justify-center">
-			<Button builders={[builder]} class="mx-auto w-fit" variant="ghost">
-				<Settings2 size="24" />
+			<Button
+				builders={[builder]}
+				class="mx-auto"
+				variant="ghost"
+				title="Reader options"
+				size="icon"
+			>
+				<Settings2 />
 			</Button>
 		</div>
 	</Drawer.Trigger>
