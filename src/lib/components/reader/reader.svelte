@@ -13,7 +13,7 @@
 	let showNotes = false;
 	let noteId = '';
 
-	$: divClass = `${$readerOptions.showSource && !$isMobile ? 'grid grid-cols-2' : ''} w-fit gap-x-8 lg:gap-x-24 mx-auto`;
+	$: divClass = `${$isMobile ? 'full' : $readerOptions.showSource ? 'grid grid-cols-2 w-fit' : 'w-fit'} gap-x-8 lg:gap-x-24 mx-auto`;
 
 	const onOpenNote = (e: CustomEvent<string>) => {
 		const id = e.detail;

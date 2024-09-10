@@ -1,10 +1,9 @@
 <script lang="ts">
-	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { authStore } from '$lib/stores/pocketbase';
 	import { ArrowLeftToLine } from 'lucide-svelte';
 	import { fade, slide } from 'svelte/transition';
-	import SidebarButton from './sidebar-button.svelte';
-	import { authStore } from '$lib/stores/pocketbase';
 	import ModeToggle from './mode-toggle.svelte';
+	import SidebarButton from './sidebar-button.svelte';
 
 	export let open = false;
 
