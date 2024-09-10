@@ -65,6 +65,7 @@ export type NovelsRecord = {
 
 export type UsersRecord<Thistory = unknown> = {
 	avatar?: string
+	discordWebhook?: string
 	history?: null | Thistory
 	name?: string
 }

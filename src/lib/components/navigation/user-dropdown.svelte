@@ -3,12 +3,8 @@
 	import * as Avatar from '$lib/shadcn/components/ui/avatar';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/shadcn/components/ui/dropdown-menu';
-	import { authStore, pb } from '$lib/stores/pocketbase';
+	import { authStore, logOut, pb } from '$lib/stores/pocketbase';
 	import { User } from 'lucide-svelte';
-
-	const onLogout = () => {
-		$authStore?.clear();
-	};
 
 	$: avatarUrl = pb.files.getUrl($authStore?.model ?? {}, $authStore?.model?.avatar);
 </script>
@@ -31,7 +27,7 @@
 			<DropdownMenu.Item class="cursor-pointer" on:click={() => goto('/profile')}
 				>Profile</DropdownMenu.Item
 			>
-			<DropdownMenu.Item class="cursor-pointer" on:click={onLogout}>Log out</DropdownMenu.Item>
+			<DropdownMenu.Item class="cursor-pointer" on:click={logOut}>Log out</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

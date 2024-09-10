@@ -4,11 +4,13 @@
 	import { blur } from 'svelte/transition';
 	import ImageInput from '../inputs/image-input.svelte';
 	import ValidatedField from '../inputs/validated-field.svelte';
-	import { useMutation } from '@sveltestack/svelte-query';
+	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { pick } from 'lodash-es';
 	import { toast } from 'svelte-sonner';
+	import type { UsersRecord, UsersResponse } from '$lib/pocketbase-types';
+	import { parsePbError } from '../inputs/validation';
 
-	$: info = pick($authStore?.model ?? {}, ['id', 'name', 'username', 'email', 'avatar']);
+	$: info = ($authStore?.model ?? {}) as UsersResponse;
 	let errors: Record<string, string> | null = null;
 
 	let tainted = false;
@@ -20,7 +22,9 @@
 
 	const userMutate = useMutation(
 		async () => {
-			const result = await pb.collection('users').update(info.id, pick(info, ['name']));
+			const result = await pb
+				.collection('users')
+				.update(info.id, pick(info, ['name', 'discordWebhook']));
 			return result;
 		},
 		{
@@ -31,6 +35,7 @@
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to save changes');
+				errors = parsePbError(error);
 			}
 		}
 	);
@@ -57,6 +62,7 @@
 	};
 
 	const saveChanges = () => {
+		errors = null;
 		$userMutate.mutate();
 	};
 </script>
@@ -66,6 +72,7 @@
 		<ImageInput src={avatarUrl} class="w-full h-fit" on:input={onUpdateAvatar} />
 		<div class="flex flex-col gap-4">
 			<ValidatedField
+				required
 				infoObject={info}
 				errorObject={errors}
 				on:input={onInput}
@@ -81,6 +88,7 @@
 				type="text"
 				id="name"
 				label="Display name"
+				placeholder="Name"
 			/>
 			<ValidatedField
 				infoObject={info}
@@ -90,6 +98,24 @@
 				id="email"
 				label="Email"
 			/>
+			<ValidatedField
+				infoObject={info}
+				errorObject={errors}
+				on:input={onInput}
+				type="text"
+				id="discordWebhook"
+				label="Discord notification webhook"
+				placeholder="https://discord.com/api/webhooks/..."
+				tooltip
+			>
+				<span slot="tooltip-content" class="max-w-8 text-wrap">
+					Provide a <a
+						href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks"
+						class="anchor">Discord webhook</a
+					>
+					to receive notifications on new chapters to favourited novels
+				</span>
+			</ValidatedField>
 			{#if tainted}
 				<div transition:blur={{ duration: 150 }}>
 					<Button on:click={saveChanges}>Save changes</Button>
