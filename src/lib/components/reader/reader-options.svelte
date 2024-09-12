@@ -8,7 +8,7 @@
 	import { Settings2 } from 'lucide-svelte';
 	import ReaderFontOption from './reader-font-option.svelte';
 
-	export let open = true;
+	export let open = false;
 </script>
 
 <Drawer.Root bind:open>
