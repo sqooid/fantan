@@ -40,8 +40,12 @@
 
 		if (!sourceNodes || !translatedNodes) return;
 		while (sourceNodes.length || translatedNodes.length) {
-			e.appendChild(sourceNodes[0] ?? document.createElement('div'));
-			e.appendChild(translatedNodes[0] ?? document.createElement('div'));
+			let sourceNode = (sourceNodes[0] ?? document.createElement('div')) as HTMLElement;
+			sourceNode.classList.add('font-source');
+			e.appendChild(sourceNode);
+			let translatedNode = (translatedNodes[0] ?? document.createElement('div')) as HTMLElement;
+			translatedNode.classList.add('font-translated');
+			e.appendChild(translatedNode);
 		}
 	};
 
@@ -55,9 +59,3 @@
 		bind:this={root}
 	/>
 </div>
-
-<style global lang="postcss">
-	.milkdown p {
-		@apply leading-7 mt-6;
-	}
-</style>
