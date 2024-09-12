@@ -39,4 +39,4 @@
 	};
 </script>
 
-<article class="max-w-prose" use:editor></article>
+<article class={`max-w-prose ${$$props.class ?? ''}`} use:editor></article>

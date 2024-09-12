@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isMobile } from '$lib/stores/breakpoints';
-	import { readerOptions } from '$lib/stores/options';
+	import { fontOptions, readerInfo, readerOptions } from '$lib/stores/options';
 	import NoteViewer from './note-viewer.svelte';
 	import ReaderAligned from './reader-aligned.svelte';
 	import ReaderOptions from './reader-options.svelte';
@@ -20,18 +20,37 @@
 		noteId = id;
 		showNotes = true;
 	};
+
+	$: sourceLanguage = $readerInfo.language.source;
+	$: sourceFontFamily = $readerOptions.font[sourceLanguage];
+	$: sourceFont = fontOptions[sourceLanguage][sourceFontFamily];
+	$: translatedLanguage = $readerInfo.language.translated;
+	$: translatedFontFamily = $readerOptions.font[translatedLanguage];
+	$: translatedFont = fontOptions[translatedLanguage][translatedFontFamily];
 </script>
 
-{#if $readerOptions.aligned && $readerOptions.showSource && !$isMobile}
-	<ReaderAligned {sourceContent} {translatedContent} on:openNote={onOpenNote} />
-{:else}
-	<div class={divClass}>
-		{#if $readerOptions.showSource}
-			<ReaderUnaligned content={sourceContent} on:openNote={onOpenNote} />
-		{/if}
-		{#if !$isMobile || !$readerOptions.showSource}
-			<ReaderUnaligned content={translatedContent} on:openNote={onOpenNote} />
-		{/if}
-	</div>
-{/if}
+<div style={`--sourceFamily:'${sourceFont}';--translatedFamily:'${translatedFont}'`}>
+	{#if $readerOptions.aligned && $readerOptions.showSource && !$isMobile}
+		<ReaderAligned {sourceContent} {translatedContent} on:openNote={onOpenNote} />
+	{:else}
+		<div class={divClass}>
+			{#if $readerOptions.showSource}
+				<ReaderUnaligned
+					class="font-source"
+					content={sourceContent}
+					on:openNote={onOpenNote}
+					language={$readerInfo.language.source}
+				/>
+			{/if}
+			{#if !$isMobile || !$readerOptions.showSource}
+				<ReaderUnaligned
+					class="font-translated"
+					content={translatedContent}
+					on:openNote={onOpenNote}
+					language={$readerInfo.language.translated}
+				/>
+			{/if}
+		</div>
+	{/if}
+</div>
 <NoteViewer {notes} bind:open={showNotes} {noteId} />
