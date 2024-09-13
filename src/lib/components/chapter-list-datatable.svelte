@@ -117,7 +117,7 @@
 
 <div class="flex flex-col">
 	<div class="flex gap-8">
-		<span class="font-extrabold text-2xl">Chapters</span>
+		<h2 class="h2">Chapters</h2>
 		{#if edit}
 			<CreateChapterModal {novelId} />
 		{/if}

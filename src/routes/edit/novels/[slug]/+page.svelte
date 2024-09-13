@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
+	import CollaboratorsEdit from '$lib/components/collaborators-edit.svelte';
 	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { parsePbError } from '$lib/components/inputs/validation';
@@ -182,6 +183,7 @@
 				{/if}
 			</div>
 		</div>
+		<CollaboratorsEdit {novelId} />
 		<ChapterListDatatable edit {novelId} />
 	</div>
 {/if}
