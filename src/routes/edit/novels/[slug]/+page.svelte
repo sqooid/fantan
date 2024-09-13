@@ -1,20 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import ChapterListDatatable from '$lib/components/chapter-list-datatable.svelte';
+	import CollaboratorsEdit from '$lib/components/collaborators-edit.svelte';
 	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { parsePbError } from '$lib/components/inputs/validation';
-	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
+	import { NovelsSourceLanguageOptions, type NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { breadcrumbStore } from '$lib/stores/navigation';
-	import { pb } from '$lib/stores/pocketbase';
+	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { assign, debounce } from 'lodash-es';
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
 
-	const novelId = $page.params.slug;
+	$: novelId = $page.params.slug;
 	const queryClient = useQueryClient();
 
 	$: if ($novelQuery.data)
@@ -24,18 +25,25 @@
 			{ title: $novelQuery.data.title, href: `/novels/${novelId}` }
 		];
 
-	const novelQuery = useQuery(
-		['novel', novelId],
-		async () => {
-			const result = await pb.collection('novels').getOne(novelId, {});
-			return result;
-		},
-		{
+	const novelQuery = useQuery<NovelsResponse>({
+		enabled: false
+	});
+	$: if (novelId) {
+		novelQuery.setOptions({
+			queryKey: ['novel', novelId],
+			queryFn: async () => {
+				const result = await pb.collection('novels').getOne(novelId);
+				return result;
+			},
+			enabled: true,
 			onSuccess(data) {
 				assign(info, data);
+				info = info;
 			}
-		}
-	);
+		});
+	}
+
+	$: isOwner = $novelQuery.data?.owner === $authStore?.model?.id;
 
 	let savingDetails = false;
 	const novelDetailsMutation = useMutation(
@@ -59,7 +67,7 @@
 		}
 	);
 
-	const info = {
+	let info = {
 		title: '',
 		description: '',
 		cover: '',
@@ -125,6 +133,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="textarea"
@@ -133,6 +142,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					required
@@ -143,6 +153,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="text"
@@ -152,6 +163,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="select"
@@ -162,6 +174,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				{#if tainted}
 					<div in:slideBlur={{ duration: 150 }} out:blur={{ duration: 150 }} class="w-fit">
@@ -177,6 +190,7 @@
 				{/if}
 			</div>
 		</div>
+		<CollaboratorsEdit {novelId} {isOwner} />
 		<ChapterListDatatable edit {novelId} />
 	</div>
 {/if}
