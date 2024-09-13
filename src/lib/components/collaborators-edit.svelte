@@ -115,7 +115,7 @@
 			</Dialog.Root>
 		{/if}
 	</div>
-	<div>
+	<div class="flex gap-2">
 		{#each editors as editor}
 			<button
 				disabled={!isOwner}
