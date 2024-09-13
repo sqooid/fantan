@@ -23,7 +23,7 @@
 </script>
 
 <header
-	class={`fixed left-0 top-0 right-0 h-16 px-4 items-center border-b border-solid border-input grid grid-cols-[auto_1fr_auto] ${inReader ? 'bg-background' : 'backdrop-blur-xl'}`}
+	class={`fixed left-0 top-0 right-0 h-16 px-4 items-center border-b border-solid border-input grid grid-cols-[auto_1fr_auto] ${inReader ? 'bg-background' : 'backdrop-blur-xl'} z-10`}
 >
 	<div class="flex items-center gap-4">
 		{#if $isMobile}
