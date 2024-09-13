@@ -3,12 +3,12 @@
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import * as Dialog from '$lib/shadcn/components/ui/dialog';
 	import { pb } from '$lib/stores/pocketbase';
-	import { useQuery, useMutation, useQueryClient } from '@sveltestack/svelte-query';
-	import ValidatedField from './inputs/validated-field.svelte';
-	import { add } from 'lodash-es';
+	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
+	import ValidatedField from './inputs/validated-field.svelte';
 
 	export let novelId: string;
+	export let isOwner: boolean;
 
 	const queryClient = useQueryClient();
 
@@ -23,8 +23,6 @@
 				if (result.editors.length === 0) return [];
 				const editors = await fetch(pb.buildUrl(`/c/user?id=${result.editors.join(',')}`));
 				const data = await editors.json();
-				console.log(data);
-
 				return data;
 			},
 			enabled: true
@@ -91,33 +89,36 @@
 <div class="flex flex-col gap-4">
 	<div class="flex gap-8 items-center">
 		<h2 class="h2">Collaborators</h2>
-		<Dialog.Root bind:open>
-			<Dialog.Trigger asChild let:builder>
-				<Button variant="outline" builders={[builder]}>Add collaborator</Button>
-			</Dialog.Trigger>
-			<Dialog.Content>
-				<Dialog.Header>
-					<Dialog.Title>Add collaborator</Dialog.Title>
-					<Dialog.Description>
-						This user will be able to create and edit chapters for this novel.
-					</Dialog.Description>
-				</Dialog.Header>
-				<ValidatedField
-					label="User ID"
-					id="id"
-					type="text"
-					placeholder="User ID"
-					infoObject={addInfo}
-					errorObject={addErrors}
-					required
-				/>
-				<Button on:click={onAdd}>Add</Button>
-			</Dialog.Content>
-		</Dialog.Root>
+		{#if isOwner}
+			<Dialog.Root bind:open>
+				<Dialog.Trigger asChild let:builder>
+					<Button variant="outline" builders={[builder]}>Add collaborator</Button>
+				</Dialog.Trigger>
+				<Dialog.Content>
+					<Dialog.Header>
+						<Dialog.Title>Add collaborator</Dialog.Title>
+						<Dialog.Description>
+							This user will be able to create and edit chapters for this novel.
+						</Dialog.Description>
+					</Dialog.Header>
+					<ValidatedField
+						label="User ID"
+						id="id"
+						type="text"
+						placeholder="User ID"
+						infoObject={addInfo}
+						errorObject={addErrors}
+						required
+					/>
+					<Button on:click={onAdd}>Add</Button>
+				</Dialog.Content>
+			</Dialog.Root>
+		{/if}
 	</div>
 	<div>
 		{#each editors as editor}
 			<button
+				disabled={!isOwner}
 				on:click={() => promptRemove(editor.id, editor.name)}
 				class={badgeVariants({ variant: 'outline' })}>{editor.name}</button
 			>

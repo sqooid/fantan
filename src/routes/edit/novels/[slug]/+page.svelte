@@ -8,7 +8,7 @@
 	import { NovelsSourceLanguageOptions, type NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { breadcrumbStore } from '$lib/stores/navigation';
-	import { pb } from '$lib/stores/pocketbase';
+	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { assign, debounce } from 'lodash-es';
@@ -42,6 +42,8 @@
 			}
 		});
 	}
+
+	$: isOwner = $novelQuery.data?.owner === $authStore?.model?.id;
 
 	let savingDetails = false;
 	const novelDetailsMutation = useMutation(
@@ -131,6 +133,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="textarea"
@@ -139,6 +142,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					required
@@ -149,6 +153,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="text"
@@ -158,6 +163,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				<ValidatedField
 					type="select"
@@ -168,6 +174,7 @@
 					infoObject={info}
 					errorObject={errors}
 					on:input={onInput}
+					disabled={!isOwner}
 				/>
 				{#if tainted}
 					<div in:slideBlur={{ duration: 150 }} out:blur={{ duration: 150 }} class="w-fit">
@@ -183,7 +190,7 @@
 				{/if}
 			</div>
 		</div>
-		<CollaboratorsEdit {novelId} />
+		<CollaboratorsEdit {novelId} {isOwner} />
 		<ChapterListDatatable edit {novelId} />
 	</div>
 {/if}
