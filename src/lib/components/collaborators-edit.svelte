@@ -21,7 +21,7 @@
 			queryFn: async () => {
 				const result = await pb.collection('novels').getOne(novelId, { fields: 'editors' });
 				if (result.editors.length === 0) return [];
-				const editors = await fetch(pb.buildUrl(`/c/user?id=${result.editors.join(',')}`));
+				const editors = await fetch(pb.buildUrl(`/c/users?ids=${result.editors.join(',')}`));
 				const data = await editors.json();
 				return data;
 			},

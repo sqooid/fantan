@@ -1,6 +1,6 @@
 type CUserType = { username: string; name: string; id: string };
-routerAdd('GET', '/c/user', (c) => {
-	const ids = c.queryParam('id').split(',');
+routerAdd('GET', '/c/users', (c) => {
+	const ids = c.queryParam('ids').split(',');
 	const data: CUserType[] = [];
 	ids.forEach((id) => {
 		const result = new DynamicModel({ username: '', name: '', id: '' });

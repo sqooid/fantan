@@ -40,17 +40,19 @@
 		$readerInfo.language.source = novel.sourceLanguage;
 	}
 
-	const ownerQuery = useQuery<{ username: string; name: string }>({ enabled: false });
+	const ownerQuery = useQuery<{ username: string; name: string; id: string }>({ enabled: false });
 	$: if (novel?.owner) {
 		ownerQuery.setOptions({
 			queryKey: ['user', novel.owner],
 			queryFn: async () => {
-				const path = pb.buildUrl(`/c/user?id=${novel.owner}`);
+				const path = pb.buildUrl(`/c/users?ids=${novel.owner}`);
 				const result = await fetch(path);
+
 				if (!result.ok) {
 					throw new Error('Failed to fetch user');
 				}
-				return await result.json();
+				const body = await result.json();
+				return body[0];
 			},
 			enabled: true
 		});
