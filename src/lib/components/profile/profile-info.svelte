@@ -77,6 +77,21 @@
 				errorObject={errors}
 				on:input={onInput}
 				type="text"
+				id="id"
+				label="ID"
+				disabled
+				tooltip
+			>
+				<span slot="tooltip-content" class="max-w-8 text-wrap">
+					Copy this ID to be added as a collaborator to novels
+				</span>
+			</ValidatedField>
+			<ValidatedField
+				required
+				infoObject={info}
+				errorObject={errors}
+				on:input={onInput}
+				type="text"
 				id="username"
 				label="Username"
 				disabled
