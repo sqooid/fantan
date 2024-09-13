@@ -16,12 +16,15 @@
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import Breadcrumb from '$lib/components/navigation/breadcrumb.svelte';
 	import { isMobile } from '$lib/stores/breakpoints';
+	//@ts-ignore
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
 	storeHighlightJs.set(hljs);
 	initializeStores();
 	const queryClient = new QueryClient();
+	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 </script>
 
 <svelte:head>
@@ -31,6 +34,7 @@
 		href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+SC:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif+JP:wght@200..900&family=Noto+Serif+SC:wght@200..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
 		rel="stylesheet"
 	/>
+	{@html webManifestLink}
 	<title>Fantan</title>
 </svelte:head>
 
