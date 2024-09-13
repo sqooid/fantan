@@ -17,7 +17,7 @@
     "format": "prettier --write .",
     "test:integration": "playwright test",
     "test:unit": "vitest",
-    "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.svg"
+    "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.png"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
