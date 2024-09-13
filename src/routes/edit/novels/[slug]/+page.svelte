@@ -4,7 +4,7 @@
 	import ImageInput from '$lib/components/inputs/image-input.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import { parsePbError } from '$lib/components/inputs/validation';
-	import { NovelsSourceLanguageOptions } from '$lib/pocketbase-types';
+	import { NovelsSourceLanguageOptions, type NovelsResponse } from '$lib/pocketbase-types';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { pb } from '$lib/stores/pocketbase';
@@ -14,7 +14,7 @@
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
 
-	const novelId = $page.params.slug;
+	$: novelId = $page.params.slug;
 	const queryClient = useQueryClient();
 
 	$: if ($novelQuery.data)
@@ -24,18 +24,23 @@
 			{ title: $novelQuery.data.title, href: `/novels/${novelId}` }
 		];
 
-	const novelQuery = useQuery(
-		['novel', novelId],
-		async () => {
-			const result = await pb.collection('novels').getOne(novelId, {});
-			return result;
-		},
-		{
+	const novelQuery = useQuery<NovelsResponse>({
+		enabled: false
+	});
+	$: if (novelId) {
+		novelQuery.setOptions({
+			queryKey: ['novel', novelId],
+			queryFn: async () => {
+				const result = await pb.collection('novels').getOne(novelId);
+				return result;
+			},
+			enabled: true,
 			onSuccess(data) {
 				assign(info, data);
+				info = info;
 			}
-		}
-	);
+		});
+	}
 
 	let savingDetails = false;
 	const novelDetailsMutation = useMutation(
@@ -59,7 +64,7 @@
 		}
 	);
 
-	const info = {
+	let info = {
 		title: '',
 		description: '',
 		cover: '',
