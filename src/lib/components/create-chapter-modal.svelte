@@ -16,6 +16,8 @@
 
 	export let novelId: string;
 
+	let open = false;
+
 	const content: ChapterSection = { source: '', translated: '' };
 	const info: Record<string, any> = {
 		novel: novelId,
@@ -33,6 +35,7 @@
 		{
 			onSuccess(data, variables, context) {
 				queryClient.invalidateQueries(['chapters', novelId]);
+				open = false;
 				goto(`/edit/chapters/${data.id}`);
 			},
 			onError(error, variables, context) {
@@ -45,7 +48,7 @@
 	);
 </script>
 
-<Dialog>
+<Dialog bind:open>
 	<DialogTrigger class={buttonVariants({ variant: 'outline' })}>Create chapter</DialogTrigger>
 	<DialogContent>
 		<DialogHeader>

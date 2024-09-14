@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import CreateChapterModal from '$lib/components/create-chapter-modal.svelte';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import EditTips from '$lib/components/editor/edit-tips.svelte';
 	import InlineNoteEditor from '$lib/components/editor/inline-note-editor.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
-	import type { NovelsResponse } from '$lib/pocketbase-types';
+	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
 	import { breadcrumbStore } from '$lib/stores/navigation';
@@ -17,7 +18,7 @@
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
 
-	const chapterId = $page.params.slug;
+	$: chapterId = $page.params.slug;
 
 	let editor: SplitEditor;
 
@@ -32,14 +33,28 @@
 			}
 		];
 
-	const chapterQuery = useQuery(['chapter', chapterId], () => {
-		const result = pb.collection('chapters').getOne(chapterId);
-		return result;
-	});
-	const notesQuery = useQuery(['notes', chapterId], () => {
-		const result = pb.collection('chapters').getOne(chapterId, { fields: 'notes' });
-		return result;
-	});
+	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
+	$: {
+		chapterQuery.setOptions({
+			enabled: true,
+			queryKey: ['chapter', chapterId],
+			queryFn: async () => {
+				const result = await pb.collection('chapters').getOne(chapterId);
+				return result;
+			}
+		});
+	}
+	const notesQuery = useQuery<ChaptersResponse>({ enabled: false });
+	$: {
+		notesQuery.setOptions({
+			enabled: true,
+			queryKey: ['notes', chapterId],
+			queryFn: async () => {
+				const result = await pb.collection('chapters').getOne(chapterId, { fields: 'notes' });
+				return result;
+			}
+		});
+	}
 	$: content = $chapterQuery.data?.content as ChapterSection;
 	$: notes = $notesQuery.data?.notes as Record<string, string>;
 
@@ -136,7 +151,12 @@
 </script>
 
 <div class="flex flex-col w-full gap-4">
-	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Chapter edit</h1>
+	<div class="flex gap-8 items-center">
+		<h1 class="h1">Chapter edit</h1>
+		{#if $chapterQuery.data}
+			<CreateChapterModal novelId={$chapterQuery.data.novel} />
+		{/if}
+	</div>
 	<div class="flex w-full flex-col gap-4 transition-all">
 		{#if $chapterQuery.isSuccess}
 			<ValidatedField
