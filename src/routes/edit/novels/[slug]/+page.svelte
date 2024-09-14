@@ -23,7 +23,7 @@
 		$breadcrumbStore = [
 			{ title: 'Home', href: '/' },
 			{ title: 'Create', href: '/create' },
-			{ title: $novelQuery.data.title, href: `/novels/${novelId}` }
+			{ title: $novelQuery.data.title, href: `/edit/novels/${novelId}` }
 		];
 
 	const novelQuery = useQuery<NovelsResponse>({
