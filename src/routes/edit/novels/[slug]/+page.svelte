@@ -113,7 +113,7 @@
 </script>
 
 {#if $novelQuery.isSuccess}
-	<div class="flex flex-col gap-16 max-w-4xl mx-auto">
+	<div class="flex flex-col gap-16 max-w-4xl mx-auto mb-32">
 		<div class="flex gap-8">
 			<ImageInput
 				on:input={onChooseCover}

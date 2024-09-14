@@ -44,6 +44,7 @@ export type ChaptersRecord<Tcontent = unknown, Tnotes = unknown> = {
 	source?: string
 	title?: string
 	value: string
+	volume: number
 }
 
 export enum NovelsSourceLanguageOptions {

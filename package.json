@@ -7,7 +7,6 @@
     "build": "vite build",
     "dev:api": "./scripts/dev-api.sh",
     "stop:api": "cd src/pb && docker compose down",
-    "types:api": "./scripts/generate-pocketbase-types.sh",
     "build:api": "tsc ./src/pb/hooks/*.pb.ts --outDir ./pb_build --noCheck",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
@@ -17,7 +16,8 @@
     "format": "prettier --write .",
     "test:integration": "playwright test",
     "test:unit": "vitest",
-    "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.png"
+    "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.png",
+    "generate:types": "./scripts/generate-pocketbase-types.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
