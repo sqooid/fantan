@@ -11,6 +11,7 @@
 
 	import moment from 'moment';
 	import { Ellipsis } from '$lib/shadcn/components/ui/breadcrumb';
+	import MarkdownIt from 'markdown-it';
 
 	$: novelId = $page.params.slug;
 
@@ -43,6 +44,9 @@
 	});
 
 	$: lastChapter = $authStore?.model?.history?.[novelId] as string | undefined;
+
+	const md = new MarkdownIt();
+	$: descriptionHtml = $novelQuery.data ? md.render($novelQuery.data?.description) : '';
 
 	let nextChapter: ChaptersResponse | null = null;
 	$: if (lastChapter && $chaptersQuery.data?.length) {
@@ -82,7 +86,13 @@
 			<div class="h-full flex flex-col justify-between">
 				<div>
 					<h1 class="h1">{$novelQuery.data.title}</h1>
-					<p class="p">{$novelQuery.data.description}</p>
+					{#if descriptionHtml}
+						<div class="mt-7 milkdown">
+							{@html descriptionHtml}
+						</div>
+					{:else}
+						<p class="p">No description</p>
+					{/if}
 					<div class="flex items-center mt-4 gap-4">
 						{#if editors.includes($authStore?.model?.id)}
 							<Button href={`/edit/novels/${novelId}`} variant="outline">Edit</Button>

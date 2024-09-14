@@ -35,11 +35,7 @@
 				const result = await pb.collection('novels').getOne(novelId);
 				return result;
 			},
-			enabled: true,
-			onSuccess(data) {
-				assign(info, data);
-				info = info;
-			}
+			enabled: !tainted
 		});
 	}
 
@@ -67,7 +63,7 @@
 		}
 	);
 
-	let info = {
+	$: info = $novelQuery.data ?? {
 		title: '',
 		description: '',
 		cover: '',
@@ -81,6 +77,7 @@
 	const onInput = () => {
 		tainted = true;
 	};
+	$: novelQuery.setEnabled(!tainted);
 
 	const coverChangeMutation = useMutation(
 		async (file: File) => {
@@ -143,7 +140,14 @@
 					errorObject={errors}
 					on:input={onInput}
 					disabled={!isOwner}
-				/>
+					tooltip
+				>
+					<span slot="tooltip-content"
+						>Raw <a href="https://www.markdownguide.org/basic-syntax/" class="anchor"
+							>markdown syntax</a
+						> will be rendered for viewers</span
+					>
+				</ValidatedField>
 				<ValidatedField
 					required
 					type="text"
