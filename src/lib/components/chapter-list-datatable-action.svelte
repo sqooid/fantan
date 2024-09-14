@@ -21,7 +21,7 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Deleted chapter');
-				queryClient.invalidateQueries(['chapters', novelId]);
+				queryClient.invalidateQueries(['chapters', { novel: novelId }]);
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to delete chapter');

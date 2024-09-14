@@ -17,7 +17,7 @@
 	});
 	$: if (novelId) {
 		editorsQuery.setOptions({
-			queryKey: ['novel', 'editors', novelId],
+			queryKey: ['editors', { novel: novelId }],
 			queryFn: async () => {
 				const result = await pb.collection('novels').getOne(novelId, { fields: 'editors' });
 				if (result.editors.length === 0) return [];
@@ -36,7 +36,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				queryClient.invalidateQueries(['novel', 'editors', novelId]);
+				queryClient.invalidateQueries(['editors', { novel: novelId }]);
 				addInfo.id = '';
 				open = false;
 			},
@@ -66,7 +66,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				queryClient.invalidateQueries(['novel', 'editors', novelId]);
+				queryClient.invalidateQueries(['editors', { novel: novelId }]);
 				openRemove = false;
 			},
 			onError(error, variables, context) {

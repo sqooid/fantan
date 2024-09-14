@@ -17,7 +17,8 @@
 		goto('/');
 	};
 
-	$: inReader = $page.url.pathname.startsWith('/chapters');
+	const readerPattern = /\/read\/.+\/.+\/chapter-.+/;
+	$: inReader = readerPattern.test($page.url.pathname);
 
 	let showSidebar = false;
 </script>

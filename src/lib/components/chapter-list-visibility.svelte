@@ -19,8 +19,8 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Changed chapter visibility');
-				queryClient.invalidateQueries(['chapters', novelId]);
-				queryClient.invalidateQueries(['chapter', id]);
+				queryClient.invalidateQueries(['chapters', { novel: novelId }]);
+				queryClient.invalidateQueries(['chapter', { id }]);
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to change chapter visiblity');

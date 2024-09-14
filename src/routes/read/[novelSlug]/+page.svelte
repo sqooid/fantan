@@ -12,7 +12,7 @@
 	$: if (novelSlug) {
 		novelQuery.setOptions({
 			enabled: true,
-			queryKey: ['novel', novelSlug],
+			queryKey: ['novel', { slug: novelSlug }],
 			queryFn: () =>
 				pb
 					.collection('novels')
@@ -24,7 +24,7 @@
 </script>
 
 {#if $novelQuery.data}
-	<NovelsPage novelId={$novelQuery.data.id} />
+	<NovelsPage novelId={$novelQuery.data.id} {novelSlug} />
 {:else}
 	<GlobalLoadingBar />
 {/if}

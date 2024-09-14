@@ -35,7 +35,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				queryClient.invalidateQueries(['chapters', novelId]);
+				queryClient.invalidateQueries(['chapters', { novel: novelId }]);
 				open = false;
 				goto(`/edit/chapters/${data.id}`);
 			},

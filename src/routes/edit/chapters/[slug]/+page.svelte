@@ -37,7 +37,7 @@
 	$: {
 		chapterQuery.setOptions({
 			enabled: true,
-			queryKey: ['chapter', chapterId],
+			queryKey: ['chapter', { id: chapterId, full: true }],
 			queryFn: async () => {
 				const result = await pb.collection('chapters').getOne(chapterId);
 				return result;
@@ -48,7 +48,7 @@
 	$: {
 		notesQuery.setOptions({
 			enabled: true,
-			queryKey: ['notes', chapterId],
+			queryKey: ['notes', { chapterId: chapterId }],
 			queryFn: async () => {
 				const result = await pb.collection('chapters').getOne(chapterId, { fields: 'notes' });
 				return result;
@@ -62,7 +62,7 @@
 	$: if ($chapterQuery.data?.novel) {
 		novelQuery.setOptions({
 			enabled: true,
-			queryKey: ['novel', $chapterQuery.data?.novel],
+			queryKey: ['novel', { id: $chapterQuery.data.novel, full: false }],
 			queryFn: () => {
 				const result = pb
 					.collection('novels')

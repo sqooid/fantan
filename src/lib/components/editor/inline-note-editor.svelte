@@ -37,7 +37,7 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Note saved');
-				queryClient.invalidateQueries(['notes', chapterId]);
+				queryClient.invalidateQueries(['notes', { chapterId }]);
 				open = false;
 			},
 			onError(error, variables, context) {

@@ -13,26 +13,26 @@
 	import moment from 'moment';
 
 	export let novelId: string;
+	export let novelSlug = '';
 
 	$: if ($novelQuery.data)
 		$breadcrumbStore = [
 			{ title: 'Home', href: '/' },
-			{ title: $novelQuery.data.title, href: `/edit/novels/${novelId}` }
+			{ title: $novelQuery.data.title, href: `/read/${novelSlug}` }
 		];
 
 	const novelQuery = useQuery<NovelsResponse>({ enabled: false });
 	$: novelQuery.setOptions({
 		enabled: true,
-		queryKey: ['novel', novelId],
+		queryKey: ['novel', { id: novelId, full: true }],
 		queryFn: () => pb.collection('novels').getOne(novelId)
 	});
-	$: novelSlug = $novelQuery.data?.slug ?? '';
 	$: editors = [...($novelQuery.data?.editors ?? []), $novelQuery.data?.owner];
 
 	const chaptersQuery = useQuery<ChaptersResponse[]>({ enabled: false });
 	$: chaptersQuery.setOptions({
 		enabled: true,
-		queryKey: ['chapters', novelId],
+		queryKey: ['chapters', { novel: novelId, full: false }],
 		queryFn: async () => {
 			const result = await pb.collection('chapters').getFullList({
 				filter: pb.filter('novel = {:id} && published = true', { id: novelId }),
@@ -74,7 +74,7 @@
 		<div class="flex flex-col sm:grid grid-cols-[auto_1fr] gap-4">
 			{#if $novelQuery.data.cover}
 				<img
-					class="w-80 h-80 rounded-md self-center"
+					class="w-80 min-h-80 h-fit rounded-md self-center object-cover"
 					src={pb.files.getUrl($novelQuery.data, $novelQuery.data.cover)}
 					alt={`${$novelQuery.data.title} cover image`}
 				/>
