@@ -54,9 +54,10 @@ migrate(
 		});
 		//@ts-ignore
 		novelsCol.indexes = [
-			'CREATE UNIQUE INDEX `idx_5s7kVUu` ON `novels` (\n  `title`\n)'
-			// 'CREATE UNIQUE INDEX `novel_slug` ON `novels` (\n  `slug`\n)'
+			'CREATE UNIQUE INDEX `idx_5s7kVUu` ON `novels` (\n  `title`\n)',
+			'CREATE UNIQUE INDEX `novel_slug` ON `novels` (\n  `slug`\n)'
 		];
+		dao.saveCollection(novelsCol);
 	},
 	(db) => {
 		const dao = new Dao(db);
