@@ -7,7 +7,9 @@
     "build": "vite build",
     "dev:api": "./scripts/dev-api.sh",
     "stop:api": "cd src/pb && docker compose down",
-    "build:api": "tsc ./src/pb/hooks/*.pb.ts --outDir ./pb_build --noCheck",
+    "clean:api": "rm -rf src/pb/{pb_data,pb_migrations}/*",
+    "build:api": "tsc ./src/pb/**/*.ts --outDir ./pb_build --noCheck",
+    "build:migrations": "tsc ./src/pb/migrations/*.ts --outDir ./src/pb/pb_migrations --noCheck",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -17,7 +19,8 @@
     "test:integration": "playwright test",
     "test:unit": "vitest",
     "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.png",
-    "generate:types": "./scripts/generate-pocketbase-types.sh"
+    "generate:types": "./scripts/generate-pocketbase-types.sh",
+    "generate:migration": "./scripts/create-migration.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
