@@ -31,7 +31,7 @@
 	});
 	$: if (novelId) {
 		novelQuery.setOptions({
-			queryKey: ['novel', novelId],
+			queryKey: ['novel', { id: novelId, full: true }],
 			queryFn: async () => {
 				const result = await pb.collection('novels').getOne(novelId);
 				return result;
@@ -51,7 +51,7 @@
 		{
 			onSuccess(data, variables, context) {
 				toast.success('Saved changes');
-				queryClient.invalidateQueries(['novel', novelId]);
+				queryClient.invalidateQueries(['novel', { id: novelId }]);
 				tainted = false;
 			},
 			onError(error, variables, context) {
@@ -88,7 +88,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				queryClient.invalidateQueries(['novel', novelId]);
+				queryClient.invalidateQueries(['novel', { id: novelId }]);
 				toast.success('Updated cover image');
 			},
 			onError(error, variables, context) {

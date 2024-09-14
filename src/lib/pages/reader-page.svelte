@@ -29,7 +29,7 @@
 
 	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
 	$: chapterQuery.setOptions({
-		queryKey: ['chapter', chapterId],
+		queryKey: ['chapter', { id: chapterId, full: true }],
 		queryFn: async () => {
 			const result = await pb.collection('chapters').getOne(chapterId, { expand: 'novel' });
 			return result;
@@ -46,7 +46,7 @@
 	const ownerQuery = useQuery<{ username: string; name: string; id: string }>({ enabled: false });
 	$: if (novel?.owner) {
 		ownerQuery.setOptions({
-			queryKey: ['user', novel.owner],
+			queryKey: ['user', { id: novel.owner }],
 			queryFn: async () => {
 				const path = pb.buildUrl(`/c/users?ids=${novel.owner}`);
 				const result = await fetch(path);
@@ -65,7 +65,7 @@
 	$: if ($chapterQuery.data) {
 		chaptersQuery.setOptions({
 			enabled: true,
-			queryKey: ['chapters', $chapterQuery.data.novel],
+			queryKey: ['chapters', { novelId: $chapterQuery.data.novel, full: false }],
 			queryFn: async () => {
 				const result = await pb.collection('chapters').getFullList({
 					filter: pb.filter('novel = {:novelId} && published = true', {
@@ -85,7 +85,6 @@
 	$: data = $chapterQuery.data;
 	$: chapterContent = data?.content as ChapterSection | null;
 	$: notes = (data?.notes ?? {}) as Record<string, string>;
-	$: console.log(chapterContent);
 
 	const finishedChapter = debounce(async () => {
 		console.log('finished chapter');

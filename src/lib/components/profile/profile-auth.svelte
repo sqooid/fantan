@@ -8,7 +8,7 @@
 
 	$: info = ($authStore?.model ?? {}) as UsersResponse;
 
-	const authProvidersQuery = useQuery(['user'], async () => {
+	const authProvidersQuery = useQuery(['user', 'auth'], async () => {
 		const linked = await pb.collection('users').listExternalAuths(info.id);
 		const available = await pb.collection('users').listAuthMethods();
 		return { linked, available };

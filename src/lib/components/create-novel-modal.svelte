@@ -40,7 +40,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				queryClient.invalidateQueries(['novels']);
+				queryClient.invalidateQueries(['novels', 'edit']);
 				goto(`/edit/novels/${data.id}`);
 			},
 			onError(error, variables, context) {

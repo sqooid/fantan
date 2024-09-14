@@ -21,7 +21,7 @@
 	export let edit = false;
 
 	const chaptersQuery = useQuery(
-		['chapters', novelId],
+		['chapters', { novel: novelId, full: false }],
 		async () => {
 			const result = await pb.collection('chapters').getList(0, 100, {
 				filter: pb.filter('novel = {:novelId}', { novelId }),
