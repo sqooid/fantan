@@ -17,7 +17,8 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 EXPOSE 8090
 
 RUN mkdir -p /pb_hooks
-COPY ./pb_build /pb_hooks
+COPY ./pb_build/hooks /pb_hooks
+COPY ./pb_build/migrations /pb_migrations
 
 COPY --from=downloader /pocketbase /usr/local/bin/pocketbase
 ENTRYPOINT ["/usr/local/bin/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb_data", "--publicDir=/pb_public", "--hooksDir=/pb_hooks"]

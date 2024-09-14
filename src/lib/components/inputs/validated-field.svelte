@@ -12,7 +12,7 @@
 	import { slide } from 'svelte/transition';
 
 	export let label: string;
-	export let type: 'text' | 'email' | 'password' | 'file' | 'textarea' | 'select';
+	export let type: 'text' | 'number' | 'email' | 'password' | 'file' | 'textarea' | 'select';
 	export let tooltipIcon = Info;
 	export let id: string;
 	export let placeholder = '';
@@ -57,13 +57,13 @@
 		<Label for={elementId} class="relative"
 			>{label}{required ? '*' : ''}
 			{#if tooltip}
-				<Tooltip.Root>
+				<Tooltip.Root openDelay={0}>
 					<Tooltip.Trigger asChild let:builder>
 						<Button builders={[builder]} variant="ghost" class="h-fit w-fit p-1" size="icon">
 							<svelte:component this={tooltipIcon} class="w-3 h-3 p-0" />
 						</Button>
 					</Tooltip.Trigger>
-					<Tooltip.Content>
+					<Tooltip.Content class="max-w-sm">
 						<slot name="tooltip-content" />
 					</Tooltip.Content>
 				</Tooltip.Root>
@@ -75,6 +75,18 @@
 				{disabled}
 				id={elementId}
 				type="text"
+				class={classes}
+				title={label}
+				placeholder={placeholder || label}
+				bind:value={infoObject[id]}
+				{autocomplete}
+				on:input
+			/>
+		{:else if type === 'number'}
+			<Input
+				{disabled}
+				id={elementId}
+				type="number"
 				class={classes}
 				title={label}
 				placeholder={placeholder || label}

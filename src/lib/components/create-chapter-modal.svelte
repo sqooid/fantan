@@ -22,6 +22,7 @@
 	const info: Record<string, any> = {
 		novel: novelId,
 		value: '',
+		volume: 1,
 		title: '',
 		content
 	};
@@ -61,6 +62,15 @@
 				id="value"
 				label="Number"
 				placeholder="e.g. 7 or 7.1"
+				infoObject={info}
+				errorObject={errors}
+			/>
+			<ValidatedField
+				required
+				type="number"
+				id="volume"
+				label="Volume"
+				placeholder="e.g. 1"
 				infoObject={info}
 				errorObject={errors}
 			/>

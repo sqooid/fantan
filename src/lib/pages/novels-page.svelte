@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
+	import { Ellipsis } from '$lib/shadcn/components/ui/breadcrumb';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import * as DropdownMenu from '$lib/shadcn/components/ui/dropdown-menu';
 	import { breadcrumbStore } from '$lib/stores/navigation';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
-	import { useQuery, useQueryClient } from '@sveltestack/svelte-query';
+	import { chapterToPath } from '$lib/utils/data-transform';
+	import { useQuery } from '@sveltestack/svelte-query';
 	import { BookText } from 'lucide-svelte';
-	import * as DropdownMenu from '$lib/shadcn/components/ui/dropdown-menu';
-	import moment from 'moment';
-	import { Ellipsis } from '$lib/shadcn/components/ui/breadcrumb';
 	import MarkdownIt from 'markdown-it';
+	import moment from 'moment';
 
-	$: novelId = $page.params.slug;
+	export let novelId: string;
 
 	$: if ($novelQuery.data)
 		$breadcrumbStore = [
@@ -26,6 +26,7 @@
 		queryKey: ['novel', novelId],
 		queryFn: () => pb.collection('novels').getOne(novelId)
 	});
+	$: novelSlug = $novelQuery.data?.slug ?? '';
 	$: editors = [...($novelQuery.data?.editors ?? []), $novelQuery.data?.owner];
 
 	const chaptersQuery = useQuery<ChaptersResponse[]>({ enabled: false });
@@ -35,7 +36,7 @@
 		queryFn: async () => {
 			const result = await pb.collection('chapters').getFullList({
 				filter: pb.filter('novel = {:id} && published = true', { id: novelId }),
-				fields: 'id,value,title,updated'
+				fields: 'id,value,title,updated,volume'
 			});
 			result.sort((x, y) => semverChapterSort(x.value, y.value));
 			return result;
@@ -45,7 +46,7 @@
 	$: lastChapter = $authStore?.model?.history?.[novelId] as string | undefined;
 
 	const md = new MarkdownIt();
-	$: descriptionHtml = $novelQuery.data ? md.render($novelQuery.data?.description) : '';
+	$: descriptionHtml = md.render($novelQuery.data?.description ?? '');
 
 	let nextChapter: ChaptersResponse | null = null;
 	$: if (lastChapter && $chaptersQuery.data?.length) {
@@ -68,7 +69,7 @@
 	};
 </script>
 
-{#if $novelQuery.isSuccess}
+{#if $novelQuery.data}
 	<div class="flex flex-col gap-16 max-w-4xl mx-auto pb-32">
 		<div class="flex flex-col sm:grid grid-cols-[auto_1fr] gap-4">
 			{#if $novelQuery.data.cover}
@@ -108,12 +109,12 @@
 						</DropdownMenu.Root>
 					</div>
 				</div>
-				{#if $chaptersQuery.data}
+				{#if $chaptersQuery.data?.length}
 					<Button
 						class="w-fit mt-8"
 						href={nextChapter
-							? `/chapters/${nextChapter.id}`
-							: `/chapters/${$chaptersQuery.data[0]?.id}`}
+							? chapterToPath(nextChapter, novelSlug)
+							: chapterToPath($chaptersQuery.data[0], novelSlug)}
 					>
 						{nextChapter ? `Continue from Chapter ${nextChapter.value}` : 'Start reading'}
 					</Button>
@@ -125,7 +126,7 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				{#each $chaptersQuery.data as chapter}
 					<Button
-						href={`/chapters/${chapter.id}`}
+						href={chapterToPath(chapter, novelSlug)}
 						class="w-full flex flex-col items-start h-fit gap-1"
 						variant="ghost"
 					>
