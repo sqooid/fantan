@@ -143,7 +143,14 @@
 					errorObject={errors}
 					on:input={onInput}
 					disabled={!isOwner}
-				/>
+					tooltip
+				>
+					<span slot="tooltip-content"
+						>Raw <a href="https://www.markdownguide.org/basic-syntax/" class="anchor"
+							>markdown syntax</a
+						> will be rendered for viewers</span
+					>
+				</ValidatedField>
 				<ValidatedField
 					required
 					type="text"

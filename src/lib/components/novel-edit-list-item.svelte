@@ -1,13 +1,24 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import type { NovelsResponse } from '$lib/pocketbase-types';
 	import CardContent from '$lib/shadcn/components/ui/card/card-content.svelte';
 	import CardTitle from '$lib/shadcn/components/ui/card/card-title.svelte';
 	import Card from '$lib/shadcn/components/ui/card/card.svelte';
 	import { pb } from '$lib/stores/pocketbase';
 	import { BookText } from 'lucide-svelte';
+	import MarkdownIt from 'markdown-it';
+	import plainText from 'markdown-it-plain-text';
 
 	export let novel: NovelsResponse;
 	export let edit = true;
+
+	const md = new MarkdownIt().use(plainText);
+	let description = '';
+	$: if (browser) {
+		md.render(novel.description);
+		//@ts-ignore
+		description = md.plainText;
+	}
 </script>
 
 <Card>
@@ -29,7 +40,7 @@
 			</CardTitle>
 			<div class="flex flex-col justify-between h-full gap-4">
 				<small class="opacity-50 small overflow-ellipsis line-clamp-4">
-					{novel.description || 'No description'}
+					{description || 'No description'}
 				</small>
 				<p class="muted">
 					{novel.chaptersCount} chapters

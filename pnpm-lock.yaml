@@ -38,6 +38,9 @@ importers:
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
+      markdown-it-plain-text:
+        specifier: ^0.3.0
+        version: 0.3.0
       mdast-util-to-markdown:
         specifier: 2.1.0
         version: 2.1.0
@@ -3417,6 +3420,9 @@ packages:
   make-fetch-happen@9.1.0:
     resolution: {integrity: sha512-+zopwDy7DNknmwPQplem5lAZX/eCOzSvSNNcSKm5eVwTkOBzoktEfXsa9L23J/GIRhxRsaxzkPEhrJEpE2F4Gg==}
     engines: {node: '>= 10'}
+
+  markdown-it-plain-text@0.3.0:
+    resolution: {integrity: sha512-JT5x7oXZaTY6lwxsnxaIAT4hm5Q2Mi8dZoCaCNg3s7JXmDxY84D90OtV0US436UvN4zOUHoac4ExceTogydOLw==}
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
@@ -8935,6 +8941,8 @@ snapshots:
       - bluebird
       - supports-color
     optional: true
+
+  markdown-it-plain-text@0.3.0: {}
 
   markdown-it@14.1.0:
     dependencies:
