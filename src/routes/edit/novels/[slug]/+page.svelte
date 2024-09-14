@@ -12,6 +12,7 @@
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
 	import { assign, debounce } from 'lodash-es';
+	import { CircleAlert } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';
 
@@ -65,6 +66,7 @@
 
 	$: info = $novelQuery.data ?? {
 		title: '',
+		slug: '',
 		description: '',
 		cover: '',
 		originalAuthor: '',
@@ -132,6 +134,24 @@
 					on:input={onInput}
 					disabled={!isOwner}
 				/>
+				<ValidatedField
+					required
+					type="text"
+					id="slug"
+					label="Slug"
+					infoObject={info}
+					errorObject={errors}
+					on:input={onInput}
+					disabled={!isOwner}
+					placeholder="e.g. abc123"
+					tooltip
+					tooltipIcon={CircleAlert}
+				>
+					<span slot="tooltip-content"
+						>Changing this will break existing links to this novel. Try to avoid changing this if
+						possible. Can contain [a-z0-9] and -</span
+					>
+				</ValidatedField>
 				<ValidatedField
 					type="textarea"
 					id="description"

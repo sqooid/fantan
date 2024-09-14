@@ -20,7 +20,8 @@
     "test:unit": "vitest",
     "generate:assets": "pwa-assets-generator --preset minimal-2023 static/fantan.png",
     "generate:types": "./scripts/generate-pocketbase-types.sh",
-    "generate:migration": "./scripts/create-migration.sh"
+    "generate:migration": "./scripts/create-migration.sh",
+    "pocketbase": "docker exec -it fantan-pb-dev pocketbase"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",

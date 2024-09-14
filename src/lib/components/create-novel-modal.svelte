@@ -12,6 +12,7 @@
 
 	const info = {
 		title: '',
+		slug: '',
 		description: '',
 		cover: '',
 		originalAuthor: '',
@@ -29,6 +30,7 @@
 				form.append('cover', file);
 			}
 			form.append('title', info.title);
+			form.append('slug', info.slug);
 			form.append('description', info.description);
 			form.append('owner', $authStore?.model?.id);
 			form.append('originalAuthor', info.originalAuthor);
@@ -73,6 +75,21 @@
 				infoObject={info}
 				errorObject={errors}
 			/>
+			<ValidatedField
+				required
+				type="text"
+				id="slug"
+				label="Slug"
+				placeholder="e.g. my-novel"
+				infoObject={info}
+				errorObject={errors}
+				tooltip
+			>
+				<span slot="tooltip-content"
+					>This determines the url of the novel - e.g. /my-novel/volume-1/chapter-1. Can contain
+					[a-z0-9] and -</span
+				>
+			</ValidatedField>
 			<ValidatedField
 				type="textarea"
 				id="description"

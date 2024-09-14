@@ -57,13 +57,13 @@
 		<Label for={elementId} class="relative"
 			>{label}{required ? '*' : ''}
 			{#if tooltip}
-				<Tooltip.Root>
+				<Tooltip.Root openDelay={0}>
 					<Tooltip.Trigger asChild let:builder>
 						<Button builders={[builder]} variant="ghost" class="h-fit w-fit p-1" size="icon">
 							<svelte:component this={tooltipIcon} class="w-3 h-3 p-0" />
 						</Button>
 					</Tooltip.Trigger>
-					<Tooltip.Content>
+					<Tooltip.Content class="max-w-sm">
 						<slot name="tooltip-content" />
 					</Tooltip.Content>
 				</Tooltip.Root>
