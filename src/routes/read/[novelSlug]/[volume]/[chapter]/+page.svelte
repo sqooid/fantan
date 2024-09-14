@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import GlobalLoadingBar from '$lib/components/global-loading-bar.svelte';
 	import ReaderPage from '$lib/pages/reader-page.svelte';
 	import type { ChaptersResponse } from '$lib/pocketbase-types';
 	import { pb } from '$lib/stores/pocketbase';
@@ -56,5 +57,5 @@
 {#if $chapterQuery.data}
 	<ReaderPage chapterId={$chapterQuery.data.id} chapterLinkFormat={linkFormat} {novelSlug} />
 {:else}
-	<p>Loading...</p>
+	<GlobalLoadingBar />
 {/if}

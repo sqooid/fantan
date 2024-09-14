@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import GlobalLoadingBar from '$lib/components/global-loading-bar.svelte';
 	import NovelsPage from '$lib/pages/novels-page.svelte';
 	import type { NovelsResponse } from '$lib/pocketbase-types';
 	import { pb } from '$lib/stores/pocketbase';
@@ -25,5 +26,5 @@
 {#if $novelQuery.data}
 	<NovelsPage novelId={$novelQuery.data.id} />
 {:else}
-	<p>Loading...</p>
+	<GlobalLoadingBar />
 {/if}
