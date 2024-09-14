@@ -7,11 +7,12 @@
 	import { readerInfo } from '$lib/stores/options';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
-	import { chapterToDisplay } from '$lib/utils/data-transform';
+	import { chapterToDisplay, chapterToPath } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
 	import { debounce } from 'lodash-es';
 
 	export let chapterId: string;
+	export let novelSlug: string = '';
 	export let chapterLinkFormat = (chapter: ChaptersResponse) => {
 		return `/chapters/${chapter.id}`;
 	};
@@ -19,10 +20,10 @@
 	$: if (novel && $chapterQuery.data)
 		$breadcrumbStore = [
 			{ title: 'Home', href: '/' },
-			{ title: novel.title, href: `/novels/${novel.id}` },
+			{ title: novel.title, href: `/read/${novelSlug}` },
 			{
 				title: chapterToDisplay($chapterQuery.data),
-				href: `/chapters/${chapterId}`
+				href: chapterToPath($chapterQuery.data, novel.slug)
 			}
 		];
 
@@ -70,7 +71,7 @@
 					filter: pb.filter('novel = {:novelId} && published = true', {
 						novelId: $chapterQuery.data.novel
 					}),
-					fields: 'id,value,title'
+					fields: 'id,value,title,volume'
 				});
 				result.sort((a, b) => semverChapterSort(a.value, b.value));
 				return result;
@@ -84,6 +85,7 @@
 	$: data = $chapterQuery.data;
 	$: chapterContent = data?.content as ChapterSection | null;
 	$: notes = (data?.notes ?? {}) as Record<string, string>;
+	$: console.log(chapterContent);
 
 	const finishedChapter = debounce(async () => {
 		console.log('finished chapter');

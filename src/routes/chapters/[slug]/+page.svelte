@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import ReaderPage from './reader-page.svelte';
+	import ReaderPage from '$lib/pages/reader-page.svelte';
 
 	$: chapterId = $page.params.slug;
 </script>

@@ -22,7 +22,7 @@
 </script>
 
 <Card>
-	<a href={`/${edit ? 'edit/' : ''}novels/${novel.id}`}>
+	<a href={edit ? `/edit/${novel.id}` : `/read/${novel.slug}`}>
 		<CardContent class="p-3 sm:p-6 flex flex-col gap-4 w-full">
 			{#if novel.cover}
 				<img

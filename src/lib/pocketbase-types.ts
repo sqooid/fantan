@@ -60,6 +60,7 @@ export type NovelsRecord = {
 	originalAuthor: string
 	originalSource?: string
 	owner: RecordIdString
+	slug: string
 	sourceLanguage: NovelsSourceLanguageOptions
 	title: string
 }

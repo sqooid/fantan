@@ -35,6 +35,7 @@
 	};
 
 	const transformNodes = async (e: HTMLElement) => {
+		root.innerHTML = '';
 		const sourceNodes = await render(sourceContent);
 		const translatedNodes = await render(translatedContent);
 
@@ -50,7 +51,7 @@
 	};
 
 	let root: HTMLElement;
-	$: if (root && (sourceContent || translatedContent)) transformNodes(root);
+	$: if (root && (sourceContent || translatedContent || true)) transformNodes(root);
 </script>
 
 <div class="w-full">
