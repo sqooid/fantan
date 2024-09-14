@@ -35,11 +35,7 @@
 				const result = await pb.collection('novels').getOne(novelId);
 				return result;
 			},
-			enabled: true,
-			onSuccess(data) {
-				assign(info, data);
-				info = info;
-			}
+			enabled: !tainted
 		});
 	}
 
@@ -67,7 +63,7 @@
 		}
 	);
 
-	let info = {
+	$: info = $novelQuery.data ?? {
 		title: '',
 		description: '',
 		cover: '',
@@ -81,6 +77,7 @@
 	const onInput = () => {
 		tainted = true;
 	};
+	$: novelQuery.setEnabled(!tainted);
 
 	const coverChangeMutation = useMutation(
 		async (file: File) => {
