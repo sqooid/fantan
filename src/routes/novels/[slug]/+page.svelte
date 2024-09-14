@@ -87,7 +87,7 @@
 				<div>
 					<h1 class="h1">{$novelQuery.data.title}</h1>
 					{#if descriptionHtml}
-						<div class="mt-7">
+						<div class="mt-7 milkdown">
 							{@html descriptionHtml}
 						</div>
 					{:else}
