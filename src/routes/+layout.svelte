@@ -30,7 +30,7 @@
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
 	let metaDescription = 'Read unofficial translations of web novels';
-	let metaLogo = `${data.host}/fantan.png`;
+	let metaLogo = `${data.origin}/fantan.png`;
 </script>
 
 <svelte:head>
@@ -43,7 +43,7 @@
 	{@html webManifestLink}
 	<title>Fantan</title>
 	<meta name="description" content={metaDescription} />
-	{#if !browser}
+	{#if !browser && !data.path.startsWith('/read')}
 		<meta property="og:site_name" content="Fantan" />
 		<!-- facebook meta tags -->
 		<meta property="og:title" content="Fantan" />
