@@ -22,25 +22,27 @@
 	$: fonts = getFonts($readerInfo, $editorOptions);
 </script>
 
-<div
-	class={`${$editorOptions.showSource ? 'grid-cols-2' : 'grid-cols-1'} grid gap-x-16 py-8 w-fit mx-auto`}
-	style={`--sourceFamily:'${fonts.sourceFont}';--translatedFamily:'${fonts.translatedFont}'`}
->
-	{#if $editorOptions.showSource}
+<div class="w-full">
+	<div
+		class={`${$editorOptions.showSource ? 'grid-cols-2' : 'grid-cols-1'} grid gap-x-8 lg:gap-x-24 py-8 mx-auto`}
+		style={`--sourceFamily:'${fonts.sourceFont}';--translatedFamily:'${fonts.translatedFont}'`}
+	>
+		{#if $editorOptions.showSource}
+			<SplitEditorRawSideCooked
+				on:editNote
+				bind:content={content.source}
+				on:input={onInput}
+				bind:this={sourceEditor}
+				placeholder={sourceLanguage}
+				class="font-source justify-self-end"
+			/>
+		{/if}
 		<SplitEditorRawSideCooked
 			on:editNote
-			bind:content={content.source}
+			bind:content={content.translated}
 			on:input={onInput}
-			bind:this={sourceEditor}
-			placeholder={sourceLanguage}
-			class="font-source"
+			bind:this={targetEditor}
+			class="font-translated self-start"
 		/>
-	{/if}
-	<SplitEditorRawSideCooked
-		on:editNote
-		bind:content={content.translated}
-		on:input={onInput}
-		bind:this={targetEditor}
-		class="font-translated"
-	/>
+	</div>
 </div>
