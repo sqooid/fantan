@@ -6,6 +6,7 @@
 	import EditTips from '$lib/components/editor/edit-tips.svelte';
 	import InlineNoteEditor from '$lib/components/editor/inline-note-editor.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
+	import GlobalLoadingBar from '$lib/components/global-loading-bar.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
@@ -158,7 +159,7 @@
 		{/if}
 	</div>
 	<div class="flex w-full flex-col gap-4 transition-all">
-		{#if $chapterQuery.isSuccess}
+		{#if $chapterQuery.data}
 			<ValidatedField
 				type="text"
 				id="value"
@@ -185,6 +186,7 @@
 		{:else}
 			<Skeleton class="h-16" />
 			<Skeleton class="h-16" />
+			<GlobalLoadingBar />
 		{/if}
 	</div>
 	<EditTips />

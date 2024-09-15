@@ -90,7 +90,7 @@
 	});
 </script>
 
-<div class="w-full h-full outline-none focus-visible:outline-none">
+<div class="h-full outline-none focus-visible:outline-none max-w-prose">
 	<div use:editor class="relative">
 		{#if showPlaceholder}
 			<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
