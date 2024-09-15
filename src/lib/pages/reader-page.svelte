@@ -29,7 +29,7 @@
 
 	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
 	$: chapterQuery.setOptions({
-		queryKey: ['chapter', { id: chapterId, full: true }],
+		queryKey: ['chapter', { id: chapterId, full: true, expand: 'novel' }],
 		queryFn: async () => {
 			const result = await pb.collection('chapters').getOne(chapterId, { expand: 'novel' });
 			return result;
@@ -42,6 +42,10 @@
 		$novelIdStore = novel.id;
 		$readerInfo.language.source = novel.sourceLanguage;
 	}
+
+	$: canEdit =
+		$authStore?.isValid &&
+		(novel?.owner === $authStore?.model?.id || novel?.editors.includes($authStore?.model?.id));
 
 	const ownerQuery = useQuery<{ username: string; name: string; id: string }>({ enabled: false });
 	$: if (novel?.owner) {
@@ -112,6 +116,11 @@
 <svelte:document on:scroll={onScroll} />
 
 <div class="flex flex-col w-full gap-4">
+	{#if canEdit}
+		<div class="flex justify-end">
+			<Button href={`/edit/chapters/${chapterId}`} variant="outline">Edit</Button>
+		</div>
+	{/if}
 	<div class="max-w-prose self-center flex flex-col gap-8">
 		{#if data}
 			<h1 class="h1 mx-auto">Chapter {data.value}{data.title ? ` - ${data.title}` : ''}</h1>

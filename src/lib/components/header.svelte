@@ -11,6 +11,7 @@
 	import ReaderOptions from './reader/reader-options.svelte';
 	import UserDropdown from './navigation/user-dropdown.svelte';
 	import { novelIdStore } from '$lib/stores/navigation';
+	import { readerOptions } from '$lib/stores/options';
 
 	const onLogout = () => {
 		$authStore?.clear();
@@ -19,6 +20,8 @@
 
 	const readerPattern = /\/read\/.+\/.+\/chapter-.+/;
 	$: inReader = readerPattern.test($page.url.pathname);
+	const editorPattern = /\/edit\/chapters\/.+/;
+	$: inEditor = editorPattern.test($page.url.pathname);
 
 	let showSidebar = false;
 </script>
@@ -42,7 +45,9 @@
 	<div></div>
 	<div class="flex items-center gap-4">
 		{#if inReader}
-			<ReaderOptions />
+			<ReaderOptions title="Reader options" reader />
+		{:else if inEditor}
+			<ReaderOptions title="Editor options" />
 		{/if}
 		{#if !$isMobile}
 			<ModeToggle />

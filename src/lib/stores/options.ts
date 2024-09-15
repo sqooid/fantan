@@ -44,8 +44,8 @@ export type Languages = keyof typeof fontOptions;
 
 export type ReaderOptions = typeof defaultReaderOptions;
 
-const createReaderOptionStore = () => {
-	const existing = browser ? localStorage.getItem('readerOptions') : null;
+const createReaderOptionStore = (key: string) => {
+	const existing = browser ? localStorage.getItem(key) : null;
 	const options: ReaderOptions = existing
 		? JSON.parse(existing)
 		: { aligned: true, showSource: !get(isMobile) };
@@ -59,9 +59,10 @@ const createReaderOptionStore = () => {
 	return { subscribe, set: persistentSet };
 };
 
-export const readerOptions = createReaderOptionStore();
+export const readerOptions = createReaderOptionStore('readerOptions');
+export const editorOptions = createReaderOptionStore('editorOptions');
 
-type ReaderInfo = {
+export type ReaderInfo = {
 	language: {
 		source: Languages;
 		translated: Languages;

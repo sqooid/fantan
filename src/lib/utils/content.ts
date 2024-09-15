@@ -1,4 +1,5 @@
 import type { ChapterSection } from '$lib/components/editor/content-types';
+import { fontOptions, type ReaderInfo, type ReaderOptions } from '$lib/stores/options';
 import { max } from 'lodash-es';
 
 export const sectionedToRaw = (s: ChapterSection[]) => {
@@ -45,4 +46,14 @@ export const semverChapterSort = (l: string, r: string) => {
 		if (rv < lv) return 1;
 	}
 	return lt.length === rt.length ? 0 : lt.length < rt.length ? -1 : 1;
+};
+
+export const getFonts = (info: ReaderInfo, options: ReaderOptions) => {
+	const sourceLanguage = info.language.source;
+	const sourceFontFamily = options.font[sourceLanguage];
+	const sourceFont = fontOptions[sourceLanguage][sourceFontFamily];
+	const translatedLanguage = info.language.translated;
+	const translatedFontFamily = options.font[translatedLanguage];
+	const translatedFont = fontOptions[translatedLanguage][translatedFontFamily];
+	return { sourceFont, translatedFont };
 };

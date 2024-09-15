@@ -1,18 +1,21 @@
 <script lang="ts">
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import ChapterListVisibility from '$lib/components/chapter-list-visibility.svelte';
 	import CreateChapterModal from '$lib/components/create-chapter-modal.svelte';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import EditTips from '$lib/components/editor/edit-tips.svelte';
 	import InlineNoteEditor from '$lib/components/editor/inline-note-editor.svelte';
 	import SplitEditor from '$lib/components/editor/split-editor.svelte';
+	import GlobalLoadingBar from '$lib/components/global-loading-bar.svelte';
 	import ValidatedField from '$lib/components/inputs/validated-field.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
 	import { breadcrumbStore } from '$lib/stores/navigation';
+	import { readerInfo } from '$lib/stores/options';
 	import { pb } from '$lib/stores/pocketbase';
-	import { chapterToDisplay } from '$lib/utils/data-transform';
+	import { chapterToDisplay, chapterToPath } from '$lib/utils/data-transform';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery } from '@sveltestack/svelte-query';
 	import { toast } from 'svelte-sonner';
@@ -66,10 +69,15 @@
 			queryFn: () => {
 				const result = pb
 					.collection('novels')
-					.getOne($chapterQuery.data?.novel, { fields: 'sourceLanguage,title,id' });
+					.getOne($chapterQuery.data?.novel, { fields: 'sourceLanguage,title,id,slug' });
 				return result;
 			}
 		});
+	}
+
+	$: if ($novelQuery.data) {
+		$readerInfo.language.source = $novelQuery.data.sourceLanguage;
+		$readerInfo.language.translated = 'English';
 	}
 
 	$: info = {
@@ -151,14 +159,28 @@
 </script>
 
 <div class="flex flex-col w-full gap-4">
-	<div class="flex gap-8 items-center">
-		<h1 class="h1">Chapter edit</h1>
-		{#if $chapterQuery.data}
-			<CreateChapterModal novelId={$chapterQuery.data.novel} />
+	<div class="flex justify-between">
+		<div class="flex gap-8 items-center">
+			<h1 class="h1">Chapter edit</h1>
+			{#if $chapterQuery.data}
+				<CreateChapterModal novelId={$chapterQuery.data.novel} />
+			{/if}
+		</div>
+		{#if $chapterQuery.data && $novelQuery.data}
+			<div class="flex gap-8 items-center">
+				<Button href={chapterToPath($chapterQuery.data, $novelQuery.data.slug)} variant="outline"
+					>Preview</Button
+				>
+				<ChapterListVisibility
+					id={$chapterQuery.data.id}
+					novelId={$chapterQuery.data.novel}
+					published={$chapterQuery.data.published}
+				/>
+			</div>
 		{/if}
 	</div>
 	<div class="flex w-full flex-col gap-4 transition-all">
-		{#if $chapterQuery.isSuccess}
+		{#if $chapterQuery.data}
 			<ValidatedField
 				type="text"
 				id="value"
@@ -185,6 +207,7 @@
 		{:else}
 			<Skeleton class="h-16" />
 			<Skeleton class="h-16" />
+			<GlobalLoadingBar />
 		{/if}
 	</div>
 	<EditTips />
