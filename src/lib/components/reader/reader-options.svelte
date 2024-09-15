@@ -4,11 +4,15 @@
 	import Label from '$lib/shadcn/components/ui/label/label.svelte';
 	import Switch from '$lib/shadcn/components/ui/switch/switch.svelte';
 	import { isMobile } from '$lib/stores/breakpoints';
-	import { readerInfo, readerOptions } from '$lib/stores/options';
+	import { editorOptions, readerInfo, readerOptions } from '$lib/stores/options';
 	import { Settings2 } from 'lucide-svelte';
 	import ReaderFontOption from './reader-font-option.svelte';
 
 	export let open = false;
+	export let reader = false;
+
+	$: options = reader ? readerOptions : editorOptions;
+	export let title: string;
 </script>
 
 <Drawer.Root bind:open>
@@ -27,27 +31,27 @@
 	</Drawer.Trigger>
 	<Drawer.Content>
 		<Drawer.Header>
-			<Drawer.Title>Reader options</Drawer.Title>
+			<Drawer.Title>{title}</Drawer.Title>
 		</Drawer.Header>
 		<div class="p-16 pt-4 flex flex-col sm:grid grid-cols-3 gap-4">
 			<div class="flex flex-col gap-4">
 				<h3 class="h3">Content</h3>
-				{#if !$isMobile}
+				{#if !$isMobile && reader}
 					<div class="flex items-center gap-4">
-						<Switch bind:checked={$readerOptions.aligned} id="aligned" />
+						<Switch bind:checked={$options.aligned} id="aligned" />
 						<Label for="aligned">Align paragraphs</Label>
 					</div>
 				{/if}
 				<div class="flex items-center gap-4">
-					<Switch bind:checked={$readerOptions.showSource} id="aligned" />
+					<Switch bind:checked={$options.showSource} id="aligned" />
 					<Label for="aligned">Show source language</Label>
 				</div>
 			</div>
 			<div class="flex flex-col gap-4">
 				<h3 class="h3">Font</h3>
 				<div class="grid grid-cols-[auto_1fr] items-center gap-4">
-					<ReaderFontOption side="Source" language={$readerInfo.language.source} />
-					<ReaderFontOption side="Translated" language={$readerInfo.language.translated} />
+					<ReaderFontOption side="Source" language={$readerInfo.language.source} {reader} />
+					<ReaderFontOption side="Translated" language={$readerInfo.language.translated} {reader} />
 				</div>
 			</div>
 		</div>

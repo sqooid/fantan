@@ -12,6 +12,7 @@
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import Skeleton from '$lib/shadcn/components/ui/skeleton/skeleton.svelte';
 	import { breadcrumbStore } from '$lib/stores/navigation';
+	import { readerInfo } from '$lib/stores/options';
 	import { pb } from '$lib/stores/pocketbase';
 	import { chapterToDisplay } from '$lib/utils/data-transform';
 	import { slideBlur } from '$lib/utils/transition';
@@ -71,6 +72,11 @@
 				return result;
 			}
 		});
+	}
+
+	$: if ($novelQuery.data) {
+		$readerInfo.language.source = $novelQuery.data.sourceLanguage;
+		$readerInfo.language.translated = 'English';
 	}
 
 	$: info = {

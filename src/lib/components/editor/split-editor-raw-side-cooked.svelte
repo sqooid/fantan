@@ -91,7 +91,7 @@
 </script>
 
 <div class="h-full outline-none focus-visible:outline-none max-w-prose">
-	<div use:editor class="relative">
+	<div use:editor class={`relative ${$$props.class ?? ''}`}>
 		{#if showPlaceholder}
 			<span class="absolute text-lg pointer-events-none opacity-30 top-0 left-0">
 				{placeholder}...

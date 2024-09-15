@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fontOptions, editorOptions, readerInfo } from '$lib/stores/options';
+	import { getFonts } from '$lib/utils/content';
 	import type { ChapterSection } from './content-types';
 	import SplitEditorRawSideCooked from './split-editor-raw-side-cooked.svelte';
 
@@ -16,20 +18,29 @@
 
 	let sourceEditor: SplitEditorRawSideCooked;
 	let targetEditor: SplitEditorRawSideCooked;
+
+	$: fonts = getFonts($readerInfo, $editorOptions);
 </script>
 
-<div class="grid grid-cols-2 gap-x-16 py-8 w-fit mx-auto">
-	<SplitEditorRawSideCooked
-		on:editNote
-		bind:content={content.source}
-		on:input={onInput}
-		bind:this={sourceEditor}
-		placeholder={sourceLanguage}
-	/>
+<div
+	class={`${$editorOptions.showSource ? 'grid-cols-2' : 'grid-cols-1'} grid gap-x-16 py-8 w-fit mx-auto`}
+	style={`--sourceFamily:'${fonts.sourceFont}';--translatedFamily:'${fonts.translatedFont}'`}
+>
+	{#if $editorOptions.showSource}
+		<SplitEditorRawSideCooked
+			on:editNote
+			bind:content={content.source}
+			on:input={onInput}
+			bind:this={sourceEditor}
+			placeholder={sourceLanguage}
+			class="font-source"
+		/>
+	{/if}
 	<SplitEditorRawSideCooked
 		on:editNote
 		bind:content={content.translated}
 		on:input={onInput}
 		bind:this={targetEditor}
+		class="font-translated"
 	/>
 </div>

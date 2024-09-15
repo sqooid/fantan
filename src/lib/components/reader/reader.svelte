@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { isMobile } from '$lib/stores/breakpoints';
 	import { fontOptions, readerInfo, readerOptions } from '$lib/stores/options';
+	import { getFonts } from '$lib/utils/content';
 	import NoteViewer from './note-viewer.svelte';
 	import ReaderAligned from './reader-aligned.svelte';
-	import ReaderOptions from './reader-options.svelte';
 	import ReaderUnaligned from './reader-unaligned.svelte';
 
 	export let sourceContent: string;
@@ -21,15 +21,10 @@
 		showNotes = true;
 	};
 
-	$: sourceLanguage = $readerInfo.language.source;
-	$: sourceFontFamily = $readerOptions.font[sourceLanguage];
-	$: sourceFont = fontOptions[sourceLanguage][sourceFontFamily];
-	$: translatedLanguage = $readerInfo.language.translated;
-	$: translatedFontFamily = $readerOptions.font[translatedLanguage];
-	$: translatedFont = fontOptions[translatedLanguage][translatedFontFamily];
+	$: fonts = getFonts($readerInfo, $readerOptions);
 </script>
 
-<div style={`--sourceFamily:'${sourceFont}';--translatedFamily:'${translatedFont}'`}>
+<div style={`--sourceFamily:'${fonts.sourceFont}';--translatedFamily:'${fonts.translatedFont}'`}>
 	{#if $readerOptions.aligned && $readerOptions.showSource && !$isMobile}
 		<ReaderAligned {sourceContent} {translatedContent} on:openNote={onOpenNote} />
 	{:else}
