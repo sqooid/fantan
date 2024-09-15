@@ -21,6 +21,7 @@
 				toast.success('Changed chapter visibility');
 				queryClient.invalidateQueries(['chapters', { novel: novelId }]);
 				queryClient.invalidateQueries(['chapter', { id }]);
+				published = !published;
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to change chapter visiblity');
