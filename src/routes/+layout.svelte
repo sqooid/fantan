@@ -30,6 +30,7 @@
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
 	let metaDescription = 'Read unofficial translations of web novels';
+	let metaLogo = `${data.host}/fantan.png`;
 </script>
 
 <svelte:head>
@@ -49,11 +50,11 @@
 		<meta property="og:description" content={metaDescription} />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={data.url} />
-		<meta property="og:image" content="/fantan.png" />
+		<meta property="og:image" content={metaLogo} />
 		<!-- twitter meta tags -->
 		<meta name="twitter:title" content="Fantan" />
 		<meta name="twitter:description" content={metaDescription} />
-		<meta name="twitter:image" content="/fantan.png" />
+		<meta name="twitter:image" content={metaLogo} />
 		<meta name="twitter:image:alt" content="Fantan logo" />
 		<meta name="twitter:card" content="summary_large_image" />
 	{/if}

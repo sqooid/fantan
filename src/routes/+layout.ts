@@ -13,6 +13,7 @@ export const load: LayoutLoad = ({ url }) => {
 
 	return {
 		url: url.href,
+		host: url.host,
 		queryClient
 	};
 };
