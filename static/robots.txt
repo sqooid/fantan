@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /edit
+
+Sitemap: https://fantan.thesqooid.com/sitemap
