@@ -18,13 +18,18 @@
 	import { isMobile } from '$lib/stores/breakpoints';
 	//@ts-ignore
 	import { pwaInfo } from 'virtual:pwa-info';
+	import type { LayoutData } from './$types';
+	import { browser } from '$app/environment';
+
+	export let data: LayoutData;
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	hljs.registerLanguage('markdown', markdown);
 	storeHighlightJs.set(hljs);
 	initializeStores();
-	const queryClient = new QueryClient();
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
+
+	let metaDescription = 'Read unofficial translations of web novels';
 </script>
 
 <svelte:head>
@@ -36,10 +41,26 @@
 	/>
 	{@html webManifestLink}
 	<title>Fantan</title>
+	<meta name="description" content={metaDescription} />
+	{#if !browser}
+		<meta property="og:site_name" content="Fantan" />
+		<!-- facebook meta tags -->
+		<meta property="og:title" content="Fantan" />
+		<meta property="og:description" content={metaDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={data.url} />
+		<meta property="og:image" content="/fantan.png" />
+		<!-- twitter meta tags -->
+		<meta name="twitter:title" content="Fantan" />
+		<meta name="twitter:description" content={metaDescription} />
+		<meta name="twitter:image" content="/fantan.png" />
+		<meta name="twitter:image:alt" content="Fantan logo" />
+		<meta name="twitter:card" content="summary_large_image" />
+	{/if}
 </svelte:head>
 
 <ModeWatcher />
-<QueryClientProvider client={queryClient}>
+<QueryClientProvider client={data.queryClient}>
 	<Toaster />
 	<!-- <div class="grid grid-rows-[auto_1fr_auto]"> -->
 	<!-- Header -->

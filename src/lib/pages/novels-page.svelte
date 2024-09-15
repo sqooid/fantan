@@ -69,6 +69,11 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Fantan | {$novelQuery.data?.title ?? ''}</title>
+	<meta name="description" content={$novelQuery.data?.description ?? ''} />
+</svelte:head>
+
 {#if $novelQuery.data}
 	<div class="flex flex-col gap-16 max-w-4xl mx-auto pb-32">
 		<div class="flex flex-col sm:grid grid-cols-[auto_1fr] gap-4">

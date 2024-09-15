@@ -115,6 +115,14 @@
 
 <svelte:document on:scroll={onScroll} />
 
+<svelte:head>
+	<title
+		>Fantan | {novel?.title} | Volume {$chapterQuery.data?.volume} | Chapter {$chapterQuery.data
+			?.value}</title
+	>
+	<meta name="description" content={novel?.description} />
+</svelte:head>
+
 <div class="flex flex-col w-full gap-4">
 	{#if canEdit}
 		<div class="flex justify-end">
