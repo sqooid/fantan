@@ -60,7 +60,7 @@
 					{ requestKey: null }
 				);
 			});
-			await Promise.all(results);
+			await Promise.allSettled(results);
 		},
 		{
 			onError(error, variables, context) {
@@ -134,8 +134,8 @@
 						</Accordion.Item>
 					{/each}
 				</Accordion.Root>
+				<Button on:click={onImport} variant="default">Import</Button>
 			{/if}
-			<Button on:click={onImport} variant="default">Import</Button>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
