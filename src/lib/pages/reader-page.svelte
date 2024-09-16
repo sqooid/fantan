@@ -138,14 +138,14 @@
 		{/if}
 	</div>
 	{#if chapterContent}
-		<div class="p-8 mt-12 mb-12 sm:mt-24 sm:mb-32">
+		<div class="p-2 sm:p-8 mt-12 mb-12 sm:mt-24 sm:mb-32">
 			<Reader
 				sourceContent={chapterContent.source}
 				translatedContent={chapterContent.translated}
 				{notes}
 			/>
 		</div>
-		<div class="w-full mb-8 p-8 sm:p-16 grid grid-cols-3">
+		<div class="w-full mb-8 p-2 sm:p-16 grid grid-cols-3">
 			{#if $chaptersQuery.data?.length && chapterIndex > -1}
 				{#if previousChapter}
 					<Button
@@ -156,8 +156,10 @@
 				{:else}
 					<div></div>
 				{/if}
-				<Button href={`/read/${novelSlug}`} variant="outline" class="justify-self-center"
-					>Back to chapters</Button
+				<Button
+					href={`/read/${novelSlug}`}
+					variant="outline"
+					class="justify-self-center invisible sm:visible">Back to chapters</Button
 				>
 				{#if nextChapter}
 					<Button
