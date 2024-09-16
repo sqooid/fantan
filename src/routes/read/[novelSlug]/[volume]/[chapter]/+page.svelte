@@ -5,15 +5,10 @@
 	import ReaderPage from '$lib/pages/reader-page.svelte';
 	import type { ChaptersResponse } from '$lib/pocketbase-types';
 	import { pb } from '$lib/stores/pocketbase';
-	import { chapterToPath, markdownText } from '$lib/utils/data-transform';
+	import { chapterToPath } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
 	import { ClientResponseError } from 'pocketbase';
 	import { toast } from 'svelte-sonner';
-	import type { PageData } from './$types';
-	import { browser } from '$app/environment';
-
-	export let data: PageData;
-	console.log(data);
 
 	const chapterPattern = /^chapter-(\d+)$/;
 	const volumePattern = /^volume-(\d+)$/;
@@ -57,28 +52,7 @@
 	$: linkFormat = (chapter: ChaptersResponse) => {
 		return chapterToPath(chapter, novelSlug);
 	};
-
-	let metaTitle = '';
-	let metaDescription = '';
-	if (!browser) {
-		metaTitle = data.chapterId
-			? `Fantan | ${data.novelTitle} | Volume ${data.volume} | Chapter ${data.chapter}`
-			: data.novelTitle
-				? `Fantan | ${data.novelTitle} | Chapter not found`
-				: 'Fantan | Novel not found';
-		metaDescription = data.novelTitle ? markdownText(data.description) : 'Novel does not exist';
-		console.log(data);
-	}
 </script>
-
-<svelte:head>
-	{#if !browser}
-		<title>{metaTitle}</title>
-		<meta name="description" content={metaDescription} />
-		<meta property="og:title" content={metaTitle} />
-		<meta name="twitter:title" content={metaTitle} />
-	{/if}
-</svelte:head>
 
 {#if $chapterQuery.data}
 	<ReaderPage chapterId={$chapterQuery.data.id} chapterLinkFormat={linkFormat} {novelSlug} />
