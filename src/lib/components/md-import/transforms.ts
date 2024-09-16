@@ -28,7 +28,7 @@ export const parseMdContent = (
 		if (!footnotes[id]) return match;
 
 		usedNotes[noteId] = footnotes[id];
-		return `@${id}@(${noteId})`;
+		return `@note@(${noteId})`;
 	});
 	return { content: newContent, footnotes: usedNotes };
 };

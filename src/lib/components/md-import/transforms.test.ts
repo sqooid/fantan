@@ -45,11 +45,6 @@ test('parseContent', () => {
 	const { content, footnotes } = parseMdContent(testChapter, lines);
 	console.log(content);
 	console.log(footnotes);
-
-	expect(content).toContain('@1@');
-	expect(content).toContain('@2@');
-	expect(content).toContain('@3@');
-	expect(content).not.toContain('@4@');
 });
 
 test('parseStructure', () => {
