@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { Editor, rootCtx, defaultValueCtx, editorViewOptionsCtx } from '@milkdown/kit/core';
+	import { defaultValueCtx, Editor, editorViewOptionsCtx, rootCtx } from '@milkdown/kit/core';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { createEventDispatcher } from 'svelte';
-	import { activateNotes } from '../editor/event-listeners';
-	import { inlineNoteSerializer, inlineNotePlugin } from '../editor/note-plugin';
+	import { inlineNotePlugin, inlineNoteSerializer, noteCallbackCtx } from '../editor/note-plugin';
 
 	export let sourceContent: string;
 	export let translatedContent: string;
@@ -24,12 +23,12 @@
 					...prev,
 					editable: () => false
 				}));
+				ctx.inject(noteCallbackCtx, showNote);
 			})
 			.config(inlineNoteSerializer)
 			.use(commonmark)
 			.use(inlineNotePlugin)
 			.create();
-		activateNotes(editor.ctx, showNote);
 		const nodes = root.firstChild?.firstChild?.childNodes;
 		return nodes;
 	};

@@ -11,7 +11,7 @@
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { slideBlur } from '$lib/utils/transition';
 	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query';
-	import { assign, debounce } from 'lodash-es';
+	import { debounce } from 'lodash-es';
 	import { CircleAlert } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { blur } from 'svelte/transition';

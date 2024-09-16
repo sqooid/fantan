@@ -4,7 +4,6 @@
 		Editor,
 		editorViewCtx,
 		rootCtx,
-		rootDOMCtx,
 		serializerCtx
 	} from '@milkdown/kit/core';
 	import type { Ctx } from '@milkdown/kit/ctx';
@@ -14,8 +13,8 @@
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { brackets } from './brackets-plugin';
-	import { activateNotes, addEventListeners } from './event-listeners';
-	import { inlineNotePlugin, inlineNoteSerializer } from './note-plugin';
+	import { addEventListeners } from './event-listeners';
+	import { inlineNotePlugin, inlineNoteSerializer, noteCallbackCtx } from './note-plugin';
 
 	export let content: string;
 	export let placeholder = 'English';
@@ -45,8 +44,6 @@
 			prevContent = markdown;
 			onChange(markdown);
 		}
-
-		activateNotes(ctx, editNote);
 	};
 
 	const editNote = (id: string) => {
@@ -59,6 +56,7 @@
 			.config((ctx) => {
 				ctx.set(rootCtx, e);
 				ctx.set(defaultValueCtx, content);
+				ctx.inject(noteCallbackCtx, editNote);
 			})
 			.config(inlineNoteSerializer)
 			.use(commonmark)

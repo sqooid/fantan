@@ -16,6 +16,7 @@
 	import ChapterListVisibility from './chapter-list-visibility.svelte';
 	import { Input } from '$lib/shadcn/components/ui/input';
 	import { add } from 'lodash-es';
+	import MassMdImport from './editor/mass-md-import.svelte';
 
 	export let novelId: string;
 	export let edit = false;
@@ -133,6 +134,7 @@
 		<h2 class="h2">Chapters</h2>
 		{#if edit}
 			<CreateChapterModal {novelId} />
+			<MassMdImport {novelId} />
 		{/if}
 	</div>
 	{#if $chaptersQuery.isSuccess}
