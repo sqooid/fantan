@@ -145,19 +145,29 @@
 				{notes}
 			/>
 		</div>
-		<div class="w-full mb-8 p-8 sm:p-16 flex justify-between">
+		<div class="w-full mb-8 p-8 sm:p-16 grid grid-cols-3">
 			{#if $chaptersQuery.data?.length && chapterIndex > -1}
 				{#if previousChapter}
-					<Button href={chapterLinkFormat(previousChapter)} variant="outline"
-						>Previous chapter</Button
+					<Button
+						href={chapterLinkFormat(previousChapter)}
+						variant="outline"
+						class="justify-self-start">Previous chapter</Button
 					>
 				{:else}
 					<div></div>
 				{/if}
+				<Button href={`/read/${novelSlug}`} variant="outline" class="justify-self-center"
+					>Back to chapters</Button
+				>
 				{#if nextChapter}
-					<Button href={chapterLinkFormat(nextChapter)} variant="outline" on:click={finishedChapter}
-						>Next chapter</Button
+					<Button
+						href={chapterLinkFormat(nextChapter)}
+						variant="outline"
+						on:click={finishedChapter}
+						class="justify-self-end">Next chapter</Button
 					>
+				{:else}
+					<div></div>
 				{/if}
 			{/if}
 		</div>
