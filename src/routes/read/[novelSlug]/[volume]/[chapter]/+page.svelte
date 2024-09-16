@@ -58,25 +58,25 @@
 		return chapterToPath(chapter, novelSlug);
 	};
 
-	let description = '';
+	let metaTitle = '';
+	let metaDescription = '';
 	if (!browser) {
-		description = markdownText(data.description);
+		metaTitle = data.chapterId
+			? `Fantan | ${data.novelTitle} | Volume ${data.volume} | Chapter ${data.chapter}`
+			: data.novelTitle
+				? `Fantan | ${data.novelTitle} | Chapter not found`
+				: 'Fantan | Novel not found';
+		metaDescription = data.novelTitle ? markdownText(data.description) : 'Novel does not exist';
 		console.log(data);
 	}
 </script>
 
 <svelte:head>
 	{#if !browser}
-		{#if data.chapterId}
-			<title>Fantan | {data.novelTitle} | Volume {data.volume} | Chapter {data.chapter}</title>
-			<meta name="description" content={description} />
-		{:else if data.novelTitle}
-			<title>Fantan | {data.novelTitle} | Chapter not found</title>
-			<meta name="description" content={description} />
-		{:else}
-			<title>Fantan | Novel not found</title>
-			<meta name="description" content="Novel does not exist" />
-		{/if}
+		<title>{metaTitle}</title>
+		<meta name="description" content={metaDescription} />
+		<meta property="og:title" content={metaTitle} />
+		<meta name="twitter:title" content={metaTitle} />
 	{/if}
 </svelte:head>
 
