@@ -60,7 +60,7 @@
 					{ requestKey: null }
 				);
 			});
-			await Promise.all(results);
+			await Promise.allSettled(results);
 		},
 		{
 			onError(error, variables, context) {
