@@ -28,7 +28,7 @@ export const load: PageLoad = async ({ params, parent }) => {
 				chapter: result.value
 			};
 		} catch (error) {
-			console.log(error);
+			console.log('error', error);
 
 			return {};
 		}

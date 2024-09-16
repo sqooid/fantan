@@ -10,6 +10,7 @@
 	if (!browser) {
 		descriptionText = markdownText(data.description);
 	}
+	let metaLogo = `${data.origin}/fantan.png`;
 </script>
 
 <svelte:head>
@@ -17,6 +18,7 @@
 		<title>Fantan | {data.novelTitle}</title>
 		<meta name="description" content={descriptionText} />
 		<meta property="og:site_name" content="Fantan" />
+		<meta property="og:logo" content={metaLogo} />
 		<!-- facebook meta tags -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={descriptionText} />

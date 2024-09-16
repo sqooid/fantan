@@ -51,6 +51,7 @@
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={data.url} />
 		<meta property="og:image" content={metaLogo} />
+		<meta property="og:logo" content={metaLogo} />
 		<!-- twitter meta tags -->
 		<meta name="twitter:title" content="Fantan" />
 		<meta name="twitter:description" content={metaDescription} />

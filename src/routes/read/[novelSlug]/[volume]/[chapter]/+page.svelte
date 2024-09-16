@@ -13,6 +13,7 @@
 	import { browser } from '$app/environment';
 
 	export let data: PageData;
+	console.log(data);
 
 	const chapterPattern = /^chapter-(\d+)$/;
 	const volumePattern = /^volume-(\d+)$/;
