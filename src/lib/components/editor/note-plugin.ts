@@ -14,22 +14,23 @@ export const inlineNoteRemark = $remark('inlineNote', () => () => {
 		if (!tree.children) return;
 		for (let index = 0; index < tree.children.length; index++) {
 			const node = tree.children[index];
+
 			if (node.type === 'text') {
 				const textNode = node as Text;
 				const match = inlineNoteRegex.exec(textNode.value);
 				if (!match) continue;
-				const index = match.index;
+				const matchIndex = match.index;
 				const length = match[0].length;
 				const text = match[1];
 				const id = match[2];
+
 				const inlineNoteNode = {
 					type: 'inline_note',
 					id,
 					children: [{ type: 'text', value: text }]
 				};
-				const beforeText = textNode.value.slice(0, index);
-				const afterText = textNode.value.slice(index + length);
-				console.log({ beforeText, afterText });
+				const beforeText = textNode.value.slice(0, matchIndex);
+				const afterText = textNode.value.slice(matchIndex + length);
 
 				textNode.value = beforeText;
 				const newTextNode = {
