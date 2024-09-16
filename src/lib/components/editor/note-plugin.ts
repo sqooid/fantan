@@ -1,5 +1,5 @@
 import { remarkStringifyOptionsCtx, type Config } from '@milkdown/kit/core';
-import type { MilkdownPlugin } from '@milkdown/kit/ctx';
+import { createSlice, type MilkdownPlugin } from '@milkdown/kit/ctx';
 import { markRule } from '@milkdown/kit/prose';
 import type { Root } from '@milkdown/kit/transformer';
 import { $inputRule, $markAttr, $markSchema, $remark } from '@milkdown/kit/utils';
@@ -29,6 +29,8 @@ export const inlineNoteRemark = $remark('inlineNote', () => () => {
 				};
 				const beforeText = textNode.value.slice(0, index);
 				const afterText = textNode.value.slice(index + length);
+				console.log({ beforeText, afterText });
+
 				textNode.value = beforeText;
 				const newTextNode = {
 					type: 'text',
@@ -36,6 +38,7 @@ export const inlineNoteRemark = $remark('inlineNote', () => () => {
 				};
 
 				const deletePrior = beforeText.length === 0;
+
 				if (afterText.length === 0) {
 					tree.children.splice(
 						deletePrior ? index : index + 1,
@@ -98,15 +101,15 @@ export const inlineNoteSchema = $markSchema('inline_note', (ctx) => {
 		],
 		toDOM: (mark) => {
 			const attr = ctx.get(inlineNoteAttr.key)(mark);
-			return [
-				'sup',
-				{
-					...attr,
-					id: mark.attrs.id || uuidv4(),
-					class: 'inline-note'
-				},
-				0
-			];
+			const callback = ctx.get(noteCallbackCtx);
+			const id = mark.attrs.id || uuidv4();
+
+			const dom = document.createElement('sup');
+			dom.id = id;
+			dom.addEventListener('click', () => callback(id));
+			dom.classList.add('inline-note', 'activated');
+
+			return { dom };
 		},
 		parseMarkdown: {
 			match: ({ type }) => type === 'inline_note',
@@ -144,3 +147,5 @@ export const inlineNotePlugin: MilkdownPlugin[] = [
 	inlineNoteSchema as any,
 	inlineNoteInputRule
 ];
+
+export const noteCallbackCtx = createSlice((id: string) => {}, 'noteCallback');

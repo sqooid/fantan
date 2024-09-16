@@ -3,8 +3,7 @@
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { replaceAll } from '@milkdown/kit/utils';
 	import { createEventDispatcher } from 'svelte';
-	import { activateNotes } from '../editor/event-listeners';
-	import { inlineNotePlugin, inlineNoteSerializer } from '../editor/note-plugin';
+	import { inlineNotePlugin, inlineNoteSerializer, noteCallbackCtx } from '../editor/note-plugin';
 
 	export let content: string = '';
 
@@ -19,6 +18,7 @@
 					...prev,
 					editable: () => false
 				}));
+				ctx.inject(noteCallbackCtx, showNote);
 			})
 			.config(inlineNoteSerializer)
 			.use(commonmark)
@@ -31,7 +31,6 @@
 
 	$: if (content && milkdownEditor) {
 		milkdownEditor.action(replaceAll(content));
-		activateNotes(milkdownEditor.ctx, showNote);
 	}
 
 	const showNote = (id: string) => {
