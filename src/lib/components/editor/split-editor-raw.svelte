@@ -34,7 +34,7 @@
 				on:input={onInput}
 				bind:this={sourceEditor}
 				placeholder={sourceLanguage}
-				class="font-source justify-self-end"
+				class={`font-source justify-self-end`}
 			/>
 		{/if}
 		<SplitEditorRawSideCooked
@@ -42,7 +42,7 @@
 			bind:content={content.translated}
 			on:input={onInput}
 			bind:this={targetEditor}
-			class="font-translated self-start"
+			class={`font-translated ${$editorOptions.showSource ? 'justify-self-start' : 'justify-self-center'}`}
 		/>
 	</div>
 </div>
