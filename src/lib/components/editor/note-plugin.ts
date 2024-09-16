@@ -89,7 +89,7 @@ export const inlineNoteSchema = $markSchema('inline_note', (ctx) => {
 		},
 		parseDOM: [
 			{
-				tag: 'span.inline-note',
+				tag: 'sup.inline-note',
 				preserveWhitespace: true,
 				getAttrs: (dom) => {
 					return { id: dom.id };
@@ -99,7 +99,7 @@ export const inlineNoteSchema = $markSchema('inline_note', (ctx) => {
 		toDOM: (mark) => {
 			const attr = ctx.get(inlineNoteAttr.key)(mark);
 			return [
-				'span',
+				'sup',
 				{
 					...attr,
 					id: mark.attrs.id || uuidv4(),
