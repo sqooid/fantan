@@ -2,23 +2,39 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
-	import ValidatedField from './inputs/validated-field.svelte';
-	import { parsePbError } from './inputs/validation';
+	import { toast } from 'svelte-sonner';
+	import ValidatedField from '../inputs/validated-field.svelte';
+	import { parsePbError } from '../inputs/validation';
+	import { ClientResponseError } from 'pocketbase';
+
+	export let turnstileToken = '';
 
 	const info = {
 		username: '',
 		email: '',
 		password: '',
-		confirmPassword: ''
+		confirmPassword: '',
+		turnstileToken: 'asdf'
 	};
 	let errors: Record<string, string> | null = null;
 
 	const onClick = async () => {
 		try {
+			if (!turnstileToken) {
+				toast.error('Please complete human verification');
+				return;
+			}
+			info.turnstileToken = turnstileToken;
 			await pb.collection('users').create(info);
 			await pb.collection('users').authWithPassword(info.username, info.password);
 			goto('/');
 		} catch (error) {
+			if (error instanceof ClientResponseError) {
+				if (error.message === 'Invalid token.') {
+					toast.error('Please complete human verification');
+				}
+			}
+
 			errors = parsePbError(error);
 		}
 	};
