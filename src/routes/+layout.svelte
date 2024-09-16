@@ -9,17 +9,20 @@
 	import 'highlight.js/styles/github-dark.css';
 	// Floating UI for Popups
 	import Header from '$lib/components/header.svelte';
+	import Breadcrumb from '$lib/components/navigation/breadcrumb.svelte';
 	import { Toaster } from '$lib/shadcn/components/ui/sonner';
+	import { isMobile } from '$lib/stores/breakpoints';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
-	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
-	import { ModeWatcher, setMode } from 'mode-watcher';
-	import Breadcrumb from '$lib/components/navigation/breadcrumb.svelte';
-	import { isMobile } from '$lib/stores/breakpoints';
+	import { QueryClientProvider } from '@sveltestack/svelte-query';
+	import { ModeWatcher } from 'mode-watcher';
+	import { page } from '$app/stores';
+	import { generateMetaProps } from '$lib/utils/data-transform';
+	import { merge } from 'lodash-es';
+	import { MetaTags } from 'svelte-meta-tags';
 	//@ts-ignore
 	import { pwaInfo } from 'virtual:pwa-info';
 	import type { LayoutData } from './$types';
-	import { browser } from '$app/environment';
 
 	export let data: LayoutData;
 
@@ -29,8 +32,7 @@
 	initializeStores();
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
-	let metaDescription = 'Read unofficial translations of web novels';
-	let metaLogo = `${data.origin}/fantan.png`;
+	$: metaTags = generateMetaProps(merge({}, data.baseMetaTags, $page.data.pageMetaTags));
 </script>
 
 <svelte:head>
@@ -41,24 +43,9 @@
 		rel="stylesheet"
 	/>
 	{@html webManifestLink}
-	<title>Fantan</title>
-	<meta name="description" content={metaDescription} />
-	{#if !browser && !data.path.startsWith('/read')}
-		<meta property="og:site_name" content="Fantan" />
-		<!-- facebook meta tags -->
-		<meta property="og:title" content="Fantan" />
-		<meta property="og:description" content={metaDescription} />
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content={data.url} />
-		<meta property="og:image" content={metaLogo} />
-		<!-- twitter meta tags -->
-		<meta name="twitter:title" content="Fantan" />
-		<meta name="twitter:description" content={metaDescription} />
-		<meta name="twitter:image" content={metaLogo} />
-		<meta name="twitter:image:alt" content="Fantan logo" />
-		<meta name="twitter:card" content="summary_large_image" />
-	{/if}
 </svelte:head>
+
+<MetaTags {...metaTags} />
 
 <ModeWatcher />
 <QueryClientProvider client={data.queryClient}>

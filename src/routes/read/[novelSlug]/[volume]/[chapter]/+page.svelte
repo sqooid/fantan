@@ -5,14 +5,10 @@
 	import ReaderPage from '$lib/pages/reader-page.svelte';
 	import type { ChaptersResponse } from '$lib/pocketbase-types';
 	import { pb } from '$lib/stores/pocketbase';
-	import { chapterToPath, markdownText } from '$lib/utils/data-transform';
+	import { chapterToPath } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
 	import { ClientResponseError } from 'pocketbase';
 	import { toast } from 'svelte-sonner';
-	import type { PageData } from './$types';
-	import { browser } from '$app/environment';
-
-	export let data: PageData;
 
 	const chapterPattern = /^chapter-(\d+)$/;
 	const volumePattern = /^volume-(\d+)$/;
@@ -56,28 +52,7 @@
 	$: linkFormat = (chapter: ChaptersResponse) => {
 		return chapterToPath(chapter, novelSlug);
 	};
-
-	let description = '';
-	if (!browser) {
-		description = markdownText(data.description);
-		console.log(data);
-	}
 </script>
-
-<svelte:head>
-	{#if !browser}
-		{#if data.chapterId}
-			<title>Fantan | {data.novelTitle} | Volume {data.volume} | Chapter {data.chapter}</title>
-			<meta name="description" content={description} />
-		{:else if data.novelTitle}
-			<title>Fantan | {data.novelTitle} | Chapter not found</title>
-			<meta name="description" content={description} />
-		{:else}
-			<title>Fantan | Novel not found</title>
-			<meta name="description" content="Novel does not exist" />
-		{/if}
-	{/if}
-</svelte:head>
 
 {#if $chapterQuery.data}
 	<ReaderPage chapterId={$chapterQuery.data.id} chapterLinkFormat={linkFormat} {novelSlug} />
