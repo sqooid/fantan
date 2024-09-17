@@ -1,13 +1,13 @@
 migrate(
 	(db) => {
 		const dao = new Dao(db);
-		const collection = dao.findCollectionByNameOrId('chapters');
+		const collection = dao.findCollectionByNameOrId('novels');
 
 		// add
 		collection.schema.addField(
 			new SchemaField({
 				system: false,
-				id: 'j2dj0egc',
+				id: 'ql9fwjow',
 				name: 'views',
 				type: 'number',
 				required: false,
@@ -25,10 +25,10 @@ migrate(
 	},
 	(db) => {
 		const dao = new Dao(db);
-		const collection = dao.findCollectionByNameOrId('chapters');
+		const collection = dao.findCollectionByNameOrId('novels');
 
 		// remove
-		collection.schema.removeField('j2dj0egc');
+		collection.schema.removeField('ql9fwjow');
 
 		return dao.saveCollection(collection);
 	}

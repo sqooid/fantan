@@ -15,12 +15,27 @@ routerAdd('POST', '/c/chapter-visit', (c) => {
 		// already visited, throws unique constraint error
 		return c.json(200, {});
 	}
+
+	// Increment view counts
 	const chapterRecord = $app.dao().findRecordById('chapters', chapterId);
+	const chapterViews = chapterRecord.getInt('views') + 1;
+
+	// TODO: move to cron if performance is an issue
+	const novelRecord = $app.dao().findRecordById('novels', chapterRecord.get('novel'));
+	if (novelRecord.getInt('views') < chapterViews) {
+		const novelForm = new RecordUpsertForm($app, novelRecord);
+		novelForm.loadData({
+			views: chapterViews
+		});
+		novelForm.submit();
+	}
+
 	const chapterForm = new RecordUpsertForm($app, chapterRecord);
 	chapterForm.loadData({
-		'views+': 1
+		views: chapterViews
 	});
 	chapterForm.submit();
+
 	return c.json(200, {});
 });
 
