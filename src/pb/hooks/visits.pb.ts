@@ -11,6 +11,17 @@ routerAdd('POST', '/c/chapter-visit', (c) => {
 	form.loadData({ chapter: chapterId, idHash: result.id });
 	try {
 		form.submit();
-	} catch (error) {}
+	} catch (error) {
+		// already visited, throws unique constraint error
+		return c.json(200, {});
+	}
+	const chapterRecord = $app.dao().findRecordById('chapters', chapterId);
+	const chapterForm = new RecordUpsertForm($app, chapterRecord);
+	chapterForm.loadData({
+		'views+': 1
+	});
+	chapterForm.submit();
 	return c.json(200, {});
 });
+
+cronAdd('visitCountClean', '0 * * * *', () => {});
