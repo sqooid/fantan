@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/shadcn/components/ui/button';
-	import { pb } from '$lib/stores/pocketbase';
+	import { pb, turnstileJwt } from '$lib/stores/pocketbase';
 	import { toast } from 'svelte-sonner';
 	import ValidatedField from '../inputs/validated-field.svelte';
 	import { parsePbError } from '../inputs/validation';
 	import { ClientResponseError } from 'pocketbase';
-
-	export let turnstileToken = '';
 
 	const info = {
 		username: '',
@@ -20,11 +18,11 @@
 
 	const onClick = async () => {
 		try {
-			if (!turnstileToken) {
+			if (!$turnstileJwt) {
 				toast.error('Please complete human verification');
 				return;
 			}
-			info.turnstileToken = turnstileToken;
+			info.turnstileToken = $turnstileJwt;
 			await pb.collection('users').create(info);
 			await pb.collection('users').authWithPassword(info.username, info.password);
 			goto('/');

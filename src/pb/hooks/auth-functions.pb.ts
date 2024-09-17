@@ -1,4 +1,6 @@
-export const verifyToken = (token: string, ip: string): string | null => {
+export const verifyToken = (token: string, c: echo.Context): string | null => {
+	const ip = c.request().header.get('X-Forwarded-For');
+	const userAgent = c.request().header.get('User-Agent');
 	const res = $http.send({
 		method: 'POST',
 		url: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
@@ -20,15 +22,22 @@ export const verifyToken = (token: string, ip: string): string | null => {
 		key = $security.randomString(32);
 		$app.store().set('turnstileTokenKey', key);
 	}
-	const jwt = $security.createJWT({ ip } as any, key, 60 * 60 * 24 * 7);
+	const id = $security.sha256(`${ip}${userAgent}`);
+	const jwt = $security.createJWT({ id } as any, key, 60 * 60 * 24 * 7);
 	return jwt;
 };
 
-export const parseToken = (token: string, ip: string): boolean => {
+export const parseToken = (jwt: string, c: echo.Context) => {
 	try {
-		const { ip: tokenIp } = $security.parseJWT(token, $app.store().get('turnstileTokenKey'));
-		return ip === tokenIp;
+		const ip = c.request().header.get('X-Forwarded-For');
+		const userAgent = c.request().header.get('User-Agent');
+		const { id } = $security.parseJWT(jwt, $app.store().get('turnstileTokenKey'));
+		const currentId = $security.sha256(`${ip}${userAgent}`);
+		if (id !== currentId) {
+			return null;
+		}
+		return { id };
 	} catch (error) {
-		return false;
+		return null;
 	}
 };

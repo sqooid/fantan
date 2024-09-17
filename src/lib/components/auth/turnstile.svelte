@@ -2,25 +2,26 @@
 	//@ts-nocheck
 	import { browser, dev } from '$app/environment';
 	import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
+	import { pb, turnstileJwt } from '$lib/stores/pocketbase';
 	import { mode } from 'mode-watcher';
-	import { createEventDispatcher } from 'svelte';
-	import { v4 as uuid } from 'uuid';
 
 	export let show = false;
 	export let id = 'turnstile';
 
-	const dispatch = createEventDispatcher();
-
 	if (browser) {
-		window.onLoad = () => {
+		window.onLoadTurnstile = () => {
 			turnstile.render(`#${id}`, {
 				sitekey: PUBLIC_TURNSTILE_SITE_KEY,
 				theme: $mode,
 				appearance: show ? 'always' : 'interaction-only',
 				size: 'flexible',
-				callback: (token: string) => {
+				callback: async (token: string) => {
 					if (dev) console.log('turnstile token:', token);
-					dispatch('token', token);
+					const result = await pb.send('/c/turnstile-verify', {
+						method: 'POST',
+						body: JSON.stringify({ token })
+					});
+					$turnstileJwt = result.jwt;
 				}
 			});
 		};
@@ -29,7 +30,7 @@
 
 <svelte:head>
 	<script
-		src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onLoad"
+		src={`https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onLoadTurnstile`}
 	></script>
 </svelte:head>
 

@@ -5,11 +5,12 @@
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import { breadcrumbStore, novelIdStore } from '$lib/stores/navigation';
 	import { readerInfo } from '$lib/stores/options';
-	import { authStore, pb } from '$lib/stores/pocketbase';
+	import { authStore, pb, turnstileJwt } from '$lib/stores/pocketbase';
 	import { semverChapterSort } from '$lib/utils/content';
 	import { chapterToDisplay, chapterToPath } from '$lib/utils/data-transform';
 	import { useQuery } from '@sveltestack/svelte-query';
 	import { debounce } from 'lodash-es';
+	import { ClientResponseError } from 'pocketbase';
 
 	export let chapterId: string;
 	export let novelSlug: string = '';
@@ -26,6 +27,26 @@
 				href: chapterToPath($chapterQuery.data, novel.slug)
 			}
 		];
+
+	// Visit
+	const visitChapter = async () => {
+		try {
+			const result = await pb.send('/c/chapter-visit', {
+				method: 'POST',
+				body: JSON.stringify({ chapterId, jwt: $turnstileJwt })
+			});
+		} catch (error) {
+			console.error('Failed to visit chapter', error);
+			if (error instanceof ClientResponseError) {
+				if (error.status === 403) {
+					$turnstileJwt = '';
+				}
+			}
+		}
+	};
+	$: if (chapterId && $turnstileJwt) {
+		visitChapter();
+	}
 
 	const chapterQuery = useQuery<ChaptersResponse>({ enabled: false });
 	$: chapterQuery.setOptions({

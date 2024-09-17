@@ -23,6 +23,8 @@
 	//@ts-ignore
 	import { pwaInfo } from 'virtual:pwa-info';
 	import type { LayoutData } from './$types';
+	import Turnstile from '$lib/components/auth/turnstile.svelte';
+	import { turnstileJwt } from '$lib/stores/pocketbase';
 
 	export let data: LayoutData;
 
@@ -77,3 +79,6 @@
 	<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
 	<!-- </div> -->
 </QueryClientProvider>
+{#if !$turnstileJwt || $page.url.pathname === '/register'}
+	<Turnstile />
+{/if}

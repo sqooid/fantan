@@ -11,14 +11,10 @@
 	if (browser && $authStore?.isValid) {
 		goto('/');
 	}
-	let token = '';
-	const onToken = (e: CustomEvent<string>) => {
-		token = e.detail;
-	};
 </script>
 
 <div class="flex flex-col items-center gap-4 max-w-lg mx-auto">
-	<EmailRegister turnstileToken={token} />
+	<EmailRegister />
 	<div>or</div>
 	<OauthSigninButton provider="google" name="Google" class="w-full">
 		<GoogleIcon class="h-6" />Register with Google</OauthSigninButton
@@ -27,5 +23,4 @@
 		><GithubIcon class="h-6" />Register with Github</OauthSigninButton
 	>
 	<hr />
-	<Turnstile show on:token={onToken} id="turnstile-register" />
 </div>
