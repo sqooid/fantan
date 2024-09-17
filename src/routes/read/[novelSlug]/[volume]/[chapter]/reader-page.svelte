@@ -36,7 +36,6 @@
 				body: JSON.stringify({ chapterId, jwt: $turnstileJwt })
 			});
 		} catch (error) {
-			console.error('Failed to visit chapter', error);
 			if (error instanceof ClientResponseError) {
 				if (error.status === 403) {
 					$turnstileJwt = '';

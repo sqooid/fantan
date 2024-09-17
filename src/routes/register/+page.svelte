@@ -22,5 +22,4 @@
 	<OauthSigninButton provider="github" name="Github" class="w-full"
 		><GithubIcon class="h-6" />Register with Github</OauthSigninButton
 	>
-	<hr />
 </div>
