@@ -24,4 +24,7 @@ routerAdd('POST', '/c/chapter-visit', (c) => {
 	return c.json(200, {});
 });
 
-cronAdd('visitCountClean', '0 * * * *', () => {});
+cronAdd('visitCountClean', '0 * * * *', () => {
+	// delete all chapterVisists records
+	$app.dao().db().delete('chapterVisits', $dbx.exp('')).execute();
+});
