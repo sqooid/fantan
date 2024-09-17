@@ -1,5 +1,5 @@
 <script lang="ts">
-	import OauthSigninButton from '../oauth-signin-button.svelte';
+	import OauthSigninButton from '../auth/oauth-signin-button.svelte';
 
 	export let only: boolean;
 	export let linked: boolean;
