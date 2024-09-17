@@ -26,7 +26,7 @@
 		async () => {
 			const result = await pb.collection('chapters').getList(0, 100, {
 				filter: pb.filter('novel = {:novelId}', { novelId }),
-				fields: 'id,value,title,published,created,updated,volume'
+				fields: 'id,value,title,published,created,updated,volume,views'
 			});
 			return result;
 		},
@@ -72,6 +72,11 @@
 		table.column({
 			accessor: 'title',
 			header: 'Title'
+		}),
+		table.column({
+			accessor: 'views',
+			header: 'Views',
+			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
 			accessor: 'updated',
@@ -130,7 +135,7 @@
 </script>
 
 <div class="flex flex-col">
-	<div class="flex gap-8">
+	<div class="flex gap-8 max-w-4xl mx-auto w-full">
 		<h2 class="h2">Chapters</h2>
 		{#if edit}
 			<CreateChapterModal {novelId} />
@@ -138,11 +143,11 @@
 		{/if}
 	</div>
 	{#if $chaptersQuery.isSuccess}
-		<div class="w-full mx-auto py-10">
+		<div class="mx-auto py-10 max-w-[90vw] w-fit">
 			<div class="flex items-center py-4">
 				<Input class="w-full" placeholder="Filter rows..." type="text" bind:value={$filterValue} />
 			</div>
-			<div class="rounded-md border">
+			<div class="rounded-md border overflow-x-auto">
 				<Table.Root {...$tableAttrs}>
 					<Table.Header>
 						{#each $headerRows as headerRow}

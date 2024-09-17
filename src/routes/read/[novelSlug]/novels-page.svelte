@@ -1,4 +1,5 @@
 <script lang="ts">
+	import NovelMeta from '$lib/components/reader/novel-meta.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
 	import { Ellipsis } from '$lib/shadcn/components/ui/breadcrumb';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
@@ -45,9 +46,6 @@
 
 	$: lastChapter = $authStore?.model?.history?.[novelId] as string | undefined;
 
-	const md = new MarkdownIt();
-	$: descriptionHtml = md.render($novelQuery.data?.description ?? '');
-
 	let nextChapter: ChaptersResponse | null = null;
 	$: if (lastChapter && $chaptersQuery.data?.length) {
 		const lastIndex = $chaptersQuery.data.findIndex((x) => x.id === lastChapter);
@@ -89,15 +87,9 @@
 				</div>
 			{/if}
 			<div class="h-full flex flex-col justify-between">
-				<div>
+				<div class="flex flex-col gap-4">
 					<h1 class="h1">{$novelQuery.data.title}</h1>
-					{#if descriptionHtml}
-						<div class="mt-7 milkdown">
-							{@html descriptionHtml}
-						</div>
-					{:else}
-						<p class="p">No description</p>
-					{/if}
+					<NovelMeta novel={$novelQuery.data} chapterCount={$chaptersQuery.data?.length ?? 0} />
 					<div class="flex items-center mt-4 gap-4">
 						{#if editors.includes($authStore?.model?.id)}
 							<Button href={`/edit/novels/${novelId}`} variant="outline">Edit</Button>
