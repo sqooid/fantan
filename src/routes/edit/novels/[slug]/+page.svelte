@@ -215,6 +215,6 @@
 			</div>
 		</div>
 		<CollaboratorsEdit {novelId} {isOwner} />
-		<ChapterListDatatable edit {novelId} />
 	</div>
+	<ChapterListDatatable edit {novelId} />
 {/if}

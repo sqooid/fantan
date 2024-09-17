@@ -3,9 +3,9 @@
 	import { pb } from '$lib/stores/pocketbase';
 	import { ClientResponseError } from 'pocketbase';
 	import { toast } from 'svelte-sonner';
-	import ValidatedField from './inputs/validated-field.svelte';
-	import { parsePbError } from './inputs/validation';
 	import { Button } from '$lib/shadcn/components/ui/button';
+	import ValidatedField from '../inputs/validated-field.svelte';
+	import { parsePbError } from '../inputs/validation';
 
 	const info = {
 		identity: '',

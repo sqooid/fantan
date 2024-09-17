@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import GlobalLoadingBar from '$lib/components/global-loading-bar.svelte';
-	import ReaderPage from '$lib/pages/reader-page.svelte';
+	import ReaderPage from './reader-page.svelte';
 	import type { ChaptersResponse } from '$lib/pocketbase-types';
 	import { pb } from '$lib/stores/pocketbase';
 	import { chapterToPath } from '$lib/utils/data-transform';

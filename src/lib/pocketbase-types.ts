@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	ChapterVisits = "chapterVisits",
 	Chapters = "chapters",
 	Novels = "novels",
 	Users = "users",
@@ -35,6 +36,11 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export type ChapterVisitsRecord = {
+	chapter?: RecordIdString
+	idHash?: string
+}
+
 export type ChaptersRecord<Tcontent = unknown, Tnotes = unknown> = {
 	content: null | Tcontent
 	editor?: RecordIdString
@@ -44,6 +50,7 @@ export type ChaptersRecord<Tcontent = unknown, Tnotes = unknown> = {
 	source?: string
 	title?: string
 	value: string
+	views: number
 	volume: number
 }
 
@@ -63,6 +70,7 @@ export type NovelsRecord = {
 	slug: string
 	sourceLanguage: NovelsSourceLanguageOptions
 	title: string
+	views?: number
 }
 
 export type UsersRecord<Thistory = unknown> = {
@@ -73,6 +81,7 @@ export type UsersRecord<Thistory = unknown> = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ChapterVisitsResponse<Texpand = unknown> = Required<ChapterVisitsRecord> & BaseSystemFields<Texpand>
 export type ChaptersResponse<Tcontent = unknown, Tnotes = unknown, Texpand = unknown> = Required<ChaptersRecord<Tcontent, Tnotes>> & BaseSystemFields<Texpand>
 export type NovelsResponse<Texpand = unknown> = Required<NovelsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Thistory = unknown, Texpand = unknown> = Required<UsersRecord<Thistory>> & AuthSystemFields<Texpand>
@@ -80,12 +89,14 @@ export type UsersResponse<Thistory = unknown, Texpand = unknown> = Required<User
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	chapterVisits: ChapterVisitsRecord
 	chapters: ChaptersRecord
 	novels: NovelsRecord
 	users: UsersRecord
 }
 
 export type CollectionResponses = {
+	chapterVisits: ChapterVisitsResponse
 	chapters: ChaptersResponse
 	novels: NovelsResponse
 	users: UsersResponse
@@ -95,6 +106,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'chapterVisits'): RecordService<ChapterVisitsResponse>
 	collection(idOrName: 'chapters'): RecordService<ChaptersResponse>
 	collection(idOrName: 'novels'): RecordService<NovelsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
