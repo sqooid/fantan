@@ -1,34 +1,35 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/shadcn/components/ui/button';
-	import { pb, turnstileJwt } from '$lib/stores/pocketbase';
+	import { pb, turnstileJwt, turnstileToken } from '$lib/stores/pocketbase';
 	import { toast } from 'svelte-sonner';
 	import ValidatedField from '../inputs/validated-field.svelte';
 	import { parsePbError } from '../inputs/validation';
 	import { ClientResponseError } from 'pocketbase';
+	import Turnstile from './turnstile.svelte';
 
 	const info = {
 		username: '',
 		email: '',
 		password: '',
 		confirmPassword: '',
-		turnstileToken: 'asdf'
+		turnstileToken: ''
 	};
 	let errors: Record<string, string> | null = null;
 
 	const onClick = async () => {
 		try {
-			if (!$turnstileJwt) {
-				toast.error('Please complete human verification');
+			if (!$turnstileToken) {
+				toast.error('Please wait for human verification');
 				return;
 			}
-			info.turnstileToken = $turnstileJwt;
+			info.turnstileToken = $turnstileToken;
 			await pb.collection('users').create(info);
 			await pb.collection('users').authWithPassword(info.username, info.password);
 			goto('/');
 		} catch (error) {
 			if (error instanceof ClientResponseError) {
-				if (error.message === 'Invalid token.') {
+				if (error.message.startsWith('Invalid token')) {
 					toast.error('Please complete human verification');
 				}
 			}
@@ -38,7 +39,7 @@
 	};
 </script>
 
-<dev class="flex flex-col gap-2 w-full">
+<div class="flex flex-col gap-2 w-full">
 	<span class="large">Create a new account</span>
 	<ValidatedField
 		required
@@ -80,4 +81,6 @@
 		autocomplete="new-password"
 	/>
 	<Button variant="outline" on:click={onClick}>Sign up</Button>
-</dev>
+</div>
+
+<Turnstile />

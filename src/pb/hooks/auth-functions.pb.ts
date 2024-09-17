@@ -1,5 +1,5 @@
 export const verifyToken = (token: string, c: echo.Context): string | null => {
-	const ip = c.request().header.get('X-Forwarded-For');
+	const ip = c.realIP();
 	const userAgent = c.request().header.get('User-Agent');
 	const res = $http.send({
 		method: 'POST',
@@ -29,7 +29,7 @@ export const verifyToken = (token: string, c: echo.Context): string | null => {
 
 export const parseToken = (jwt: string, c: echo.Context) => {
 	try {
-		const ip = c.request().header.get('X-Forwarded-For');
+		const ip = c.realIP();
 		const userAgent = c.request().header.get('User-Agent');
 		const { id } = $security.parseJWT(jwt, $app.store().get('turnstileTokenKey'));
 		const currentId = $security.sha256(`${ip}${userAgent}`);

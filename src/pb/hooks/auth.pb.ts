@@ -11,8 +11,8 @@ routerAdd('POST', '/c/turnstile-verify', (c) => {
 routerAdd('POST', '/c/turnstile-test', (c) => {
 	const { jwt } = JSON.parse(readerToString(c.request().body));
 	const { parseToken } = require(`${__hooks}/auth-functions.pb.js`);
-	const valid = parseToken(jwt, c);
-	if (valid) {
+	const id = parseToken(jwt, c)?.id;
+	if (id) {
 		return c.json(200, {});
 	}
 	return c.json(403, {});

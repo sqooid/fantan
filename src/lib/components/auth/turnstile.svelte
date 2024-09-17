@@ -2,10 +2,11 @@
 	//@ts-nocheck
 	import { browser, dev } from '$app/environment';
 	import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
-	import { pb, turnstileJwt } from '$lib/stores/pocketbase';
+	import { pb, turnstileJwt, turnstileToken } from '$lib/stores/pocketbase';
 	import { mode } from 'mode-watcher';
 
 	export let show = false;
+	export let verify = false;
 	export let id = 'turnstile';
 
 	if (browser) {
@@ -17,11 +18,15 @@
 				size: 'flexible',
 				callback: async (token: string) => {
 					if (dev) console.log('turnstile token:', token);
-					const result = await pb.send('/c/turnstile-verify', {
-						method: 'POST',
-						body: JSON.stringify({ token })
-					});
-					$turnstileJwt = result.jwt;
+					$turnstileToken = token;
+					if (verify) {
+						const result = await pb.send('/c/turnstile-verify', {
+							method: 'POST',
+							body: JSON.stringify({ token })
+						});
+						$turnstileJwt = result.jwt;
+						if (dev) console.log('turnstile jwt:', $turnstileJwt);
+					}
 				}
 			});
 		};

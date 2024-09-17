@@ -79,6 +79,6 @@
 	<!-- <footer class="bg-blue-500 p-4">(footer)</footer> -->
 	<!-- </div> -->
 </QueryClientProvider>
-{#if !$turnstileJwt || $page.url.pathname === '/register'}
-	<Turnstile />
+{#if !$turnstileJwt && $page.url.pathname !== '/register'}
+	<Turnstile verify />
 {/if}

@@ -31,7 +31,7 @@
 	// Visit
 	const visitChapter = async () => {
 		try {
-			const result = await pb.send('/c/chapter-visit', {
+			await pb.send('/c/chapter-visit', {
 				method: 'POST',
 				body: JSON.stringify({ chapterId, jwt: $turnstileJwt })
 			});
