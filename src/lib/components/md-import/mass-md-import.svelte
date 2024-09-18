@@ -25,7 +25,7 @@
 	};
 
 	let markdown = '';
-	let open = true;
+	let open = false;
 
 	const importSettings = { ...defaultImportSettings };
 
@@ -41,23 +41,37 @@
 	}[] = [];
 
 	const onParse = () => {
-		chapters = [];
-		const { volumes, footnoteLines } = parseMdStructure(markdown, importSettings);
-		const footnotes = parseMdFootnotes(footnoteLines);
-		volumes.forEach((volume) => {
-			volume.chapters.forEach((chapter) => {
-				const newChapter = parseMdContent(chapter.lines.join('\n'), footnotes, importSettings);
-				chapters.push({
-					title: chapter.title,
-					volume: volume.value,
-					value: chapter.value,
-					content: newChapter.content,
-					footnotes: newChapter.footnotes,
-					import: !chapterExists(volume.value, chapter.value)
+		try {
+			// checks
+			if (!importSettings.volumeRegex || !importSettings.chapterRegex) {
+				toast.error('Volume and chapter regex must be set');
+				return;
+			}
+			if (importSettings.noteText === 'custom' && /[\s@]+/.test(importSettings.customNoteText)) {
+				toast.error('Custom note text must cannot contain spaces or @');
+				return;
+			}
+			chapters = [];
+			const { volumes, footnoteLines } = parseMdStructure(markdown, importSettings);
+			const footnotes = parseMdFootnotes(footnoteLines);
+			volumes.forEach((volume) => {
+				volume.chapters.forEach((chapter) => {
+					const newChapter = parseMdContent(chapter.lines.join('\n'), footnotes, importSettings);
+					chapters.push({
+						title: chapter.title,
+						volume: volume.value,
+						value: chapter.value,
+						content: newChapter.content,
+						footnotes: newChapter.footnotes,
+						import: !chapterExists(volume.value, chapter.value)
+					});
 				});
 			});
-		});
-		chapters = chapters;
+			chapters = chapters;
+			toast.success('Successfully parsed markdown');
+		} catch (error) {
+			toast.error('Failed to parse markdown');
+		}
 	};
 
 	let loading = false;
