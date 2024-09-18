@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { ChaptersResponse } from '$lib/pocketbase-types';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { Input } from '$lib/shadcn/components/ui/input';
 	import * as Table from '$lib/shadcn/components/ui/table';
 	import { pb } from '$lib/stores/pocketbase';
+	import { semverChapterSort } from '$lib/utils/content';
 	import { useQuery } from '@sveltestack/svelte-query';
+	import { ArrowUpDown } from 'lucide-svelte';
 	import moment from 'moment';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
+	import { addSortBy, addTableFilter } from 'svelte-headless-table/plugins';
 	import { writable } from 'svelte/store';
-	import CreateChapterModal from './create-chapter-modal.svelte';
-	import { addSortBy, addTableFilter, addColumnFilters } from 'svelte-headless-table/plugins';
-	import Button from '$lib/shadcn/components/ui/button/button.svelte';
-	import { ArrowUpDown } from 'lucide-svelte';
-	import { semverChapterSort } from '$lib/utils/content';
 	import ChapterListDatatableAction from './chapter-list-datatable-action.svelte';
 	import ChapterListVisibility from './chapter-list-visibility.svelte';
-	import { Input } from '$lib/shadcn/components/ui/input';
-	import { add } from 'lodash-es';
-	import MassMdImport from './editor/mass-md-import.svelte';
+	import CreateChapterModal from './create-chapter-modal.svelte';
+	import MassMdImport from './md-import/mass-md-import.svelte';
 
 	export let novelId: string;
 	export let edit = false;
@@ -24,7 +23,7 @@
 	const chaptersQuery = useQuery(
 		['chapters', { novel: novelId, full: false }],
 		async () => {
-			const result = await pb.collection('chapters').getList(0, 100, {
+			const result = await pb.collection('chapters').getFullList({
 				filter: pb.filter('novel = {:novelId}', { novelId }),
 				fields: 'id,value,title,published,created,updated,volume,views'
 			});
@@ -32,7 +31,7 @@
 		},
 		{
 			onSuccess(data) {
-				$tableData = data.items;
+				$tableData = data;
 			}
 		}
 	);
@@ -46,7 +45,7 @@
 
 	const formatDate = (d: any) => moment(d).fromNow();
 
-	const tableData = writable($chaptersQuery.data?.items ?? []);
+	const tableData = writable($chaptersQuery.data ?? []);
 	const table = createTable(tableData, {
 		sort: addSortBy({
 			toggleOrder: ['asc', 'desc'],
@@ -139,7 +138,7 @@
 		<h2 class="h2">Chapters</h2>
 		{#if edit}
 			<CreateChapterModal {novelId} />
-			<MassMdImport {novelId} />
+			<MassMdImport {novelId} existingChapters={$chaptersQuery.data ?? []} />
 		{/if}
 	</div>
 	{#if $chaptersQuery.isSuccess}

@@ -17,18 +17,34 @@ export const parseMdFootnotes = (content: string | string[]): Record<string, str
 	return lines;
 };
 
+const defaultParseMdContentOptions = {
+	noteText: 'number',
+	customNoteText: 'note'
+};
+
 export const parseMdContent = (
 	content: string,
-	footnotes: Record<string, string>
+	footnotes: Record<string, string>,
+	options = defaultParseMdContentOptions
 ): { content: string; footnotes: Record<string, string> } => {
+	options = { ...defaultParseMdContentOptions, ...options };
 	const footnotePattern = /\[\^(\d+)\]/g;
 	const usedNotes: Record<string, string> = {};
+	let index = 1;
 	const newContent = content.replaceAll(footnotePattern, (match, id) => {
 		const noteId = uuid();
 		if (!footnotes[id]) return match;
 
 		usedNotes[noteId] = footnotes[id];
-		return `@note@(${noteId})`;
+		let noteText: string;
+		if (options.noteText === 'number') {
+			noteText = (index++).toString();
+		} else if (options.noteText === 'custom') {
+			noteText = options.customNoteText;
+		} else {
+			noteText = id;
+		}
+		return `@${noteText}@(${noteId})`;
 	});
 	return { content: newContent, footnotes: usedNotes };
 };
