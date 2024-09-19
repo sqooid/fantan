@@ -12,7 +12,9 @@
 	let showComments = true;
 	let md = new MarkdownIt({ linkify: true }).use(emoji);
 
-	const commentsQuery = useQuery<ChapterCommentsResponse[]>({ enabled: false });
+	const commentsQuery = useQuery<
+		(ChapterCommentsResponse & { reactions: Record<string, number> })[]
+	>({ enabled: false });
 	$: if (chapterId && showComments) {
 		commentsQuery.setOptions({
 			queryKey: ['comments', { chapter: chapterId }],
@@ -20,13 +22,14 @@
 				const result = await pb
 					.collection('chapterComments')
 					.getFullList({ filter: pb.filter('chapter = {:chapterId}', { chapterId }) });
-				return result;
+				return result as any;
 			},
 			enabled: true
 		});
 	} else {
 		commentsQuery.setEnabled(false);
 	}
+
 	const usersQuery = useQuery<Record<string, CUserType>>({ enabled: false });
 	$: if ($commentsQuery.data) {
 		usersQuery.setOptions({
@@ -54,7 +57,11 @@
 	<CommentWrite {chapterId} />
 	<div class="flex flex-col gap-8">
 		{#each $commentsQuery.data ?? [] as comment}
-			<CommentItem userInfo={$usersQuery.data?.[comment.user]}>
+			<CommentItem
+				userInfo={$usersQuery.data?.[comment.user]}
+				reactions={comment.reactions ?? {}}
+				commentId={comment.id}
+			>
 				{@html md.render(comment.content)}
 			</CommentItem>
 		{:else}
