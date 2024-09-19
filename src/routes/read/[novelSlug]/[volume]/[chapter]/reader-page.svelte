@@ -196,5 +196,5 @@
 		</div>
 	{/if}
 	<div class="w-full"></div>
-	<CommentSection />
+	<CommentSection {chapterId} />
 </div>

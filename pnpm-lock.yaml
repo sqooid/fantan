@@ -44,6 +44,9 @@ importers:
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
+      markdown-it-emoji:
+        specifier: ^3.0.0
+        version: 3.0.0
       markdown-it-plain-text:
         specifier: ^0.3.0
         version: 0.3.0
@@ -129,6 +132,9 @@ importers:
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
+      '@types/markdown-it-emoji':
+        specifier: ^3.0.1
+        version: 3.0.1
       '@types/node':
         specifier: 22.5.1
         version: 22.5.1
@@ -1990,6 +1996,9 @@ packages:
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
+  '@types/markdown-it-emoji@3.0.1':
+    resolution: {integrity: sha512-cz1j8R35XivBqq9mwnsrP2fsz2yicLhB8+PDtuVkKOExwEdsVBNI+ROL3sbhtR5occRZ66vT0QnwFZCqdjf3pA==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -3476,6 +3485,9 @@ packages:
   make-fetch-happen@9.1.0:
     resolution: {integrity: sha512-+zopwDy7DNknmwPQplem5lAZX/eCOzSvSNNcSKm5eVwTkOBzoktEfXsa9L23J/GIRhxRsaxzkPEhrJEpE2F4Gg==}
     engines: {node: '>= 10'}
+
+  markdown-it-emoji@3.0.0:
+    resolution: {integrity: sha512-+rUD93bXHubA4arpEZO3q80so0qgoFJEKRkRbjKX8RTdca89v2kfyF+xR3i2sQTwql9tpPZPOQN5B+PunspXRg==}
 
   markdown-it-plain-text@0.3.0:
     resolution: {integrity: sha512-JT5x7oXZaTY6lwxsnxaIAT4hm5Q2Mi8dZoCaCNg3s7JXmDxY84D90OtV0US436UvN4zOUHoac4ExceTogydOLw==}
@@ -7420,6 +7432,10 @@ snapshots:
 
   '@types/lodash@4.17.7': {}
 
+  '@types/markdown-it-emoji@3.0.1':
+    dependencies:
+      '@types/markdown-it': 14.1.2
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -9082,6 +9098,8 @@ snapshots:
       - bluebird
       - supports-color
     optional: true
+
+  markdown-it-emoji@3.0.0: {}
 
   markdown-it-plain-text@0.3.0: {}
 

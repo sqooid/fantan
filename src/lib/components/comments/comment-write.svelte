@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/stores/pocketbase';
+	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { Editor, rootCtx } from '@milkdown/kit/core';
 	import UserAvatar from './user-avatar.svelte';
 	import { commonmark } from '@milkdown/kit/preset/commonmark';
@@ -9,6 +9,11 @@
 	import { addEventListeners, renderMilkdown } from '../editor/event-listeners';
 	import { emojiPlugin } from './emoji-plugin';
 	import Button from '$lib/shadcn/components/ui/button/button.svelte';
+	import { useMutation } from '@sveltestack/svelte-query';
+	import { replaceAll } from '@milkdown/kit/utils';
+	import { toast } from 'svelte-sonner';
+
+	export let chapterId: string;
 
 	$: avatar = $authStore?.model?.avatar;
 	$: loggedIn = $authStore?.isValid;
@@ -40,7 +45,33 @@
 		milkdownEditor?.destroy();
 	});
 
-	const onPost = () => {};
+	const commentMutation = useMutation(
+		async (content: string) => {
+			const id = $authStore?.model?.id;
+			if (!id) return;
+			const result = await pb.collection('chapterComments').create({
+				chapter: chapterId,
+				user: id,
+				content
+			});
+			return result;
+		},
+		{
+			onSuccess(data, variables, context) {
+				milkdownEditor?.action(replaceAll(''));
+				showPlaceholder = true;
+				toast.success('Comment posted');
+			},
+			onError(error, variables, context) {
+				toast.error('Failed to post comment');
+			}
+		}
+	);
+
+	const onPost = () => {
+		if (milkdownEditor === null) return;
+		$commentMutation.mutate(renderMilkdown(milkdownEditor));
+	};
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-x-4">
