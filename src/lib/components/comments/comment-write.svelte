@@ -1,22 +1,25 @@
 <script lang="ts">
+	import type { ChapterCommentsResponse } from '$lib/pocketbase-types';
+	import Button from '$lib/shadcn/components/ui/button/button.svelte';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { Editor, rootCtx } from '@milkdown/kit/core';
-	import UserAvatar from './user-avatar.svelte';
-	import { commonmark } from '@milkdown/kit/preset/commonmark';
 	import { clipboard } from '@milkdown/kit/plugin/clipboard';
 	import { history } from '@milkdown/kit/plugin/history';
+	import { commonmark } from '@milkdown/kit/preset/commonmark';
+	import { replaceAll } from '@milkdown/kit/utils';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { onDestroy } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import { addEventListeners, renderMilkdown } from '../editor/event-listeners';
 	import { emojiPlugin } from './emoji-plugin';
-	import Button from '$lib/shadcn/components/ui/button/button.svelte';
-	import { useMutation } from '@sveltestack/svelte-query';
-	import { replaceAll } from '@milkdown/kit/utils';
-	import { toast } from 'svelte-sonner';
+	import UserAvatar from './user-avatar.svelte';
 
 	export let chapterId: string;
 
 	$: avatar = $authStore?.model?.avatar;
 	$: loggedIn = $authStore?.isValid;
+
+	const queryClient = useQueryClient();
 
 	let showPlaceholder = true;
 
@@ -61,6 +64,15 @@
 				milkdownEditor?.action(replaceAll(''));
 				showPlaceholder = true;
 				toast.success('Comment posted');
+				queryClient.setQueryData(
+					['comments', { chapter: chapterId }],
+					(oldData: ChapterCommentsResponse[] | undefined) => {
+						if (!oldData) return [];
+						if (!data) return oldData;
+						return [data, ...oldData];
+					}
+				);
+				queryClient.invalidateQueries(['comments', { chapter: chapterId }]);
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to post comment');

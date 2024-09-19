@@ -27,37 +27,34 @@
 	} else {
 		commentsQuery.setEnabled(false);
 	}
-	const usersQuery = useQuery<CUserType[]>({ enabled: false });
+	const usersQuery = useQuery<Record<string, CUserType>>({ enabled: false });
 	$: if ($commentsQuery.data) {
 		usersQuery.setOptions({
 			queryKey: ['users', { chapter: chapterId }],
 			queryFn: async () => {
 				const userIds = $commentsQuery.data.map((comment) => comment.user);
-				const users = await pb.send('/c/users', { query: { ids: userIds } });
-				return users;
+				const users: CUserType[] = await pb.send('/c/users', { query: { ids: userIds } });
+				return users.reduce(
+					(acc, user) => {
+						if (acc[user.id]) return acc;
+						user.avatar = pb.buildUrl(`/api/files/users/${user.id}/${user.avatar}`);
+						acc[user.id] = user;
+						return acc;
+					},
+					{} as Record<string, CUserType>
+				);
 			},
 			enabled: true
 		});
-	} else {
-		usersQuery.setEnabled(false);
 	}
-	$: userMap =
-		$usersQuery.data?.reduce(
-			(acc, user) => {
-				user.avatar = pb.buildUrl(`/api/files/users/${user.id}/${user.avatar}`);
-				acc[user.id] = user;
-				return acc;
-			},
-			{} as Record<string, CUserType>
-		) ?? {};
 </script>
 
-<div class="flex flex-col gap-4 max-w-prose mx-auto w-full">
+<div class="flex flex-col gap-4 max-w-prose mx-auto w-full mb-12">
 	<h3 class="h3">Comments</h3>
 	<CommentWrite {chapterId} />
 	<div class="flex flex-col gap-8">
 		{#each $commentsQuery.data ?? [] as comment}
-			<CommentItem userInfo={userMap[comment.user]}>
+			<CommentItem userInfo={$usersQuery.data?.[comment.user]}>
 				{@html md.render(comment.content)}
 			</CommentItem>
 		{:else}
