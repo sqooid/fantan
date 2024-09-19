@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isMobile } from '$lib/stores/breakpoints';
-	import { fontOptions, readerInfo, readerOptions } from '$lib/stores/options';
+	import { readerInfo, readerOptions } from '$lib/stores/options';
 	import { getFonts } from '$lib/utils/content';
 	import NoteViewer from './note-viewer.svelte';
 	import ReaderAligned from './reader-aligned.svelte';

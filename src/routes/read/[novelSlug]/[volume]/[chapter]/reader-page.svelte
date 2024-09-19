@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CommentSection from '$lib/components/comments/comment-section.svelte';
 	import type { ChapterSection } from '$lib/components/editor/content-types';
 	import Reader from '$lib/components/reader/reader.svelte';
 	import type { ChaptersResponse, NovelsResponse } from '$lib/pocketbase-types';
@@ -143,7 +144,7 @@
 	<meta name="description" content={novel?.description} />
 </svelte:head>
 
-<div class="flex flex-col w-full gap-4">
+<div class="flex flex-col w-full gap-4 mb-24">
 	{#if canEdit}
 		<div class="flex justify-end">
 			<Button href={`/edit/chapters/${chapterId}`} variant="outline">Edit</Button>
@@ -194,4 +195,6 @@
 			{/if}
 		</div>
 	{/if}
+	<div class="w-full"></div>
+	<CommentSection />
 </div>

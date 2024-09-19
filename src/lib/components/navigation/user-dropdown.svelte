@@ -13,7 +13,7 @@
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button builders={[builder]} variant="ghost" size="icon">
 			<Avatar.Root class="">
-				<Avatar.Image src={avatarUrl} alt="@shadcn" />
+				<Avatar.Image src={avatarUrl} alt="User avatar" />
 				<Avatar.Fallback>
 					<User />
 				</Avatar.Fallback>
