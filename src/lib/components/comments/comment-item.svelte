@@ -1,37 +1,44 @@
 <script lang="ts">
-	import { useMutation } from '@sveltestack/svelte-query';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import ReactionBadge from './reaction-badge.svelte';
 	import UserAvatar from './user-avatar.svelte';
 	import UserHoverCard from './user-hover-card.svelte';
 	import { authStore, pb } from '$lib/stores/pocketbase';
 
+	const likeEmoji = 'thumbsup';
+	const dislikeEmoji = 'thumbsdown';
+
 	export let commentId: string;
 	export let userInfo: CUserType | undefined;
 	export let reactions: Record<string, number> = {};
-
+	$: likes = reactions[likeEmoji] || 0;
+	$: dislikes = reactions[dislikeEmoji] || 0;
+	$: filteredReactions = Object.entries(reactions).filter(
+		([reaction, count]) => reaction !== likeEmoji && reaction !== dislikeEmoji && count > 0
+	);
 	$: id = $authStore?.model?.id;
-	const reactionMutation = useMutation(async (params: { reaction: string; add: boolean }) => {
-		if (params.add) {
-			const result = await pb.collection('chapterCommentReactions').create({
-				chapter: commentId,
-				user: id,
-				reaction: params.reaction
+
+	const queryClient = useQueryClient();
+
+	const reactionMutation = useMutation(
+		async (reaction: string) => {
+			const { count } = await pb.send('/c/toggle-reaction', {
+				method: 'POST',
+				body: {
+					reaction: reaction,
+					comment: commentId
+				}
 			});
-			return result;
-		} else {
-			const existing = await pb.collection('chapterCommentReactions').getFirstListItem(
-				pb.filter('comment = {:commentId} && user = {:userId} AND reaction = {:reaction}', {
-					commentId,
-					userId: id,
-					reaction: params.reaction
-				}),
-				{ fields: 'id' }
-			);
-			if (!existing.id) return null;
-			const result = await pb.collection('chapterCommentReactions').delete(existing.id);
-			return result;
+			return { reaction, count };
+		},
+		{
+			onSuccess(data, variables, context) {
+				reactions[data.reaction] = data.count;
+			}
 		}
-	});
+	);
+
+	const onReaction = (reaction: string) => {};
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-x-4">
@@ -43,8 +50,18 @@
 		<div class="milkdown">
 			<slot />
 		</div>
-		<div class="flex">
-			{#each Object.entries(reactions) as [reaction, count]}
+		<div class="flex gap-1">
+			<ReactionBadge
+				reaction={likeEmoji}
+				count={likes}
+				on:click={() => $reactionMutation.mutate(likeEmoji)}
+			/>
+			<ReactionBadge
+				reaction={dislikeEmoji}
+				count={dislikes}
+				on:click={() => $reactionMutation.mutate(dislikeEmoji)}
+			/>
+			{#each filteredReactions as [reaction, count]}
 				<ReactionBadge {reaction} {count} />
 			{/each}
 		</div>
