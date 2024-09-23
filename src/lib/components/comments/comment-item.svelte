@@ -1,13 +1,14 @@
 <script lang="ts">
+	import type { ChapterCommentReactionsResponse } from '$lib/pocketbase-types';
+	import { authStore, pb } from '$lib/stores/pocketbase';
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
+	import ReactionAdd from './reaction-add.svelte';
 	import ReactionBadge from './reaction-badge.svelte';
 	import UserAvatar from './user-avatar.svelte';
 	import UserHoverCard from './user-hover-card.svelte';
-	import { authStore, pb } from '$lib/stores/pocketbase';
-	import type { ChapterCommentReactionsResponse } from '$lib/pocketbase-types';
 
-	const likeEmoji = 'thumbsup';
-	const dislikeEmoji = 'thumbsdown';
+	const likeEmoji = '👍';
+	const dislikeEmoji = '👎';
 
 	export let commentId: string;
 	export let userInfo: CUserType | undefined;
@@ -16,6 +17,7 @@
 
 	const queryClient = useQueryClient();
 
+	$: loggedIn = pb.authStore?.isValid;
 	$: activeReactions = ownReactions.reduce(
 		(acc, reaction) => {
 			if (reaction.comment === commentId) {
@@ -56,6 +58,11 @@
 			}
 		}
 	);
+
+	const onChoose = (e: CustomEvent<string>) => {
+		const emoji = e.detail;
+		$reactionMutation.mutate(emoji);
+	};
 </script>
 
 <div class="grid grid-cols-[auto_1fr] gap-x-4">
@@ -80,9 +87,17 @@
 				on:click={() => $reactionMutation.mutate(dislikeEmoji)}
 				active={activeReactions[dislikeEmoji]}
 			/>
-			{#each filteredReactions as [reaction, count]}
-				<ReactionBadge {reaction} {count} active={activeReactions[reaction]} />
+			{#each filteredReactions as [reaction, count] (reaction)}
+				<ReactionBadge
+					{reaction}
+					{count}
+					active={activeReactions[reaction]}
+					on:click={() => $reactionMutation.mutate(reaction)}
+				/>
 			{/each}
+			{#if loggedIn}
+				<ReactionAdd {commentId} on:choose={onChoose} />
+			{/if}
 		</div>
 	</div>
 </div>

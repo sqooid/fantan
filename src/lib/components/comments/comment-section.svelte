@@ -2,10 +2,14 @@
 	import { useQuery } from '@sveltestack/svelte-query';
 	import CommentWrite from './comment-write.svelte';
 	import { pb } from '$lib/stores/pocketbase';
-	import type { ChapterCommentsResponse } from '$lib/pocketbase-types';
+	import type {
+		ChapterCommentReactionsResponse,
+		ChapterCommentsResponse
+	} from '$lib/pocketbase-types';
 	import MarkdownIt from 'markdown-it';
 	import { full as emoji } from 'markdown-it-emoji';
 	import CommentItem from './comment-item.svelte';
+	import UserAvatar from './user-avatar.svelte';
 
 	export let chapterId: string;
 
@@ -53,20 +57,27 @@
 		});
 	}
 
-	const ownReactions = useQuery({
-		queryKey: ['reactions', { user: userId }],
-		queryFn: async () => {
-			const reactions = await pb
-				.collection('chapterCommentReactions')
-				.getFullList({
-					filter: pb.filter('user = {:userId}', { userId }),
+	const ownReactions = useQuery<ChapterCommentReactionsResponse[]>({
+		enabled: false
+	});
+	$: if (userId) {
+		ownReactions.setOptions({
+			queryKey: ['reactions', { user: userId }],
+			queryFn: async () => {
+				const reactions = await pb.collection('chapterCommentReactions').getFullList({
+					filter: pb.filter('user = {:userId} && comment.chapter.id = {:chapterId}', {
+						userId,
+						chapterId
+					}),
 					fields: 'reaction,comment'
 				});
-			console.log(reactions);
+				console.log(reactions);
 
-			return reactions;
-		}
-	});
+				return reactions;
+			},
+			enabled: true
+		});
+	}
 </script>
 
 <div class="flex flex-col gap-4 max-w-prose mx-auto w-full mb-12">
@@ -83,7 +94,10 @@
 				{@html md.render(comment.content)}
 			</CommentItem>
 		{:else}
-			fasfasdf
+			<div class="grid grid-cols-[auto_1fr] gap-x-4 mt-4">
+				<UserAvatar class="invisible" />
+				<span class="large">Be the first to write a comment!</span>
+			</div>
 		{/each}
 	</div>
 </div>

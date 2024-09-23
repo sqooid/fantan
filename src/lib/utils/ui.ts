@@ -95,3 +95,8 @@ export const mapToCssVars = (obj: Record<string, string>) => {
 		.map(([key, value]) => `--${key}: ${value};`)
 		.join('');
 };
+
+export const genLoginLink = () => {
+	const path = window.location.pathname;
+	return `/login?redirect=${encodeURIComponent(path)}`;
+};

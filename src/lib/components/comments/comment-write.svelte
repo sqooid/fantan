@@ -13,6 +13,7 @@
 	import { addEventListeners, renderMilkdown } from '../editor/event-listeners';
 	import { emojiPlugin } from './emoji-plugin';
 	import UserAvatar from './user-avatar.svelte';
+	import { genLoginLink } from '$lib/utils/ui';
 
 	export let chapterId: string;
 
@@ -73,6 +74,7 @@
 					}
 				);
 				queryClient.invalidateQueries(['comments', { chapter: chapterId }]);
+				queryClient.invalidateQueries(['users', { chapter: chapterId }]);
 			},
 			onError(error, variables, context) {
 				toast.error('Failed to post comment');
@@ -102,7 +104,7 @@
 	{:else}
 		<div class="h-full flex items-center">
 			<span>
-				<a href="/login" class="anchor">Log in</a> to start commenting
+				<a href={genLoginLink()} class="anchor">Log in</a> to start commenting
 			</span>
 		</div>
 	{/if}

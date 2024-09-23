@@ -4,7 +4,7 @@
 	export let avatarUrl = '';
 </script>
 
-<Avatar.Root class="">
+<Avatar.Root class={`${$$props.class ?? ''}`}>
 	<Avatar.Image src={avatarUrl} alt="User avatar" />
 	<Avatar.Fallback>
 		<User />
