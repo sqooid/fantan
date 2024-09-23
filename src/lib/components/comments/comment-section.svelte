@@ -9,6 +9,8 @@
 
 	export let chapterId: string;
 
+	$: userId = pb.authStore?.model?.id;
+
 	let showComments = true;
 	let md = new MarkdownIt({ linkify: true }).use(emoji);
 
@@ -50,6 +52,21 @@
 			enabled: true
 		});
 	}
+
+	const ownReactions = useQuery({
+		queryKey: ['reactions', { user: userId }],
+		queryFn: async () => {
+			const reactions = await pb
+				.collection('chapterCommentReactions')
+				.getFullList({
+					filter: pb.filter('user = {:userId}', { userId }),
+					fields: 'reaction,comment'
+				});
+			console.log(reactions);
+
+			return reactions;
+		}
+	});
 </script>
 
 <div class="flex flex-col gap-4 max-w-prose mx-auto w-full mb-12">
@@ -61,6 +78,7 @@
 				userInfo={$usersQuery.data?.[comment.user]}
 				reactions={comment.reactions ?? {}}
 				commentId={comment.id}
+				ownReactions={$ownReactions.data}
 			>
 				{@html md.render(comment.content)}
 			</CommentItem>
