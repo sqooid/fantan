@@ -71,7 +71,6 @@
 					}),
 					fields: 'reaction,comment'
 				});
-				console.log(reactions);
 
 				return reactions;
 			},

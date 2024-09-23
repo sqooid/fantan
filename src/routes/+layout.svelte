@@ -25,7 +25,7 @@
 	import type { LayoutData } from './$types';
 	import Turnstile from '$lib/components/auth/turnstile.svelte';
 	import { authStore, turnstileJwt } from '$lib/stores/pocketbase';
-	import { browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 
 	export let data: LayoutData;
@@ -46,6 +46,14 @@
 		} else {
 			goto('/');
 		}
+	}
+
+	if (browser && !dev) {
+		// disable logs in production on browser
+		console.log = () => {};
+		console.debug = () => {};
+		console.warn = () => {};
+		console.info = () => {};
 	}
 </script>
 
