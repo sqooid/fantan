@@ -12,6 +12,7 @@
 	import { useQuery } from '@sveltestack/svelte-query';
 	import { debounce } from 'lodash-es';
 	import { ClientResponseError } from 'pocketbase';
+	import { toast } from 'svelte-sonner';
 
 	export let chapterId: string;
 	export let novelSlug: string = '';
@@ -86,6 +87,8 @@
 		});
 	}
 
+	let endDiv: HTMLElement;
+
 	const chaptersQuery = useQuery<ChaptersResponse[]>({ enabled: false });
 	$: if ($chapterQuery.data) {
 		chaptersQuery.setOptions({
@@ -111,13 +114,19 @@
 	$: chapterContent = data?.content as ChapterSection | null;
 	$: notes = (data?.notes ?? {}) as Record<string, string>;
 
-	const finishedChapter = debounce(async () => {
+	let finished = false;
+	$: if (chapterId) {
+		finished = false;
+	}
+	$: finishedChapter = debounce(async () => {
 		console.log('finished chapter');
-
-		if (novel?.id && $authStore?.model && data) {
+		if (novel?.id && $authStore?.model && data && !finished) {
+			finished = true;
 			const history = $authStore?.model?.history ?? {};
 			const lastReadValue = $chaptersQuery.data?.[history[novel.id]]?.value;
 			const currentValue = data.value;
+			console.log('finished chapter', data.value);
+			toast.info('Finished chapter');
 
 			if (lastReadValue === undefined || semverChapterSort(lastReadValue, currentValue) < 0) {
 				history[novel.id] = chapterId;
@@ -128,7 +137,11 @@
 	}, 1000);
 
 	const onScroll = () => {
-		if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+		if (!endDiv) return;
+		if (
+			endDiv.getBoundingClientRect().bottom <
+			(window.innerHeight || document.documentElement.clientHeight)
+		) {
 			finishedChapter();
 		}
 	};
@@ -195,6 +208,6 @@
 			{/if}
 		</div>
 	{/if}
-	<div class="w-full"></div>
+	<div class="w-full" bind:this={endDiv}></div>
 	<CommentSection {chapterId} />
 </div>
