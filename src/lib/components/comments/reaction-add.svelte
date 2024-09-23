@@ -3,17 +3,12 @@
 	import * as Popover from '$lib/shadcn/components/ui/popover';
 	import { SmileIcon } from 'lucide-svelte';
 	import EmojiSearch from './emoji-search.svelte';
-
-	const onClick = () => {
-		console.log('clicked');
-	};
 </script>
 
 <Popover.Root>
 	<Popover.Trigger class="h-full">
 		<button
-			class={`h-full cursor-pointer hover:bg-primary/5 focus:ring-transparent ${badgeVariants({ variant: 'outline' })}`}
-			on:click={onClick}
+			class={`h-full cursor-pointer hover:bg-primary/5 ${badgeVariants({ variant: 'outline' })} focus:ring-0 focus:ring-offset-0`}
 			title="React to this comment"
 		>
 			<SmileIcon class="w-4 h-4" />

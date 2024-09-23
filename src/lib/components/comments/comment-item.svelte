@@ -76,20 +76,20 @@
 		</div>
 		<div class="flex gap-1">
 			<ReactionBadge
-				reaction={likeEmoji}
+				emoji={likeEmoji}
 				count={likes}
 				on:click={() => $reactionMutation.mutate(likeEmoji)}
 				active={activeReactions[likeEmoji]}
 			/>
 			<ReactionBadge
-				reaction={dislikeEmoji}
+				emoji={dislikeEmoji}
 				count={dislikes}
 				on:click={() => $reactionMutation.mutate(dislikeEmoji)}
 				active={activeReactions[dislikeEmoji]}
 			/>
 			{#each filteredReactions as [reaction, count] (reaction)}
 				<ReactionBadge
-					{reaction}
+					emoji={reaction}
 					{count}
 					active={activeReactions[reaction]}
 					on:click={() => $reactionMutation.mutate(reaction)}

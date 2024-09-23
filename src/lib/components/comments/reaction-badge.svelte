@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { badgeVariants } from '$lib/shadcn/components/ui/badge';
-	import * as nodeEmoji from 'node-emoji';
+	import { pb } from '$lib/stores/pocketbase';
+	import { searchEmoji } from '$lib/utils/emoji';
 	import { createEventDispatcher } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import { backInOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
 	import Starburst from '../effects/starburst.svelte';
-	import { pb } from '$lib/stores/pocketbase';
-	import { toast } from 'svelte-sonner';
 
-	export let reaction: string;
+	export let emoji: string;
 	export let count: number;
 	export let active: boolean = false;
-
-	$: emoji = nodeEmoji.get(reaction) ?? reaction;
 
 	$: loggedIn = pb.authStore?.isValid;
 
