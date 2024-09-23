@@ -24,7 +24,9 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 	import type { LayoutData } from './$types';
 	import Turnstile from '$lib/components/auth/turnstile.svelte';
-	import { turnstileJwt } from '$lib/stores/pocketbase';
+	import { authStore, turnstileJwt } from '$lib/stores/pocketbase';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	export let data: LayoutData;
 
@@ -35,6 +37,16 @@
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
 	$: metaTags = generateMetaProps(merge({}, data.baseMetaTags, $page.data.pageMetaTags));
+
+	$: redirect = $page.url.searchParams.get('redirect');
+	$: if (browser && $authStore?.isValid && ['/login', '/register'].includes($page.url.pathname)) {
+		if (redirect) {
+			console.log('redirecting to', redirect);
+			goto(redirect);
+		} else {
+			goto('/');
+		}
+	}
 </script>
 
 <svelte:head>

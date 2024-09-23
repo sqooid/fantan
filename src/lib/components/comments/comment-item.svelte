@@ -96,7 +96,7 @@
 				/>
 			{/each}
 			{#if loggedIn}
-				<ReactionAdd {commentId} on:choose={onChoose} />
+				<ReactionAdd on:choose={onChoose} />
 			{/if}
 		</div>
 	</div>

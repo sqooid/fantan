@@ -100,3 +100,8 @@ export const genLoginLink = () => {
 	const path = window.location.pathname;
 	return `/login?redirect=${encodeURIComponent(path)}`;
 };
+
+export const genRedirectLinkWithQueries = (path: string) => {
+	const queries = window.location.search;
+	return `${path}${queries}`;
+};

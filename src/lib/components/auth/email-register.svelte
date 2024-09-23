@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { Button } from '$lib/shadcn/components/ui/button';
-	import { pb, turnstileJwt, turnstileToken } from '$lib/stores/pocketbase';
+	import { pb, turnstileToken } from '$lib/stores/pocketbase';
+	import { ClientResponseError } from 'pocketbase';
 	import { toast } from 'svelte-sonner';
 	import ValidatedField from '../inputs/validated-field.svelte';
 	import { parsePbError } from '../inputs/validation';
-	import { ClientResponseError } from 'pocketbase';
 	import Turnstile from './turnstile.svelte';
 
 	const info = {
@@ -26,7 +25,6 @@
 			info.turnstileToken = $turnstileToken;
 			await pb.collection('users').create(info);
 			await pb.collection('users').authWithPassword(info.username, info.password);
-			goto('/');
 		} catch (error) {
 			if (error instanceof ClientResponseError) {
 				if (error.message.startsWith('Invalid token')) {

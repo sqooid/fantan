@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { badgeVariants } from '$lib/shadcn/components/ui/badge';
-	import { Input } from '$lib/shadcn/components/ui/input';
 	import * as Popover from '$lib/shadcn/components/ui/popover';
 	import { SmileIcon } from 'lucide-svelte';
 	import EmojiSearch from './emoji-search.svelte';
-
-	export let commentId: string;
 
 	const onClick = () => {
 		console.log('clicked');
