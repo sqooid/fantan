@@ -89,3 +89,9 @@ export const animateLayoutChanges = (e: HTMLElement) => {
 	});
 	observer.observe(e, { childList: true, subtree: true });
 };
+
+export const mapToCssVars = (obj: Record<string, string>) => {
+	return Object.entries(obj)
+		.map(([key, value]) => `--${key}: ${value};`)
+		.join('');
+};
