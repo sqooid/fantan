@@ -33,7 +33,7 @@
 </script>
 
 <button
-	class={`cursor-pointer hover:bg-primary/5 h-full ${badgeVariants({ variant: 'outline' })} ${activeClass} focus:ring-0 focus:ring-offset-0`}
+	class={`cursor-pointer hover:bg-primary/5 h-full ${badgeVariants({ variant: 'outline' })} ${activeClass} focus:ring-transparent focus:ring-offset-transparent`}
 	on:click={onClick}
 	transition:scale={{ duration: 150, easing: backInOut }}
 >
