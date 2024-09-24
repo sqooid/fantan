@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { badgeVariants } from '$lib/shadcn/components/ui/badge';
 	import { pb } from '$lib/stores/pocketbase';
-	import { searchEmoji } from '$lib/utils/emoji';
 	import { createEventDispatcher } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { backInOut } from 'svelte/easing';
