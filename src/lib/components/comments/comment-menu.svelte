@@ -3,8 +3,8 @@
 	import { Button } from '$lib/shadcn/components/ui/button';
 	import * as DropdownMenu from '$lib/shadcn/components/ui/dropdown-menu';
 	import { pb } from '$lib/stores/pocketbase';
-	import { useMutation } from '@sveltestack/svelte-query';
-	import { EllipsisVertical, Pencil, Trash, Flag } from 'lucide-svelte';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
+	import { EllipsisVertical, Pencil, Trash, Flag, Undo } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -16,17 +16,34 @@
 	$: isOwner = comment.user === userId;
 	$: loggedIn = pb.authStore?.isValid;
 
+	const queryClient = useQueryClient();
+
 	const onEdit = () => {
 		dispatch('edit');
 	};
 
 	const deleteMutation = useMutation(
-		async () => {
-			await pb.collection('chapterComments').update(comment.id, { deleted: true });
+		async (isDelete: boolean) => {
+			return await pb
+				.collection('chapterComments')
+				.update(comment.id, { deleted: isDelete, user: userId });
 		},
 		{
 			onSuccess(data, variables, context) {
-				toast.success('Comment deleted');
+				if (data.deleted) {
+					toast.success('Comment deleted');
+				} else {
+					toast.success('Comment restored');
+				}
+				queryClient.invalidateQueries(['comments', { chapter: comment.chapter }]);
+				comment.deleted = data.deleted;
+			},
+			onError(error, variables, context) {
+				if (variables) {
+					toast.error('Failed to delete comment');
+				} else {
+					toast.error('Failed to restore comment');
+				}
 			}
 		}
 	);
@@ -40,6 +57,7 @@
 				toast.success('Comment reported');
 			},
 			onError(error, variables, context) {
+				// assume it's because the user already reported violating unique constraint
 				toast.error('Already reported');
 			}
 		}
@@ -59,13 +77,20 @@
 				<span>Edit</span>
 			</DropdownMenu.Item>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item
-				class="cursor-pointer text-destructive"
-				on:click={() => $deleteMutation.mutate()}
-			>
-				<Trash class="icon-comment-menu" />
-				<span> Delete </span>
-			</DropdownMenu.Item>
+			{#if !comment.deleted}
+				<DropdownMenu.Item
+					class="cursor-pointer text-destructive"
+					on:click={() => $deleteMutation.mutate(true)}
+				>
+					<Trash class="icon-comment-menu" />
+					<span>Delete</span>
+				</DropdownMenu.Item>
+			{:else}
+				<DropdownMenu.Item class="cursor-pointer" on:click={() => $deleteMutation.mutate(false)}>
+					<Undo class="icon-comment-menu" />
+					<span>Restore</span>
+				</DropdownMenu.Item>
+			{/if}
 		{:else if loggedIn}
 			<DropdownMenu.Item
 				class="cursor-pointer text-destructive"

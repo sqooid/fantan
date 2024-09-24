@@ -120,11 +120,11 @@
 			<span class="muted">{timeString}</span>
 			<CommentMenu {comment} on:edit={onEdit} />
 		</div>
-		{#if !isEditing}
+		{#if !isEditing && !comment.deleted}
 			<div class="milkdown comment">
 				{@html commentMd.render(comment.content)}
 			</div>
-		{:else}
+		{:else if isEditing}
 			<CommentMilkdown
 				class="p-4 border border-solid rounded-md relative mb-4"
 				bind:this={editor}
@@ -134,6 +134,8 @@
 				<Button variant="outline" on:click={() => (isEditing = false)}>Cancel</Button>
 				<Button on:click={() => $editSaveMutation.mutate()}>Save</Button>
 			</div>
+		{:else}
+			<span class="opacity-30">Comment deleted</span>
 		{/if}
 		<div class="flex gap-1 mt-3">
 			<ReactionBadge
