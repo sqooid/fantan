@@ -89,3 +89,19 @@ export const animateLayoutChanges = (e: HTMLElement) => {
 	});
 	observer.observe(e, { childList: true, subtree: true });
 };
+
+export const mapToCssVars = (obj: Record<string, string>) => {
+	return Object.entries(obj)
+		.map(([key, value]) => `--${key}: ${value};`)
+		.join('');
+};
+
+export const genLoginLink = () => {
+	const path = window.location.pathname;
+	return `/login?redirect=${encodeURIComponent(path)}`;
+};
+
+export const genRedirectLinkWithQueries = (path: string) => {
+	const queries = window.location.search;
+	return `${path}${queries}`;
+};

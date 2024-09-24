@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { Button } from '$lib/shadcn/components/ui/button';
 	import { pb } from '$lib/stores/pocketbase';
 	import { ClientResponseError } from 'pocketbase';
 	import { toast } from 'svelte-sonner';
-	import { Button } from '$lib/shadcn/components/ui/button';
 	import ValidatedField from '../inputs/validated-field.svelte';
 	import { parsePbError } from '../inputs/validation';
 
@@ -16,7 +15,7 @@
 	const onClick = async () => {
 		try {
 			await pb.collection('users').authWithPassword(info.identity, info.password);
-			goto('/');
+			// redirect performed by login page reactivity
 		} catch (error) {
 			if (error instanceof ClientResponseError) {
 				errors = parsePbError(error);
