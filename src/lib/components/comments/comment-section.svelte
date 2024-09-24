@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { useQuery } from '@sveltestack/svelte-query';
-	import CommentWrite from './comment-write.svelte';
-	import { pb } from '$lib/stores/pocketbase';
 	import type {
 		ChapterCommentReactionsResponse,
 		ChapterCommentsResponse
 	} from '$lib/pocketbase-types';
-	import MarkdownIt from 'markdown-it';
-	import { full as emoji } from 'markdown-it-emoji';
+	import { pb } from '$lib/stores/pocketbase';
+	import { useQuery } from '@sveltestack/svelte-query';
 	import CommentItem from './comment-item.svelte';
+	import CommentWrite from './comment-write.svelte';
 	import UserAvatar from './user-avatar.svelte';
 
 	export let chapterId: string;
@@ -24,9 +22,13 @@
 		commentsQuery.setOptions({
 			queryKey: ['comments', { chapter: chapterId }],
 			queryFn: async () => {
-				const result = await pb
-					.collection('chapterComments')
-					.getFullList({ filter: pb.filter('chapter = {:chapterId}', { chapterId }) });
+				const result = await pb.collection('chapterComments').getFullList({
+					filter: pb.filter('chapter = {:chapterId} && (deleted != true || user = {:userId})', {
+						chapterId,
+						userId
+					}),
+					sort: '-created'
+				});
 				return result as any;
 			},
 			enabled: true
