@@ -7,6 +7,7 @@ import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	ChapterCommentReactions = "chapterCommentReactions",
+	ChapterCommentReports = "chapterCommentReports",
 	ChapterComments = "chapterComments",
 	ChapterVisits = "chapterVisits",
 	Chapters = "chapters",
@@ -44,9 +45,16 @@ export type ChapterCommentReactionsRecord = {
 	user?: RecordIdString
 }
 
+export type ChapterCommentReportsRecord = {
+	comment: RecordIdString
+	user: RecordIdString
+}
+
 export type ChapterCommentsRecord<Treactions = unknown> = {
 	chapter: RecordIdString
 	content: string
+	contentUpdated?: IsoDateString
+	deleted?: boolean
 	reactions?: null | Treactions
 	user: RecordIdString
 }
@@ -97,6 +105,7 @@ export type UsersRecord<Thistory = unknown> = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type ChapterCommentReactionsResponse<Texpand = unknown> = Required<ChapterCommentReactionsRecord> & BaseSystemFields<Texpand>
+export type ChapterCommentReportsResponse<Texpand = unknown> = Required<ChapterCommentReportsRecord> & BaseSystemFields<Texpand>
 export type ChapterCommentsResponse<Treactions = unknown, Texpand = unknown> = Required<ChapterCommentsRecord<Treactions>> & BaseSystemFields<Texpand>
 export type ChapterVisitsResponse<Texpand = unknown> = Required<ChapterVisitsRecord> & BaseSystemFields<Texpand>
 export type ChaptersResponse<Tcontent = unknown, Tnotes = unknown, Texpand = unknown> = Required<ChaptersRecord<Tcontent, Tnotes>> & BaseSystemFields<Texpand>
@@ -107,6 +116,7 @@ export type UsersResponse<Thistory = unknown, Texpand = unknown> = Required<User
 
 export type CollectionRecords = {
 	chapterCommentReactions: ChapterCommentReactionsRecord
+	chapterCommentReports: ChapterCommentReportsRecord
 	chapterComments: ChapterCommentsRecord
 	chapterVisits: ChapterVisitsRecord
 	chapters: ChaptersRecord
@@ -116,6 +126,7 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
 	chapterCommentReactions: ChapterCommentReactionsResponse
+	chapterCommentReports: ChapterCommentReportsResponse
 	chapterComments: ChapterCommentsResponse
 	chapterVisits: ChapterVisitsResponse
 	chapters: ChaptersResponse
@@ -128,6 +139,7 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'chapterCommentReactions'): RecordService<ChapterCommentReactionsResponse>
+	collection(idOrName: 'chapterCommentReports'): RecordService<ChapterCommentReportsResponse>
 	collection(idOrName: 'chapterComments'): RecordService<ChapterCommentsResponse>
 	collection(idOrName: 'chapterVisits'): RecordService<ChapterVisitsResponse>
 	collection(idOrName: 'chapters'): RecordService<ChaptersResponse>

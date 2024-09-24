@@ -14,6 +14,8 @@
 	import { emojiPlugin } from './emoji-plugin';
 	import UserAvatar from './user-avatar.svelte';
 	import { genLoginLink } from '$lib/utils/ui';
+	import { commonmarkStripped } from '$lib/milkdown/commonmark';
+	import CommentMilkdown from './comment-milkdown.svelte';
 
 	export let chapterId: string;
 
@@ -22,32 +24,7 @@
 
 	const queryClient = useQueryClient();
 
-	let showPlaceholder = true;
-
-	let milkdownEditor: Editor | null = null;
-
-	const editor = (e: HTMLElement) => {
-		Editor.make()
-			.config((ctx) => {
-				ctx.set(rootCtx, e);
-			})
-			.use(commonmark)
-			.use(clipboard)
-			.use(history)
-			.use(emojiPlugin)
-			.create()
-			.then((editor) => {
-				milkdownEditor = editor;
-				addEventListeners(editor, {
-					onEmptyChange(value) {
-						showPlaceholder = value;
-					}
-				});
-			});
-	};
-	onDestroy(() => {
-		milkdownEditor?.destroy();
-	});
+	let editor: CommentMilkdown | null = null;
 
 	const commentMutation = useMutation(
 		async (content: string) => {
@@ -62,8 +39,7 @@
 		},
 		{
 			onSuccess(data, variables, context) {
-				milkdownEditor?.action(replaceAll(''));
-				showPlaceholder = true;
+				editor?.reset();
 				toast.success('Comment posted');
 				queryClient.setQueryData(
 					['comments', { chapter: chapterId }],
@@ -83,7 +59,8 @@
 	);
 
 	const onPost = () => {
-		if (milkdownEditor === null) return;
+		const milkdownEditor = editor?.getEditor();
+		if (!milkdownEditor) return;
 		$commentMutation.mutate(renderMilkdown(milkdownEditor));
 	};
 </script>
@@ -92,13 +69,10 @@
 	<UserAvatar avatarUrl={avatar} />
 	{#if loggedIn}
 		<div>
-			<div use:editor class="milkdown p-4 border border-solid rounded-md relative mb-4">
-				{#if showPlaceholder}
-					<div class="absolute pointer-events-none opacity-30 inset-0 flex items-center pl-4">
-						<span>Write a comment</span>
-					</div>
-				{/if}
-			</div>
+			<CommentMilkdown
+				class="p-4 border border-solid rounded-md relative mb-4"
+				bind:this={editor}
+			/>
 			<Button on:click={onPost}>Post comment</Button>
 		</div>
 	{:else}

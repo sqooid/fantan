@@ -16,7 +16,6 @@
 	$: userId = pb.authStore?.model?.id;
 
 	let showComments = true;
-	let md = new MarkdownIt({ linkify: true }).use(emoji);
 
 	const commentsQuery = useQuery<
 		(ChapterCommentsResponse & { reactions: Record<string, number> })[]
@@ -85,13 +84,10 @@
 	<div class="flex flex-col gap-8">
 		{#each $commentsQuery.data ?? [] as comment}
 			<CommentItem
+				{comment}
 				userInfo={$usersQuery.data?.[comment.user]}
-				reactions={comment.reactions ?? {}}
-				commentId={comment.id}
 				ownReactions={$ownReactions.data}
-			>
-				{@html md.render(comment.content)}
-			</CommentItem>
+			></CommentItem>
 		{:else}
 			<div class="grid grid-cols-[auto_1fr] gap-x-4 mt-4">
 				<UserAvatar class="invisible" />

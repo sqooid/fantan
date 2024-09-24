@@ -63,6 +63,29 @@ migrate(
 					options: {
 						maxSize: 2000000
 					}
+				},
+				{
+					system: false,
+					id: 'fz3sacox',
+					name: 'contentUpdated',
+					type: 'date',
+					required: false,
+					presentable: false,
+					unique: false,
+					options: {
+						min: '',
+						max: ''
+					}
+				},
+				{
+					system: false,
+					id: 'fdblizc2',
+					name: 'deleted',
+					type: 'bool',
+					required: false,
+					presentable: false,
+					unique: false,
+					options: {}
 				}
 			] as any,
 			listRule: '',

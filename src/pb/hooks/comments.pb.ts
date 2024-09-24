@@ -83,3 +83,14 @@ routerAdd('POST', '/c/toggle-reaction', (e) => {
 	});
 	return e.json(200, { reaction, count });
 });
+
+onRecordAfterUpdateRequest((e) => {
+	const body = $apis.requestInfo(e.httpContext).data;
+	if (body.content) {
+		const record = e.record;
+		if (!record) return;
+		const updated = record.getDateTime('updated');
+		record.set('contentUpdated', updated);
+		$app.dao().saveRecord(record);
+	}
+}, 'chapterComments');
