@@ -56,8 +56,8 @@ migrate(
 			indexes: [
 				'CREATE UNIQUE INDEX `idx_INgKRSX` ON `chapterCommentReactions` (\n  `comment`,\n  `user`,\n  `reaction`\n)'
 			] as any,
-			listRule: '@request.auth.id!=""',
-			viewRule: '@request.auth.id!=""',
+			listRule: '@request.auth.id!="" && @request.auth.id=user.id',
+			viewRule: '@request.auth.id!="" && @request.auth.id=user.id',
 			createRule: '@request.auth.id!="" && @request.auth.id=@request.data.user.id',
 			updateRule: '@request.auth.id!="" && @request.auth.id=@request.data.user.id',
 			deleteRule: '@request.auth.id!="" && @request.auth.id=@request.data.user.id'
