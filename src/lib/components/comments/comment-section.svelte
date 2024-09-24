@@ -25,7 +25,7 @@
 				const result = await pb.collection('chapterComments').getFullList({
 					filter: pb.filter('chapter = {:chapterId} && (deleted != true || user = {:userId})', {
 						chapterId,
-						userId
+						userId: userId ?? ''
 					}),
 					sort: '-created'
 				});
