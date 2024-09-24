@@ -15,9 +15,7 @@
 
 	let showComments = true;
 
-	const commentsQuery = useQuery<
-		(ChapterCommentsResponse & { reactions: Record<string, number> })[]
-	>({ enabled: false });
+	const commentsQuery = useQuery<ChapterCommentsResponse[]>({ enabled: false });
 	$: if (chapterId && showComments) {
 		commentsQuery.setOptions({
 			queryKey: ['comments', { chapter: chapterId }],
