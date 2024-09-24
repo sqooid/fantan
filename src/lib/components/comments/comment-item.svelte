@@ -118,7 +118,9 @@
 		<div class="flex items-center gap-4">
 			<UserHoverCard {userInfo} />
 			<span class="muted">{timeString}</span>
-			<CommentMenu {comment} on:edit={onEdit} />
+			{#if loggedIn}
+				<CommentMenu {comment} on:edit={onEdit} />
+			{/if}
 		</div>
 		{#if !isEditing && !comment.deleted}
 			<div class="milkdown comment">
